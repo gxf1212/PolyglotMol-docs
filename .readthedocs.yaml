@@ -5,18 +5,10 @@ build:
   tools:
     python: "3.11"
 
-submodules:
-  include: all
-  recursive: false
-
 sphinx:
   builder: html
-  configuration: private-repo/docs/source/conf.py
+  configuration: docs/source/conf.py
 
 python:
   install:
     - requirements: requirements.txt
-    - method: pip
-      path: private-repo
-      extra_requirements:
-        - dev

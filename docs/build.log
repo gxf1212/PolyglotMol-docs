@@ -1,0 +1,187 @@
+Running Sphinx v7.4.7
+loading translations [en]... done
+loading pickled environment... done
+myst v3.0.1: MdParserConfig(commonmark_only=False, gfm_only=False, enable_extensions={'html_image', 'dollarmath', 'amsmath', 'colon_fence', 'tasklist'}, disable_syntax=[], all_links_external=False, links_external_new_tab=False, url_schemes=('http', 'https', 'mailto', 'ftp'), ref_domains=None, fence_as_directive=set(), number_code_blocks=[], title_to_header=False, heading_anchors=3, heading_slug_func=None, html_meta={}, footnote_transition=True, words_per_minute=200, substitutions={}, linkify_fuzzy_links=True, dmath_allow_labels=True, dmath_allow_space=True, dmath_allow_digits=True, dmath_double_inline=False, update_mathjax=True, mathjax_classes='tex2jax_process|mathjax_process|math|output_area', enable_checkboxes=False, suppress_warnings=[], highlight_code_blocks=True)
+building [mo]: targets for 0 po files that are out of date
+writing output... 
+building [html]: targets for 0 source files that are out of date
+updating environment: 0 added, 2 changed, 0 removed
+reading sources... [ 50%] api/representations/spatial/unimol
+# 2025-09-06 20:23:02,206 INFO polyglotmol.config.settings settings.py:60 -- [PolyglotMol Settings] Effective TORCH_HOME: /home/gxf1212/data/local-programs/model
+
+# 2025-09-06 20:23:02,206 INFO polyglotmol.config.settings settings.py:61 -- [PolyglotMol Settings] Effective HF_HOME: /home/gxf1212/data/local-programs/hf_model
+
+# 2025-09-06 20:23:02,206 INFO polyglotmol.config.settings settings.py:62 -- [PolyglotMol Settings] Representation cache dir: /data/gxf1212/work/PolyglotMol/docs/.pgm_cache
+
+# 2025-09-06 20:23:02,206 INFO polyglotmol.config.settings settings.py:63 -- [PolyglotMol Settings] Representation cache enabled: True
+
+# 2025-09-06 20:23:02,206 INFO polyglotmol.config.settings settings.py:65 -- [PolyglotMol Settings] Using HF_ENDPOINT (mirror): https://hf-mirror.com
+
+# 2025-09-06 20:23:02,356 INFO numexpr.utils utils.py:148 -- Note: NumExpr detected 64 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+
+# 2025-09-06 20:23:02,356 INFO numexpr.utils utils.py:161 -- NumExpr defaulting to 16 threads.
+
+# 2025-09-06 20:23:04,178 INFO polyglotmol.drawings.plot_utils plot_utils.py:81 -- Plotting style reset to default.
+
+# 2025-09-06 20:23:04,185 INFO polyglotmol.representations.fingerprints.cdk cdk.py:296 -- Registering CDK featurizer configurations...
+
+# 2025-09-06 20:23:04,185 INFO polyglotmol.representations.fingerprints.cdk cdk.py:528 -- Successfully registered all CDK featurizer configurations.
+
+# 2025-09-06 20:23:06,317 INFO polyglotmol.representations.fingerprints.datamol datamol.py:387 -- Registering Datamol/Molfeat fingerprint featurizers...
+
+# 2025-09-06 20:23:06,317 INFO polyglotmol.representations.fingerprints.datamol datamol.py:412 -- Registered 17/17 Datamol/Molfeat types. Successfully registered: ['datamol_atompair', 'datamol_atompair_count', 'datamol_avalon', 'datamol_ecfp4', 'datamol_ecfp4_1024', 'datamol_ecfp4_count', 'datamol_ecfp6', 'datamol_erg', 'datamol_estate', 'datamol_fcfp4', 'datamol_fcfp4_count', 'datamol_fcfp6', 'datamol_maccs', 'datamol_map4', 'datamol_rdkit', 'datamol_secfp', 'datamol_topological']
+
+# 2025-09-06 20:23:06,317 INFO polyglotmol.representations.fingerprints.datamol datamol.py:425 -- MAP4 library (map4-ojmb) is available.
+
+# 2025-09-06 20:23:06,317 INFO polyglotmol.representations.fingerprints.datamol datamol.py:433 -- Avalon tools (pyavalonkit) are available.
+
+# 2025-09-06 20:23:06,337 WARNING deepchem.feat.molecule_featurizers.rdkit_descriptors rdkit_descriptors.py:123 -- No normalization for SPS. Feature removed!
+
+# 2025-09-06 20:23:06,337 WARNING deepchem.feat.molecule_featurizers.rdkit_descriptors rdkit_descriptors.py:123 -- No normalization for AvgIpc. Feature removed!
+
+# 2025-09-06 20:23:06,337 WARNING deepchem.feat.molecule_featurizers.rdkit_descriptors rdkit_descriptors.py:123 -- No normalization for NumAmideBonds. Feature removed!
+
+# 2025-09-06 20:23:06,337 WARNING deepchem.feat.molecule_featurizers.rdkit_descriptors rdkit_descriptors.py:123 -- No normalization for NumAtomStereoCenters. Feature removed!
+
+# 2025-09-06 20:23:06,337 WARNING deepchem.feat.molecule_featurizers.rdkit_descriptors rdkit_descriptors.py:123 -- No normalization for NumBridgeheadAtoms. Feature removed!
+
+# 2025-09-06 20:23:06,337 WARNING deepchem.feat.molecule_featurizers.rdkit_descriptors rdkit_descriptors.py:123 -- No normalization for NumHeterocycles. Feature removed!
+
+# 2025-09-06 20:23:06,337 WARNING deepchem.feat.molecule_featurizers.rdkit_descriptors rdkit_descriptors.py:123 -- No normalization for NumSpiroAtoms. Feature removed!
+
+# 2025-09-06 20:23:06,337 WARNING deepchem.feat.molecule_featurizers.rdkit_descriptors rdkit_descriptors.py:123 -- No normalization for NumUnspecifiedAtomStereoCenters. Feature removed!
+
+# 2025-09-06 20:23:06,337 WARNING deepchem.feat.molecule_featurizers.rdkit_descriptors rdkit_descriptors.py:123 -- No normalization for Phi. Feature removed!
+
+# 2025-09-06 20:23:07,460 WARNING deepchem.models.torch_models __init__.py:39 -- Skipped loading modules with pytorch-geometric dependency, missing a dependency. No module named 'dgl'
+
+# 2025-09-06 20:23:08,615 WARNING deepchem.models __init__.py:86 -- Skipped loading some Jax models, missing a dependency. No module named 'haiku'
+
+# 2025-09-06 20:23:08,634 INFO polyglotmol.representations.fingerprints.deepchem deepchem.py:382 -- DeepChem fingerprint components loaded. Class decorators should have registered featurizers.
+
+# 2025-09-06 20:23:08,635 INFO polyglotmol.representations.fingerprints.rdkit rdkit.py:596 -- Registering RDKit featurizer configurations...
+
+# 2025-09-06 20:23:08,635 INFO polyglotmol.representations.fingerprints.rdkit rdkit.py:721 -- Successfully registered RDKit featurizer configurations
+
+# 2025-09-06 20:23:08,636 INFO polyglotmol.representations.fingerprints __init__.py:37 -- Attempted import for fingerprint modules: ['cdk', 'datamol', 'deepchem', 'rdkit', 'spatial3d']
+
+# 2025-09-06 20:23:08,636 INFO polyglotmol.representations.descriptors.descriptors_basic descriptors_basic.py:423 -- Registered MordredFeaturizer variants: 2D (1613 descriptors), All (1826 descriptors)
+
+# 2025-09-06 20:23:08,636 INFO polyglotmol.representations.descriptors.descriptors_basic descriptors_basic.py:442 -- Successfully registered all expected descriptor configurations based on available dependencies: ['mordred_descriptors_2d', 'mordred_descriptors_all', 'rdkit_all_descriptors']
+
+# 2025-09-06 20:23:08,636 INFO polyglotmol.representations.descriptors __init__.py:68 -- Successfully exposed the following descriptor featurizers in polyglotmol.representations.descriptors: RDKitAllDescriptorsFeaturizer, MordredFeaturizer
+
+# 2025-09-06 20:23:08,638 INFO polyglotmol.representations.spatial __init__.py:56 -- UniMolFeaturizer could not be imported from .unimol module. This is expected if 'unimol_tools' is not installed.
+
+# 2025-09-06 20:23:08,638 INFO polyglotmol.representations.spatial __init__.py:74 -- Successfully exposed the following in polyglotmol.representations.spatial: AdjacencyMatrix, CoulombMatrix, CoulombMatrixEig, EdgeMatrix
+
+# 2025-09-06 20:23:08,639 INFO polyglotmol.representations.graph.deepchem deepchem.py:488 -- Registering available DeepChem graph featurizers...
+
+# 2025-09-06 20:23:08,639 INFO polyglotmol.representations.graph.deepchem deepchem.py:533 -- Successfully registered 10/10 DeepChem graph featurizers
+
+# 2025-09-06 20:23:08,639 INFO polyglotmol.representations.graph.deepchem deepchem.py:534 -- Registered featurizers: ['deepchem_convmol', 'deepchem_dmpnn', 'deepchem_grover', 'deepchem_mat', 'deepchem_molgan', 'deepchem_molgraphconv', 'deepchem_mxmnet', 'deepchem_pagtn', 'deepchem_rdkit_conf', 'deepchem_weave']
+
+# 2025-09-06 20:23:08,640 INFO polyglotmol.representations.protein.sequence.plm plm.py:1231 -- Registering PLM featurizers...
+
+# 2025-09-06 20:23:08,641 INFO polyglotmol.representations.protein.sequence.plm plm.py:1310 -- PLM featurizers registration complete.
+
+# 2025-09-06 20:23:08,642 INFO polyglotmol.representations.sequential.language_model.mlm mlm.py:1023 -- Registering molecular language model featurizers...
+
+# 2025-09-06 20:23:08,642 INFO polyglotmol.representations.sequential.language_model.mlm mlm.py:1109 -- Molecular language model featurizer registration complete.
+
+# 2025-09-06 20:23:08,643 INFO polyglotmol.representations.sequential __init__.py:84 -- Sequential representations initialized with modules: language_model, tokenizer, strings
+
+reading sources... [100%] usage/models/evaluation
+
+WARNING: autodoc: failed to import method 'UniMolFeaturizer._featurize' from module 'polyglotmol.representations.spatial.unimol'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/gxf1212/data/local-programs/.conda/envs/test/lib/python3.9/site-packages/sphinx/util/inspect.py", line 411, in safe_getattr
+    return getattr(obj, name, *defargs)
+AttributeError: module 'polyglotmol.representations.spatial.unimol' has no attribute 'UniMolFeaturizer'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/gxf1212/data/local-programs/.conda/envs/test/lib/python3.9/site-packages/sphinx/ext/autodoc/importer.py", line 209, in import_object
+    obj = attrgetter(obj, mangled_name)
+  File "/home/gxf1212/data/local-programs/.conda/envs/test/lib/python3.9/site-packages/sphinx/ext/autodoc/__init__.py", line 329, in get_attr
+    return autodoc_attrgetter(self.env.app, obj, name, *defargs)
+  File "/home/gxf1212/data/local-programs/.conda/envs/test/lib/python3.9/site-packages/sphinx/ext/autodoc/__init__.py", line 2848, in autodoc_attrgetter
+    return safe_getattr(obj, name, *defargs)
+  File "/home/gxf1212/data/local-programs/.conda/envs/test/lib/python3.9/site-packages/sphinx/util/inspect.py", line 427, in safe_getattr
+    raise AttributeError(name) from exc
+AttributeError: UniMolFeaturizer
+
+WARNING: autodoc: failed to import method 'UniMolFeaturizer.get_output_info' from module 'polyglotmol.representations.spatial.unimol'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/gxf1212/data/local-programs/.conda/envs/test/lib/python3.9/site-packages/sphinx/util/inspect.py", line 411, in safe_getattr
+    return getattr(obj, name, *defargs)
+AttributeError: module 'polyglotmol.representations.spatial.unimol' has no attribute 'UniMolFeaturizer'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/gxf1212/data/local-programs/.conda/envs/test/lib/python3.9/site-packages/sphinx/ext/autodoc/importer.py", line 209, in import_object
+    obj = attrgetter(obj, mangled_name)
+  File "/home/gxf1212/data/local-programs/.conda/envs/test/lib/python3.9/site-packages/sphinx/ext/autodoc/__init__.py", line 329, in get_attr
+    return autodoc_attrgetter(self.env.app, obj, name, *defargs)
+  File "/home/gxf1212/data/local-programs/.conda/envs/test/lib/python3.9/site-packages/sphinx/ext/autodoc/__init__.py", line 2848, in autodoc_attrgetter
+    return safe_getattr(obj, name, *defargs)
+  File "/home/gxf1212/data/local-programs/.conda/envs/test/lib/python3.9/site-packages/sphinx/util/inspect.py", line 427, in safe_getattr
+    raise AttributeError(name) from exc
+AttributeError: UniMolFeaturizer
+
+/data/gxf1212/work/PolyglotMol/docs/source/usage/models/evaluation.md:97: WARNING: image file not readable: usage/models/img/regression_results_example.png
+/data/gxf1212/work/PolyglotMol/docs/source/usage/models/evaluation.md:113: WARNING: image file not readable: usage/models/img/residuals_example.png
+/data/gxf1212/work/PolyglotMol/docs/source/usage/models/evaluation.md:137: WARNING: image file not readable: usage/models/img/classification_results_example.png
+/data/gxf1212/work/PolyglotMol/docs/source/usage/models/evaluation.md:159: WARNING: image file not readable: usage/models/img/feature_importance_example.png
+/data/gxf1212/work/PolyglotMol/docs/source/usage/models/evaluation.md:180: WARNING: image file not readable: usage/models/img/learning_curve_example.png
+/data/gxf1212/work/PolyglotMol/docs/source/usage/models/evaluation.md:223: WARNING: image file not readable: usage/models/img/model_comparison_example.png
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... /data/gxf1212/work/PolyglotMol/docs/source/usage/data/protein.md: WARNING: document isn't included in any toctree
+done
+preparing documents... done
+copying assets... 
+copying static files... done
+copying extra files... done
+copying assets: done
+writing output... [ 20%] api/representations/spatial/index
+writing output... [ 40%] api/representations/spatial/unimol
+writing output... [ 60%] index
+writing output... [ 80%] usage/models/evaluation
+writing output... [100%] usage/models/index
+
+/data/gxf1212/work/PolyglotMol/docs/source/usage/models/evaluation.md:321: WARNING: unknown document: '/api/models/evaluation'
+generating indices... genindex py-modindex done
+highlighting module code... [  4%] polyglotmol.data.dataset
+highlighting module code... [  8%] polyglotmol.data.io
+highlighting module code... [ 12%] polyglotmol.data.molecule
+highlighting module code... [ 17%] polyglotmol.data.overview
+highlighting module code... [ 21%] polyglotmol.representations.descriptors.descriptors_basic
+highlighting module code... [ 25%] polyglotmol.representations.fingerprints.cdk
+highlighting module code... [ 29%] polyglotmol.representations.fingerprints.datamol
+highlighting module code... [ 33%] polyglotmol.representations.fingerprints.deepchem
+highlighting module code... [ 38%] polyglotmol.representations.fingerprints.rdkit
+highlighting module code... [ 42%] polyglotmol.representations.graph.deepchem
+highlighting module code... [ 46%] polyglotmol.representations.image.three_d
+highlighting module code... [ 50%] polyglotmol.representations.image.two_d
+highlighting module code... [ 54%] polyglotmol.representations.image.utils
+highlighting module code... [ 58%] polyglotmol.representations.image.video
+highlighting module code... [ 62%] polyglotmol.representations.protein.sequence.plm
+highlighting module code... [ 67%] polyglotmol.representations.sequential.language_model.mlm
+highlighting module code... [ 71%] polyglotmol.representations.sequential.strings
+highlighting module code... [ 75%] polyglotmol.representations.spatial.matrix
+highlighting module code... [ 79%] polyglotmol.representations.spatial.unimol
+highlighting module code... [ 83%] polyglotmol.representations.utils.base
+highlighting module code... [ 88%] polyglotmol.representations.utils.exceptions
+highlighting module code... [ 92%] polyglotmol.representations.utils.logging_config
+highlighting module code... [ 96%] polyglotmol.representations.utils.parallel
+highlighting module code... [100%] polyglotmol.representations.utils.registry
+
+writing additional pages... search done
+dumping search index in English (code: en)... done
+dumping object inventory... done
+build succeeded, 10 warnings.
+
+The HTML pages are in build/html.
