@@ -1,0 +1,3 @@
+[submodule "private-repo"]
+	path = private-repo
+	url = git@github.com:gxf1212/PolyglotMol.git
