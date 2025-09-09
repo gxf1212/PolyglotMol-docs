@@ -1,0 +1,1121 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Representations Module" href="representations/index.html" /><link rel="prev" title="Multi-Stage Model Screening" href="../usage/models/screening_usage_doc.html" />
+
+    <!-- Generated with Sphinx 7.4.7 and Furo 2025.07.19 -->
+        <title>API Reference - PolyglotMol 0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">PolyglotMol 0.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <span class="sidebar-brand-text">PolyglotMol 0.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../usage/index.html">User Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of User Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../usage/quick_start.html">Complete Workflow Example</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/basic/index.html">Basics</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/basic/featurizers.html">Featurizers</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Featurizers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/basic/config.html">Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Configuration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/basic/shapes.html">Common Featurizer Shapes</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/representations/index.html">Representations</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/sequential/index.html">Sequential Representations</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Sequential Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../usage/representations/sequential/mlm.html">Molecular Language Models</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Molecular Language Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../usage/representations/sequential/tokenizer.html">Tokenizers</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Tokenizers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/descriptors/index.html">Molecular Descriptors</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Molecular Descriptors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../usage/representations/descriptors/descriptors_basic.html">Molecular Descriptors</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Molecular Descriptors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/fingerprints/index.html">Fingerprints</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Fingerprints</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../usage/representations/fingerprints/rdkit.html">RDKit Fingerprints</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of RDKit Fingerprints</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../usage/representations/fingerprints/cdk.html">CDK Fingerprints</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of CDK Fingerprints</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../usage/representations/fingerprints/deepchem.html">DeepChem Fingerprints</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of DeepChem Fingerprints</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../usage/representations/fingerprints/datamol.html">Datamol Fingerprint</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of Datamol Fingerprint</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/graph/index.html">Graph Representations</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of Graph Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../usage/representations/graph/deepchem.html">Graph Representations</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of Graph Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/image/index.html">Image Representations</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of Image Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../usage/representations/image/2d.html">2D Molecular Images</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../usage/representations/image/3d.html">3D Molecular Representations</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/spatial/index.html">Spatial Representations</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of Spatial Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../usage/representations/spatial/matrix.html">Matrix Featurizers</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of Matrix Featurizers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../usage/representations/spatial/unimol.html">Uni-Mol Representations</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of Uni-Mol Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/temporal/index.html">Temporal Representations</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of Temporal Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/protein/index.html">Protein Representations</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of Protein Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../usage/representations/protein/sequence/index.html">Sequence Representations</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of Sequence Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../usage/representations/protein/sequence/plm.html">Protein Language Models</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of Protein Language Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../usage/representations/protein/sequence/tokenizer.html">Protein Sequence Tokenization</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../usage/representations/protein/structure/index.html">Structure Representations</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Structure Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../usage/representations/protein/structure/evoformer.html">Protein Structure Representations</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of Protein Structure Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../usage/representations/protein/structure/masif.html">Protein Structure Representations</a><input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><div class="visually-hidden">Toggle navigation of Protein Structure Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/representations/protein-ligand/index.html">Protein-ligand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/representations/utils.html">Utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/data/index.html">Data Management</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle navigation of Data Management</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/data/molecule.html">Molecule</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><div class="visually-hidden">Toggle navigation of Molecule</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/data/dataset.html">Dataset</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" role="switch" type="checkbox"/><label for="toctree-checkbox-31"><div class="visually-hidden">Toggle navigation of Dataset</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/models/index.html">Machine Learning Models</a><input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" role="switch" type="checkbox"/><label for="toctree-checkbox-32"><div class="visually-hidden">Toggle navigation of Machine Learning Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage/models/definitions.html">Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/models/preprocessing.html">Preprocessing</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/models/grid_search.html">Grid Search</a><input class="toctree-checkbox" id="toctree-checkbox-33" name="toctree-checkbox-33" role="switch" type="checkbox"/><label for="toctree-checkbox-33"><div class="visually-hidden">Toggle navigation of Grid Search</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/models/evaluation.html">Evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/models/screening_usage_doc.html">Multi-Stage Model Screening</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../usage/representations/index.html">Representations</a><input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" role="switch" type="checkbox"/><label for="toctree-checkbox-34"><div class="visually-hidden">Toggle navigation of Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/representations/sequential/index.html">Sequential Representations</a><input class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" role="switch" type="checkbox"/><label for="toctree-checkbox-35"><div class="visually-hidden">Toggle navigation of Sequential Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/sequential/mlm.html">Molecular Language Models</a><input class="toctree-checkbox" id="toctree-checkbox-36" name="toctree-checkbox-36" role="switch" type="checkbox"/><label for="toctree-checkbox-36"><div class="visually-hidden">Toggle navigation of Molecular Language Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/sequential/tokenizer.html">Tokenizers</a><input class="toctree-checkbox" id="toctree-checkbox-37" name="toctree-checkbox-37" role="switch" type="checkbox"/><label for="toctree-checkbox-37"><div class="visually-hidden">Toggle navigation of Tokenizers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/representations/descriptors/index.html">Molecular Descriptors</a><input class="toctree-checkbox" id="toctree-checkbox-38" name="toctree-checkbox-38" role="switch" type="checkbox"/><label for="toctree-checkbox-38"><div class="visually-hidden">Toggle navigation of Molecular Descriptors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/descriptors/descriptors_basic.html">Molecular Descriptors</a><input class="toctree-checkbox" id="toctree-checkbox-39" name="toctree-checkbox-39" role="switch" type="checkbox"/><label for="toctree-checkbox-39"><div class="visually-hidden">Toggle navigation of Molecular Descriptors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/representations/fingerprints/index.html">Fingerprints</a><input class="toctree-checkbox" id="toctree-checkbox-40" name="toctree-checkbox-40" role="switch" type="checkbox"/><label for="toctree-checkbox-40"><div class="visually-hidden">Toggle navigation of Fingerprints</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/fingerprints/rdkit.html">RDKit Fingerprints</a><input class="toctree-checkbox" id="toctree-checkbox-41" name="toctree-checkbox-41" role="switch" type="checkbox"/><label for="toctree-checkbox-41"><div class="visually-hidden">Toggle navigation of RDKit Fingerprints</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/fingerprints/cdk.html">CDK Fingerprints</a><input class="toctree-checkbox" id="toctree-checkbox-42" name="toctree-checkbox-42" role="switch" type="checkbox"/><label for="toctree-checkbox-42"><div class="visually-hidden">Toggle navigation of CDK Fingerprints</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/fingerprints/deepchem.html">DeepChem Fingerprints</a><input class="toctree-checkbox" id="toctree-checkbox-43" name="toctree-checkbox-43" role="switch" type="checkbox"/><label for="toctree-checkbox-43"><div class="visually-hidden">Toggle navigation of DeepChem Fingerprints</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/fingerprints/datamol.html">Datamol Fingerprint</a><input class="toctree-checkbox" id="toctree-checkbox-44" name="toctree-checkbox-44" role="switch" type="checkbox"/><label for="toctree-checkbox-44"><div class="visually-hidden">Toggle navigation of Datamol Fingerprint</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/representations/graph/index.html">Graph Representations</a><input class="toctree-checkbox" id="toctree-checkbox-45" name="toctree-checkbox-45" role="switch" type="checkbox"/><label for="toctree-checkbox-45"><div class="visually-hidden">Toggle navigation of Graph Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/graph/deepchem.html">Graph Representations</a><input class="toctree-checkbox" id="toctree-checkbox-46" name="toctree-checkbox-46" role="switch" type="checkbox"/><label for="toctree-checkbox-46"><div class="visually-hidden">Toggle navigation of Graph Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/representations/image/index.html">Image Representations</a><input class="toctree-checkbox" id="toctree-checkbox-47" name="toctree-checkbox-47" role="switch" type="checkbox"/><label for="toctree-checkbox-47"><div class="visually-hidden">Toggle navigation of Image Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage/representations/image/2d.html">2D Molecular Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/representations/image/3d.html">3D Molecular Representations</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/representations/spatial/index.html">Spatial Representations</a><input class="toctree-checkbox" id="toctree-checkbox-48" name="toctree-checkbox-48" role="switch" type="checkbox"/><label for="toctree-checkbox-48"><div class="visually-hidden">Toggle navigation of Spatial Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/spatial/matrix.html">Matrix Featurizers</a><input class="toctree-checkbox" id="toctree-checkbox-49" name="toctree-checkbox-49" role="switch" type="checkbox"/><label for="toctree-checkbox-49"><div class="visually-hidden">Toggle navigation of Matrix Featurizers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/spatial/unimol.html">Uni-Mol Representations</a><input class="toctree-checkbox" id="toctree-checkbox-50" name="toctree-checkbox-50" role="switch" type="checkbox"/><label for="toctree-checkbox-50"><div class="visually-hidden">Toggle navigation of Uni-Mol Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/representations/temporal/index.html">Temporal Representations</a><input class="toctree-checkbox" id="toctree-checkbox-51" name="toctree-checkbox-51" role="switch" type="checkbox"/><label for="toctree-checkbox-51"><div class="visually-hidden">Toggle navigation of Temporal Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/representations/protein/index.html">Protein Representations</a><input class="toctree-checkbox" id="toctree-checkbox-52" name="toctree-checkbox-52" role="switch" type="checkbox"/><label for="toctree-checkbox-52"><div class="visually-hidden">Toggle navigation of Protein Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/protein/sequence/index.html">Sequence Representations</a><input class="toctree-checkbox" id="toctree-checkbox-53" name="toctree-checkbox-53" role="switch" type="checkbox"/><label for="toctree-checkbox-53"><div class="visually-hidden">Toggle navigation of Sequence Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../usage/representations/protein/sequence/plm.html">Protein Language Models</a><input class="toctree-checkbox" id="toctree-checkbox-54" name="toctree-checkbox-54" role="switch" type="checkbox"/><label for="toctree-checkbox-54"><div class="visually-hidden">Toggle navigation of Protein Language Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../usage/representations/protein/sequence/tokenizer.html">Protein Sequence Tokenization</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/representations/protein/structure/index.html">Structure Representations</a><input class="toctree-checkbox" id="toctree-checkbox-55" name="toctree-checkbox-55" role="switch" type="checkbox"/><label for="toctree-checkbox-55"><div class="visually-hidden">Toggle navigation of Structure Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../usage/representations/protein/structure/evoformer.html">Protein Structure Representations</a><input class="toctree-checkbox" id="toctree-checkbox-56" name="toctree-checkbox-56" role="switch" type="checkbox"/><label for="toctree-checkbox-56"><div class="visually-hidden">Toggle navigation of Protein Structure Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../usage/representations/protein/structure/masif.html">Protein Structure Representations</a><input class="toctree-checkbox" id="toctree-checkbox-57" name="toctree-checkbox-57" role="switch" type="checkbox"/><label for="toctree-checkbox-57"><div class="visually-hidden">Toggle navigation of Protein Structure Representations</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/representations/protein-ligand/index.html">Protein-ligand</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/representations/utils.html">Utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../usage/data/index.html">Data Management</a><input class="toctree-checkbox" id="toctree-checkbox-58" name="toctree-checkbox-58" role="switch" type="checkbox"/><label for="toctree-checkbox-58"><div class="visually-hidden">Toggle navigation of Data Management</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/data/molecule.html">Molecule</a><input class="toctree-checkbox" id="toctree-checkbox-59" name="toctree-checkbox-59" role="switch" type="checkbox"/><label for="toctree-checkbox-59"><div class="visually-hidden">Toggle navigation of Molecule</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/data/dataset.html">Dataset</a><input class="toctree-checkbox" id="toctree-checkbox-60" name="toctree-checkbox-60" role="switch" type="checkbox"/><label for="toctree-checkbox-60"><div class="visually-hidden">Toggle navigation of Dataset</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../usage/models/index.html">Machine Learning Models</a><input class="toctree-checkbox" id="toctree-checkbox-61" name="toctree-checkbox-61" role="switch" type="checkbox"/><label for="toctree-checkbox-61"><div class="visually-hidden">Toggle navigation of Machine Learning Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../usage/models/definitions.html">Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/models/preprocessing.html">Preprocessing</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/models/grid_search.html">Grid Search</a><input class="toctree-checkbox" id="toctree-checkbox-62" name="toctree-checkbox-62" role="switch" type="checkbox"/><label for="toctree-checkbox-62"><div class="visually-hidden">Toggle navigation of Grid Search</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/models/evaluation.html">Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/models/screening_usage_doc.html">Multi-Stage Model Screening</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-63" name="toctree-checkbox-63" role="switch" type="checkbox"/><label for="toctree-checkbox-63"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="representations/index.html">Representations Module</a><input class="toctree-checkbox" id="toctree-checkbox-64" name="toctree-checkbox-64" role="switch" type="checkbox"/><label for="toctree-checkbox-64"><div class="visually-hidden">Toggle navigation of Representations Module</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="representations/sequential/index.html">Sequential Representations API (<cite>…sequential</cite>)</a><input class="toctree-checkbox" id="toctree-checkbox-65" name="toctree-checkbox-65" role="switch" type="checkbox"/><label for="toctree-checkbox-65"><div class="visually-hidden">Toggle navigation of Sequential Representations API (…sequential)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/sequential/language_model.html">Language Model API (<cite>…language_model</cite>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/sequential/tokenizer.html">Tokenizer API (<cite>…tokenizer</cite>)</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="representations/descriptors/index.html">Descriptors API (<cite>…descriptors</cite>)</a><input class="toctree-checkbox" id="toctree-checkbox-66" name="toctree-checkbox-66" role="switch" type="checkbox"/><label for="toctree-checkbox-66"><div class="visually-hidden">Toggle navigation of Descriptors API (…descriptors)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/descriptors/descriptors_basic.html">Molecular Descriptors API (<cite>…sequential</cite>)</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="representations/fingerprints/index.html">Fingerprints API (<cite>polyglotmol.representations.fingerprints</cite>)</a><input class="toctree-checkbox" id="toctree-checkbox-67" name="toctree-checkbox-67" role="switch" type="checkbox"/><label for="toctree-checkbox-67"><div class="visually-hidden">Toggle navigation of Fingerprints API (polyglotmol.representations.fingerprints)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/rdkit.html">RDKit Fingerprints (<cite>rdkit</cite>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html">CDK Fingerprints API (<cite>…cdk</cite>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/deepchem.html">API Reference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/datamol.html">datamol Fingerprints API (<cite>…datamol</cite>)</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="representations/graph/index.html">Graph Representations API (<cite>…graph</cite>)</a><input class="toctree-checkbox" id="toctree-checkbox-68" name="toctree-checkbox-68" role="switch" type="checkbox"/><label for="toctree-checkbox-68"><div class="visually-hidden">Toggle navigation of Graph Representations API (…graph)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/graph/deepchem.html">DeepChem Graph Representations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/graph/graph.html">Graph Representations API (<cite>…graph</cite>)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html">Image Representations API (<cite>…image</cite>)</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="representations/spatial/index.html">Spatial Representations API (<code class="xref py py-obj docutils literal notranslate"><span class="pre">spatial</span></code>)</a><input class="toctree-checkbox" id="toctree-checkbox-69" name="toctree-checkbox-69" role="switch" type="checkbox"/><label for="toctree-checkbox-69"><div class="visually-hidden">Toggle navigation of Spatial Representations API (spatial)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html"><code class="docutils literal notranslate"><span class="pre">CoulombMatrix</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.CoulombMatrixEig"><code class="docutils literal notranslate"><span class="pre">CoulombMatrixEig</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.AdjacencyMatrix"><code class="docutils literal notranslate"><span class="pre">AdjacencyMatrix</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.EdgeMatrix"><code class="docutils literal notranslate"><span class="pre">EdgeMatrix</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#matrix-based-spatial-representations">Matrix-Based Spatial Representations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html"><code class="docutils literal notranslate"><span class="pre">UniMolCLSFeaturizer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolAtomicCoordsFeaturizer"><code class="docutils literal notranslate"><span class="pre">UniMolAtomicCoordsFeaturizer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolAtomicReprsFeaturizer"><code class="docutils literal notranslate"><span class="pre">UniMolAtomicReprsFeaturizer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#uni-mol-representations">Uni-Mol Representations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/temporal/index.html">Sequential Representations API (<cite>…sequential</cite>)</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="representations/protein/index.html">Protein Representations API (<cite>…protein</cite>)</a><input class="toctree-checkbox" id="toctree-checkbox-70" name="toctree-checkbox-70" role="switch" type="checkbox"/><label for="toctree-checkbox-70"><div class="visually-hidden">Toggle navigation of Protein Representations API (…protein)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="representations/protein/sequence/index.html">Protein Sequence API (<cite>…sequence</cite>)</a><input class="toctree-checkbox" id="toctree-checkbox-71" name="toctree-checkbox-71" role="switch" type="checkbox"/><label for="toctree-checkbox-71"><div class="visually-hidden">Toggle navigation of Protein Sequence API (…sequence)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="representations/protein/sequence/plm.html"><code class="docutils literal notranslate"><span class="pre">BasePLMFeaturizer</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="representations/protein/sequence/plm.html#polyglotmol.representations.protein.sequence.plm.SequencePreprocessor"><code class="docutils literal notranslate"><span class="pre">SequencePreprocessor</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="representations/protein/sequence/plm.html#polyglotmol.representations.protein.sequence.plm.ESM2Featurizer"><code class="docutils literal notranslate"><span class="pre">ESM2Featurizer</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="representations/protein/sequence/plm.html#polyglotmol.representations.protein.sequence.plm.ESMCFeaturizer"><code class="docutils literal notranslate"><span class="pre">ESMCFeaturizer</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="representations/protein/sequence/plm.html#polyglotmol.representations.protein.sequence.plm.ProtT5Featurizer"><code class="docutils literal notranslate"><span class="pre">ProtT5Featurizer</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="representations/protein/sequence/plm.html#polyglotmol.representations.protein.sequence.plm.AnkhFeaturizer"><code class="docutils literal notranslate"><span class="pre">AnkhFeaturizer</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="representations/protein/sequence/plm.html#polyglotmol.representations.protein.sequence.plm.CARPFeaturizer"><code class="docutils literal notranslate"><span class="pre">CARPFeaturizer</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="representations/protein/sequence/plm.html#polyglotmol.representations.protein.sequence.plm.PepBERTFeaturizer"><code class="docutils literal notranslate"><span class="pre">PepBERTFeaturizer</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="representations/protein/sequence/plm.html#protein-language-model-plm-featurizers">Protein Language Model (PLM) Featurizers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="representations/protein/sequence/tokenizer.html">Protein Sequence API (<cite>…sequence</cite>)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/protein-ligand/index.html">Protein Representations API (<cite>…protein</cite>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html">Representation Utilities API (<cite>…utils</cite>)</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="data/index.html">Data Module</a><input class="toctree-checkbox" id="toctree-checkbox-72" name="toctree-checkbox-72" role="switch" type="checkbox"/><label for="toctree-checkbox-72"><div class="visually-hidden">Toggle navigation of Data Module</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="data/io.html">Dataset overview Utilities API (<cite>polyglotmol.data.overview</cite>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/molecule.html">Dataset overview Utilities API (<cite>polyglotmol.data.overview</cite>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/dataset.html">Dataset overview Utilities API (<cite>polyglotmol.data.overview</cite>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/overview.html">Dataset overview Utilities API (<cite>polyglotmol.data.overview</cite>)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data/index.html#module-polyglotmol.data.io">Module Hierarchy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="models/index.html">Models Module</a><input class="toctree-checkbox" id="toctree-checkbox-73" name="toctree-checkbox-73" role="switch" type="checkbox"/><label for="toctree-checkbox-73"><div class="visually-hidden">Toggle navigation of Models Module</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="drawings/index.html">Drawings API</a><input class="toctree-checkbox" id="toctree-checkbox-74" name="toctree-checkbox-74" role="switch" type="checkbox"/><label for="toctree-checkbox-74"><div class="visually-hidden">Toggle navigation of Drawings API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="drawings/graph_plots.html">Drawings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawings/model_plots.html">Drawings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawings/molecule_plots.html">Drawings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../development/index.html">Development Guide</a><input class="toctree-checkbox" id="toctree-checkbox-75" name="toctree-checkbox-75" role="switch" type="checkbox"/><label for="toctree-checkbox-75"><div class="visually-hidden">Toggle navigation of Development Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development/contributing.html">Contributing to PolyglotMol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development/setup_dev_env.html">Setting Up Development Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development/testing.html">Running Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development/featurizer.html">Summary of Fingerprint Registration Mechanisms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development/add_featurizer.html">Adding a New Featurizer to PolyglotMol</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/api/index.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="api-reference">
+<span id="api-index"></span><h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h1>
+<p>This section contains the auto-generated API documentation for PolyglotMol’s public interface.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="representations/index.html">Representations Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="representations/sequential/index.html">Sequential Representations API (<cite>…sequential</cite>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="representations/sequential/index.html#polyglotmol.representations.sequential.SMILESFeaturizer"><code class="docutils literal notranslate"><span class="pre">SMILESFeaturizer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/sequential/index.html#polyglotmol.representations.sequential.CanonicalSMILESFeaturizer"><code class="docutils literal notranslate"><span class="pre">CanonicalSMILESFeaturizer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/sequential/index.html#polyglotmol.representations.sequential.IsomericSMILESFeaturizer"><code class="docutils literal notranslate"><span class="pre">IsomericSMILESFeaturizer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/sequential/index.html#polyglotmol.representations.sequential.InChIFeaturizer"><code class="docutils literal notranslate"><span class="pre">InChIFeaturizer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/sequential/index.html#polyglotmol.representations.sequential.InChIKeyFeaturizer"><code class="docutils literal notranslate"><span class="pre">InChIKeyFeaturizer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/sequential/index.html#polyglotmol.representations.sequential.SMARTSFeaturizer"><code class="docutils literal notranslate"><span class="pre">SMARTSFeaturizer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/sequential/index.html#polyglotmol.representations.sequential.ChemBERTaFeaturizer"><code class="docutils literal notranslate"><span class="pre">ChemBERTaFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/sequential/index.html#polyglotmol.representations.sequential.ChemBERTaFeaturizer.__init__"><code class="docutils literal notranslate"><span class="pre">ChemBERTaFeaturizer.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/sequential/index.html#polyglotmol.representations.sequential.MolBERTFeaturizer"><code class="docutils literal notranslate"><span class="pre">MolBERTFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/sequential/index.html#polyglotmol.representations.sequential.MolBERTFeaturizer.__init__"><code class="docutils literal notranslate"><span class="pre">MolBERTFeaturizer.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/sequential/index.html#polyglotmol.representations.sequential.MolFormerFeaturizer"><code class="docutils literal notranslate"><span class="pre">MolFormerFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/sequential/index.html#polyglotmol.representations.sequential.MolFormerFeaturizer.__init__"><code class="docutils literal notranslate"><span class="pre">MolFormerFeaturizer.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="representations/descriptors/index.html">Descriptors API (<cite>…descriptors</cite>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="representations/descriptors/index.html#polyglotmol.representations.descriptors.RDKitAllDescriptorsFeaturizer"><code class="docutils literal notranslate"><span class="pre">RDKitAllDescriptorsFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/descriptors/index.html#polyglotmol.representations.descriptors.RDKitAllDescriptorsFeaturizer.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">RDKitAllDescriptorsFeaturizer.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/descriptors/index.html#polyglotmol.representations.descriptors.RDKitAllDescriptorsFeaturizer.OUTPUT_SHAPE"><code class="docutils literal notranslate"><span class="pre">RDKitAllDescriptorsFeaturizer.OUTPUT_SHAPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/descriptors/index.html#polyglotmol.representations.descriptors.RDKitAllDescriptorsFeaturizer.__init__"><code class="docutils literal notranslate"><span class="pre">RDKitAllDescriptorsFeaturizer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/descriptors/index.html#polyglotmol.representations.descriptors.RDKitAllDescriptorsFeaturizer.get_feature_names"><code class="docutils literal notranslate"><span class="pre">RDKitAllDescriptorsFeaturizer.get_feature_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/descriptors/index.html#polyglotmol.representations.descriptors.RDKitAllDescriptorsFeaturizer.get_output_info"><code class="docutils literal notranslate"><span class="pre">RDKitAllDescriptorsFeaturizer.get_output_info()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/descriptors/index.html#polyglotmol.representations.descriptors.MordredFeaturizer"><code class="docutils literal notranslate"><span class="pre">MordredFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/descriptors/index.html#polyglotmol.representations.descriptors.MordredFeaturizer.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">MordredFeaturizer.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/descriptors/index.html#polyglotmol.representations.descriptors.MordredFeaturizer.__init__"><code class="docutils literal notranslate"><span class="pre">MordredFeaturizer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/descriptors/index.html#polyglotmol.representations.descriptors.MordredFeaturizer.OUTPUT_SHAPE"><code class="docutils literal notranslate"><span class="pre">MordredFeaturizer.OUTPUT_SHAPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/descriptors/index.html#polyglotmol.representations.descriptors.MordredFeaturizer.get_feature_names"><code class="docutils literal notranslate"><span class="pre">MordredFeaturizer.get_feature_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/descriptors/index.html#polyglotmol.representations.descriptors.MordredFeaturizer.get_output_info"><code class="docutils literal notranslate"><span class="pre">MordredFeaturizer.get_output_info()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="representations/fingerprints/index.html">Fingerprints API (<cite>polyglotmol.representations.fingerprints</cite>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="representations/fingerprints/rdkit.html">RDKit Fingerprints (<cite>rdkit</cite>)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/rdkit.html#polyglotmol.representations.fingerprints.rdkit.RDKitTopologicalFP"><code class="docutils literal notranslate"><span class="pre">RDKitTopologicalFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/rdkit.html#polyglotmol.representations.fingerprints.rdkit.MorganBitFP"><code class="docutils literal notranslate"><span class="pre">MorganBitFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/rdkit.html#polyglotmol.representations.fingerprints.rdkit.MorganCountFP"><code class="docutils literal notranslate"><span class="pre">MorganCountFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/rdkit.html#polyglotmol.representations.fingerprints.rdkit.MACCSKeysFP"><code class="docutils literal notranslate"><span class="pre">MACCSKeysFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/rdkit.html#polyglotmol.representations.fingerprints.rdkit.AtomPairBitFP"><code class="docutils literal notranslate"><span class="pre">AtomPairBitFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/rdkit.html#polyglotmol.representations.fingerprints.rdkit.AtomPairCountFP"><code class="docutils literal notranslate"><span class="pre">AtomPairCountFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/rdkit.html#polyglotmol.representations.fingerprints.rdkit.TorsionBitFP"><code class="docutils literal notranslate"><span class="pre">TorsionBitFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/rdkit.html#polyglotmol.representations.fingerprints.rdkit.TorsionCountFP"><code class="docutils literal notranslate"><span class="pre">TorsionCountFP</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/fingerprints/cdk.html">CDK Fingerprints API (<cite>…cdk</cite>)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html#polyglotmol.representations.fingerprints.cdk.BaseCDKFingerprint"><code class="docutils literal notranslate"><span class="pre">BaseCDKFingerprint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html#polyglotmol.representations.fingerprints.cdk.CDKFP"><code class="docutils literal notranslate"><span class="pre">CDKFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html#polyglotmol.representations.fingerprints.cdk.CDKExtFP"><code class="docutils literal notranslate"><span class="pre">CDKExtFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html#polyglotmol.representations.fingerprints.cdk.CDKGraphFP"><code class="docutils literal notranslate"><span class="pre">CDKGraphFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html#polyglotmol.representations.fingerprints.cdk.CDKEStateFP"><code class="docutils literal notranslate"><span class="pre">CDKEStateFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html#polyglotmol.representations.fingerprints.cdk.CDKMACCSFP"><code class="docutils literal notranslate"><span class="pre">CDKMACCSFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html#polyglotmol.representations.fingerprints.cdk.CDKPubchemFP"><code class="docutils literal notranslate"><span class="pre">CDKPubchemFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html#polyglotmol.representations.fingerprints.cdk.CDKSubFP"><code class="docutils literal notranslate"><span class="pre">CDKSubFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html#polyglotmol.representations.fingerprints.cdk.CDKKRFP"><code class="docutils literal notranslate"><span class="pre">CDKKRFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html#polyglotmol.representations.fingerprints.cdk.CDKKlekotaRothFP"><code class="docutils literal notranslate"><span class="pre">CDKKlekotaRothFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html#polyglotmol.representations.fingerprints.cdk.CDKAP2DFP"><code class="docutils literal notranslate"><span class="pre">CDKAP2DFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html#polyglotmol.representations.fingerprints.cdk.CDKHybridFP"><code class="docutils literal notranslate"><span class="pre">CDKHybridFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html#polyglotmol.representations.fingerprints.cdk.CDKLingoFP"><code class="docutils literal notranslate"><span class="pre">CDKLingoFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html#polyglotmol.representations.fingerprints.cdk.CDKSPFP"><code class="docutils literal notranslate"><span class="pre">CDKSPFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html#polyglotmol.representations.fingerprints.cdk.CDKSigFP"><code class="docutils literal notranslate"><span class="pre">CDKSigFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/cdk.html#polyglotmol.representations.fingerprints.cdk.CDKCircFP"><code class="docutils literal notranslate"><span class="pre">CDKCircFP</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/fingerprints/deepchem.html">API Reference</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/deepchem.html#polyglotmol.representations.fingerprints.deepchem.list_deepchem_fingerprints"><code class="docutils literal notranslate"><span class="pre">list_deepchem_fingerprints()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/deepchem.html#polyglotmol.representations.fingerprints.deepchem.DeepChemMACCSKeysFP"><code class="docutils literal notranslate"><span class="pre">DeepChemMACCSKeysFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/deepchem.html#polyglotmol.representations.fingerprints.deepchem.DeepChemCircularFP"><code class="docutils literal notranslate"><span class="pre">DeepChemCircularFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/deepchem.html#polyglotmol.representations.fingerprints.deepchem.DeepChemPubChemFP"><code class="docutils literal notranslate"><span class="pre">DeepChemPubChemFP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/deepchem.html#polyglotmol.representations.fingerprints.deepchem.DeepChemMol2VecFP"><code class="docutils literal notranslate"><span class="pre">DeepChemMol2VecFP</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/fingerprints/datamol.html">datamol Fingerprints API (<cite>…datamol</cite>)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/datamol.html#polyglotmol.representations.fingerprints.datamol.list_datamol_fingerprints"><code class="docutils literal notranslate"><span class="pre">list_datamol_fingerprints()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/fingerprints/datamol.html#polyglotmol.representations.fingerprints.datamol.BaseDatamolFPCalculator"><code class="docutils literal notranslate"><span class="pre">BaseDatamolFPCalculator</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="representations/graph/index.html">Graph Representations API (<cite>…graph</cite>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemConvMol"><code class="docutils literal notranslate"><span class="pre">DeepChemConvMol</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemConvMol.__init__"><code class="docutils literal notranslate"><span class="pre">DeepChemConvMol.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemWeave"><code class="docutils literal notranslate"><span class="pre">DeepChemWeave</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemWeave.__init__"><code class="docutils literal notranslate"><span class="pre">DeepChemWeave.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemMolGan"><code class="docutils literal notranslate"><span class="pre">DeepChemMolGan</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemMolGan.__init__"><code class="docutils literal notranslate"><span class="pre">DeepChemMolGan.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemMolGraphConv"><code class="docutils literal notranslate"><span class="pre">DeepChemMolGraphConv</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemMolGraphConv.__init__"><code class="docutils literal notranslate"><span class="pre">DeepChemMolGraphConv.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemPagtn"><code class="docutils literal notranslate"><span class="pre">DeepChemPagtn</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemPagtn.__init__"><code class="docutils literal notranslate"><span class="pre">DeepChemPagtn.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemDMPNN"><code class="docutils literal notranslate"><span class="pre">DeepChemDMPNN</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemDMPNN.__init__"><code class="docutils literal notranslate"><span class="pre">DeepChemDMPNN.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemGrover"><code class="docutils literal notranslate"><span class="pre">DeepChemGrover</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemGrover.__init__"><code class="docutils literal notranslate"><span class="pre">DeepChemGrover.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemRDKitConformer"><code class="docutils literal notranslate"><span class="pre">DeepChemRDKitConformer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemRDKitConformer.__init__"><code class="docutils literal notranslate"><span class="pre">DeepChemRDKitConformer.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemMXMNet"><code class="docutils literal notranslate"><span class="pre">DeepChemMXMNet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/graph/index.html#polyglotmol.representations.graph.DeepChemMXMNet.__init__"><code class="docutils literal notranslate"><span class="pre">DeepChemMXMNet.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="representations/image/index.html">Image Representations API (<cite>…image</cite>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.RDKit2DImage"><code class="docutils literal notranslate"><span class="pre">RDKit2DImage</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.RDKit2DImage.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">RDKit2DImage.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.RDKit2DImage.__init__"><code class="docutils literal notranslate"><span class="pre">RDKit2DImage.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.ChemceptionImage"><code class="docutils literal notranslate"><span class="pre">ChemceptionImage</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.ChemceptionImage.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">ChemceptionImage.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.ChemceptionImage.__init__"><code class="docutils literal notranslate"><span class="pre">ChemceptionImage.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.DeepScreenImage"><code class="docutils literal notranslate"><span class="pre">DeepScreenImage</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.DeepScreenImage.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">DeepScreenImage.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.DeepScreenImage.__init__"><code class="docutils literal notranslate"><span class="pre">DeepScreenImage.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.CNNFeatureExtractor"><code class="docutils literal notranslate"><span class="pre">CNNFeatureExtractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.CNNFeatureExtractor.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">CNNFeatureExtractor.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.CNNFeatureExtractor.__init__"><code class="docutils literal notranslate"><span class="pre">CNNFeatureExtractor.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.ImageMolStyle"><code class="docutils literal notranslate"><span class="pre">ImageMolStyle</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.ImageMolStyle.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">ImageMolStyle.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.ImageMolStyle.__init__"><code class="docutils literal notranslate"><span class="pre">ImageMolStyle.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.DeepSnap3D"><code class="docutils literal notranslate"><span class="pre">DeepSnap3D</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.DeepSnap3D.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">DeepSnap3D.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.DeepSnap3D.__init__"><code class="docutils literal notranslate"><span class="pre">DeepSnap3D.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.VoxelGrid"><code class="docutils literal notranslate"><span class="pre">VoxelGrid</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.VoxelGrid.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">VoxelGrid.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.VoxelGrid.__init__"><code class="docutils literal notranslate"><span class="pre">VoxelGrid.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.PointCloud3D"><code class="docutils literal notranslate"><span class="pre">PointCloud3D</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.PointCloud3D.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">PointCloud3D.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.PointCloud3D.__init__"><code class="docutils literal notranslate"><span class="pre">PointCloud3D.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.PyMol3DRender"><code class="docutils literal notranslate"><span class="pre">PyMol3DRender</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.PyMol3DRender.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">PyMol3DRender.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.PyMol3DRender.__init__"><code class="docutils literal notranslate"><span class="pre">PyMol3DRender.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.SurfaceDescriptors"><code class="docutils literal notranslate"><span class="pre">SurfaceDescriptors</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.SurfaceDescriptors.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">SurfaceDescriptors.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.SurfaceDescriptors.__init__"><code class="docutils literal notranslate"><span class="pre">SurfaceDescriptors.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.VideoMolSequence"><code class="docutils literal notranslate"><span class="pre">VideoMolSequence</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.VideoMolSequence.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">VideoMolSequence.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.VideoMolSequence.__init__"><code class="docutils literal notranslate"><span class="pre">VideoMolSequence.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.ConformerVideo"><code class="docutils literal notranslate"><span class="pre">ConformerVideo</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.ConformerVideo.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">ConformerVideo.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.ConformerVideo.__init__"><code class="docutils literal notranslate"><span class="pre">ConformerVideo.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.SMILESMatrix"><code class="docutils literal notranslate"><span class="pre">SMILESMatrix</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.SMILESMatrix.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">SMILESMatrix.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.SMILESMatrix.__init__"><code class="docutils literal notranslate"><span class="pre">SMILESMatrix.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.MolecularFingerprintImage"><code class="docutils literal notranslate"><span class="pre">MolecularFingerprintImage</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.MolecularFingerprintImage.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">MolecularFingerprintImage.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.MolecularFingerprintImage.__init__"><code class="docutils literal notranslate"><span class="pre">MolecularFingerprintImage.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.DynamicsTrajectory"><code class="docutils literal notranslate"><span class="pre">DynamicsTrajectory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.DynamicsTrajectory.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">DynamicsTrajectory.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.DynamicsTrajectory.__init__"><code class="docutils literal notranslate"><span class="pre">DynamicsTrajectory.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.preprocess_molecular_image"><code class="docutils literal notranslate"><span class="pre">preprocess_molecular_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.augment_molecular_image"><code class="docutils literal notranslate"><span class="pre">augment_molecular_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.normalize_image_batch"><code class="docutils literal notranslate"><span class="pre">normalize_image_batch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.create_image_grid"><code class="docutils literal notranslate"><span class="pre">create_image_grid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.save_molecular_image"><code class="docutils literal notranslate"><span class="pre">save_molecular_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.load_molecular_image"><code class="docutils literal notranslate"><span class="pre">load_molecular_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.extract_image_statistics"><code class="docutils literal notranslate"><span class="pre">extract_image_statistics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.convert_image_format"><code class="docutils literal notranslate"><span class="pre">convert_image_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.batch_process_images"><code class="docutils literal notranslate"><span class="pre">batch_process_images()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/image/index.html#polyglotmol.representations.image.calculate_image_similarity"><code class="docutils literal notranslate"><span class="pre">calculate_image_similarity()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="representations/spatial/index.html">Spatial Representations API (<code class="xref py py-obj docutils literal notranslate"><span class="pre">spatial</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="representations/spatial/matrix.html"><code class="docutils literal notranslate"><span class="pre">CoulombMatrix</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.CoulombMatrix.__init__"><code class="docutils literal notranslate"><span class="pre">CoulombMatrix.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.CoulombMatrix.OUTPUT_SHAPE"><code class="docutils literal notranslate"><span class="pre">CoulombMatrix.OUTPUT_SHAPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.CoulombMatrix.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">CoulombMatrix.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.CoulombMatrix.__call__"><code class="docutils literal notranslate"><span class="pre">CoulombMatrix.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.CoulombMatrix.__repr__"><code class="docutils literal notranslate"><span class="pre">CoulombMatrix.__repr__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.CoulombMatrixEig"><code class="docutils literal notranslate"><span class="pre">CoulombMatrixEig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.CoulombMatrixEig.__init__"><code class="docutils literal notranslate"><span class="pre">CoulombMatrixEig.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.CoulombMatrixEig.OUTPUT_SHAPE"><code class="docutils literal notranslate"><span class="pre">CoulombMatrixEig.OUTPUT_SHAPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.CoulombMatrixEig.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">CoulombMatrixEig.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.CoulombMatrixEig.__call__"><code class="docutils literal notranslate"><span class="pre">CoulombMatrixEig.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.CoulombMatrixEig.__repr__"><code class="docutils literal notranslate"><span class="pre">CoulombMatrixEig.__repr__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.AdjacencyMatrix"><code class="docutils literal notranslate"><span class="pre">AdjacencyMatrix</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.AdjacencyMatrix.__init__"><code class="docutils literal notranslate"><span class="pre">AdjacencyMatrix.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.AdjacencyMatrix.OUTPUT_SHAPE"><code class="docutils literal notranslate"><span class="pre">AdjacencyMatrix.OUTPUT_SHAPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.AdjacencyMatrix.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">AdjacencyMatrix.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.AdjacencyMatrix.__call__"><code class="docutils literal notranslate"><span class="pre">AdjacencyMatrix.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.AdjacencyMatrix.__repr__"><code class="docutils literal notranslate"><span class="pre">AdjacencyMatrix.__repr__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.EdgeMatrix"><code class="docutils literal notranslate"><span class="pre">EdgeMatrix</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.EdgeMatrix.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">EdgeMatrix.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.EdgeMatrix.__call__"><code class="docutils literal notranslate"><span class="pre">EdgeMatrix.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.EdgeMatrix.__init__"><code class="docutils literal notranslate"><span class="pre">EdgeMatrix.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.EdgeMatrix.__repr__"><code class="docutils literal notranslate"><span class="pre">EdgeMatrix.__repr__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#polyglotmol.representations.spatial.matrix.EdgeMatrix.OUTPUT_SHAPE"><code class="docutils literal notranslate"><span class="pre">EdgeMatrix.OUTPUT_SHAPE</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/spatial/matrix.html#matrix-based-spatial-representations">Matrix-Based Spatial Representations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#featurizer-classes">Featurizer Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#module-constants">Module Constants</a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/matrix.html#helper-functions">Helper Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/spatial/unimol.html"><code class="docutils literal notranslate"><span class="pre">UniMolCLSFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolCLSFeaturizer.__init__"><code class="docutils literal notranslate"><span class="pre">UniMolCLSFeaturizer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolCLSFeaturizer.OUTPUT_SHAPE"><code class="docutils literal notranslate"><span class="pre">UniMolCLSFeaturizer.OUTPUT_SHAPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolCLSFeaturizer.get_output_info"><code class="docutils literal notranslate"><span class="pre">UniMolCLSFeaturizer.get_output_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolCLSFeaturizer.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">UniMolCLSFeaturizer.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolCLSFeaturizer.__call__"><code class="docutils literal notranslate"><span class="pre">UniMolCLSFeaturizer.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolCLSFeaturizer.__repr__"><code class="docutils literal notranslate"><span class="pre">UniMolCLSFeaturizer.__repr__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolAtomicCoordsFeaturizer"><code class="docutils literal notranslate"><span class="pre">UniMolAtomicCoordsFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolAtomicCoordsFeaturizer.OUTPUT_SHAPE"><code class="docutils literal notranslate"><span class="pre">UniMolAtomicCoordsFeaturizer.OUTPUT_SHAPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolAtomicCoordsFeaturizer.__init__"><code class="docutils literal notranslate"><span class="pre">UniMolAtomicCoordsFeaturizer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolAtomicCoordsFeaturizer.get_output_info"><code class="docutils literal notranslate"><span class="pre">UniMolAtomicCoordsFeaturizer.get_output_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolAtomicCoordsFeaturizer.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">UniMolAtomicCoordsFeaturizer.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolAtomicCoordsFeaturizer.__call__"><code class="docutils literal notranslate"><span class="pre">UniMolAtomicCoordsFeaturizer.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolAtomicCoordsFeaturizer.__repr__"><code class="docutils literal notranslate"><span class="pre">UniMolAtomicCoordsFeaturizer.__repr__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolAtomicReprsFeaturizer"><code class="docutils literal notranslate"><span class="pre">UniMolAtomicReprsFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolAtomicReprsFeaturizer.__init__"><code class="docutils literal notranslate"><span class="pre">UniMolAtomicReprsFeaturizer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolAtomicReprsFeaturizer.OUTPUT_SHAPE"><code class="docutils literal notranslate"><span class="pre">UniMolAtomicReprsFeaturizer.OUTPUT_SHAPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolAtomicReprsFeaturizer.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">UniMolAtomicReprsFeaturizer.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolAtomicReprsFeaturizer.__call__"><code class="docutils literal notranslate"><span class="pre">UniMolAtomicReprsFeaturizer.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolAtomicReprsFeaturizer.__repr__"><code class="docutils literal notranslate"><span class="pre">UniMolAtomicReprsFeaturizer.__repr__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#polyglotmol.representations.spatial.unimol.UniMolAtomicReprsFeaturizer.get_output_info"><code class="docutils literal notranslate"><span class="pre">UniMolAtomicReprsFeaturizer.get_output_info()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/spatial/unimol.html#uni-mol-representations">Uni-Mol Representations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#featurizer-class">Featurizer Class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#available-configurations">Available Configurations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/spatial/unimol.html#helper-functions">Helper Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="representations/temporal/index.html">Sequential Representations API (<cite>…sequential</cite>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="representations/temporal/index.html#polyglotmol.representations.sequential.SMILESFeaturizer"><code class="docutils literal notranslate"><span class="pre">SMILESFeaturizer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/temporal/index.html#polyglotmol.representations.sequential.CanonicalSMILESFeaturizer"><code class="docutils literal notranslate"><span class="pre">CanonicalSMILESFeaturizer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/temporal/index.html#polyglotmol.representations.sequential.IsomericSMILESFeaturizer"><code class="docutils literal notranslate"><span class="pre">IsomericSMILESFeaturizer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/temporal/index.html#polyglotmol.representations.sequential.InChIFeaturizer"><code class="docutils literal notranslate"><span class="pre">InChIFeaturizer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/temporal/index.html#polyglotmol.representations.sequential.InChIKeyFeaturizer"><code class="docutils literal notranslate"><span class="pre">InChIKeyFeaturizer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/temporal/index.html#polyglotmol.representations.sequential.SMARTSFeaturizer"><code class="docutils literal notranslate"><span class="pre">SMARTSFeaturizer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/temporal/index.html#polyglotmol.representations.sequential.ChemBERTaFeaturizer"><code class="docutils literal notranslate"><span class="pre">ChemBERTaFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/temporal/index.html#polyglotmol.representations.sequential.ChemBERTaFeaturizer.__init__"><code class="docutils literal notranslate"><span class="pre">ChemBERTaFeaturizer.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/temporal/index.html#polyglotmol.representations.sequential.MolBERTFeaturizer"><code class="docutils literal notranslate"><span class="pre">MolBERTFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/temporal/index.html#polyglotmol.representations.sequential.MolBERTFeaturizer.__init__"><code class="docutils literal notranslate"><span class="pre">MolBERTFeaturizer.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/temporal/index.html#polyglotmol.representations.sequential.MolFormerFeaturizer"><code class="docutils literal notranslate"><span class="pre">MolFormerFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/temporal/index.html#polyglotmol.representations.sequential.MolFormerFeaturizer.__init__"><code class="docutils literal notranslate"><span class="pre">MolFormerFeaturizer.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="representations/protein/index.html">Protein Representations API (<cite>…protein</cite>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="representations/protein-ligand/index.html">Protein Representations API (<cite>…protein</cite>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="representations/utils.html">Representation Utilities API (<cite>…utils</cite>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseFeaturizer"><code class="docutils literal notranslate"><span class="pre">BaseFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseFeaturizer.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">BaseFeaturizer.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseFeaturizer.OUTPUT_SHAPE"><code class="docutils literal notranslate"><span class="pre">BaseFeaturizer.OUTPUT_SHAPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseFeaturizer.__init__"><code class="docutils literal notranslate"><span class="pre">BaseFeaturizer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseFeaturizer.name"><code class="docutils literal notranslate"><span class="pre">BaseFeaturizer.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseFeaturizer.featurize"><code class="docutils literal notranslate"><span class="pre">BaseFeaturizer.featurize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseFeaturizer.featurize_batch"><code class="docutils literal notranslate"><span class="pre">BaseFeaturizer.featurize_batch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseFeaturizer.__call__"><code class="docutils literal notranslate"><span class="pre">BaseFeaturizer.__call__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseFeaturizer.__repr__"><code class="docutils literal notranslate"><span class="pre">BaseFeaturizer.__repr__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseFeaturizer.get_output_info"><code class="docutils literal notranslate"><span class="pre">BaseFeaturizer.get_output_info()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseProteinFeaturizer"><code class="docutils literal notranslate"><span class="pre">BaseProteinFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseProteinFeaturizer.EXPECTED_INPUT_TYPE"><code class="docutils literal notranslate"><span class="pre">BaseProteinFeaturizer.EXPECTED_INPUT_TYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseProteinFeaturizer.__init__"><code class="docutils literal notranslate"><span class="pre">BaseProteinFeaturizer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseProteinFeaturizer.validate_sequence"><code class="docutils literal notranslate"><span class="pre">BaseProteinFeaturizer.validate_sequence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseProteinFeaturizer.preprocess_sequence"><code class="docutils literal notranslate"><span class="pre">BaseProteinFeaturizer.preprocess_sequence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseProteinFeaturizer.get_sequence_length"><code class="docutils literal notranslate"><span class="pre">BaseProteinFeaturizer.get_sequence_length()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.BaseProteinFeaturizer.__repr__"><code class="docutils literal notranslate"><span class="pre">BaseProteinFeaturizer.__repr__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType"><code class="docutils literal notranslate"><span class="pre">InputType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.SMILES"><code class="docutils literal notranslate"><span class="pre">InputType.SMILES</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.RDKIT_MOL"><code class="docutils literal notranslate"><span class="pre">InputType.RDKIT_MOL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.MOLBLOCK"><code class="docutils literal notranslate"><span class="pre">InputType.MOLBLOCK</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.SDF_FILE"><code class="docutils literal notranslate"><span class="pre">InputType.SDF_FILE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.MOL_FILE"><code class="docutils literal notranslate"><span class="pre">InputType.MOL_FILE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.MOL2_FILE"><code class="docutils literal notranslate"><span class="pre">InputType.MOL2_FILE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.PDB_FILE"><code class="docutils literal notranslate"><span class="pre">InputType.PDB_FILE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.PYBEL_MOL"><code class="docutils literal notranslate"><span class="pre">InputType.PYBEL_MOL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.MOLECULE"><code class="docutils literal notranslate"><span class="pre">InputType.MOLECULE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.SEQUENCE"><code class="docutils literal notranslate"><span class="pre">InputType.SEQUENCE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.FASTA_STRING"><code class="docutils literal notranslate"><span class="pre">InputType.FASTA_STRING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.FASTA_FILE"><code class="docutils literal notranslate"><span class="pre">InputType.FASTA_FILE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.CIF_FILE"><code class="docutils literal notranslate"><span class="pre">InputType.CIF_FILE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.PDB_ID"><code class="docutils literal notranslate"><span class="pre">InputType.PDB_ID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.ALPHAFOLD_ID"><code class="docutils literal notranslate"><span class="pre">InputType.ALPHAFOLD_ID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.UNIPROT_ID"><code class="docutils literal notranslate"><span class="pre">InputType.UNIPROT_ID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.BIOPYTHON_STRUCTURE"><code class="docutils literal notranslate"><span class="pre">InputType.BIOPYTHON_STRUCTURE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.BIOPYTHON_SEQRECORD"><code class="docutils literal notranslate"><span class="pre">InputType.BIOPYTHON_SEQRECORD</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.PROTEIN_DATA"><code class="docutils literal notranslate"><span class="pre">InputType.PROTEIN_DATA</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.FILE_PATH"><code class="docutils literal notranslate"><span class="pre">InputType.FILE_PATH</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InputType.UNKNOWN"><code class="docutils literal notranslate"><span class="pre">InputType.UNKNOWN</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.mol_from_input"><code class="docutils literal notranslate"><span class="pre">mol_from_input()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.register_featurizer"><code class="docutils literal notranslate"><span class="pre">register_featurizer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.get_featurizer"><code class="docutils literal notranslate"><span class="pre">get_featurizer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.list_available_featurizers"><code class="docutils literal notranslate"><span class="pre">list_available_featurizers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.get_featurizer_info"><code class="docutils literal notranslate"><span class="pre">get_featurizer_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.register_protein_featurizer"><code class="docutils literal notranslate"><span class="pre">register_protein_featurizer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.get_protein_featurizer"><code class="docutils literal notranslate"><span class="pre">get_protein_featurizer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.list_available_protein_featurizers"><code class="docutils literal notranslate"><span class="pre">list_available_protein_featurizers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.get_protein_featurizer_info"><code class="docutils literal notranslate"><span class="pre">get_protein_featurizer_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.print_available_featurizers"><code class="docutils literal notranslate"><span class="pre">print_available_featurizers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.select_featurizers_by_category"><code class="docutils literal notranslate"><span class="pre">select_featurizers_by_category()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.create_featurizer_ensemble"><code class="docutils literal notranslate"><span class="pre">create_featurizer_ensemble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.get_category_info"><code class="docutils literal notranslate"><span class="pre">get_category_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.list_category_paths"><code class="docutils literal notranslate"><span class="pre">list_category_paths()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.run_parallel"><code class="docutils literal notranslate"><span class="pre">run_parallel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.PolyglotMolError"><code class="docutils literal notranslate"><span class="pre">PolyglotMolError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.DependencyNotFoundError"><code class="docutils literal notranslate"><span class="pre">DependencyNotFoundError</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.DependencyNotFoundError.__init__"><code class="docutils literal notranslate"><span class="pre">DependencyNotFoundError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.FeaturizationError"><code class="docutils literal notranslate"><span class="pre">FeaturizationError</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.FeaturizationError.__init__"><code class="docutils literal notranslate"><span class="pre">FeaturizationError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.InvalidInputError"><code class="docutils literal notranslate"><span class="pre">InvalidInputError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.RegistryError"><code class="docutils literal notranslate"><span class="pre">RegistryError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.ParallelExecutionError"><code class="docutils literal notranslate"><span class="pre">ParallelExecutionError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.WorkerError"><code class="docutils literal notranslate"><span class="pre">WorkerError</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.WorkerError.__init__"><code class="docutils literal notranslate"><span class="pre">WorkerError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="representations/utils.html#polyglotmol.representations.utils.setup_logging"><code class="docutils literal notranslate"><span class="pre">setup_logging()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data/index.html">Data Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data/io.html">Dataset overview Utilities API (<cite>polyglotmol.data.overview</cite>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data/io.html#polyglotmol.data.overview.generate_dataset_report"><code class="docutils literal notranslate"><span class="pre">generate_dataset_report()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data/molecule.html">Dataset overview Utilities API (<cite>polyglotmol.data.overview</cite>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data/molecule.html#polyglotmol.data.overview.generate_dataset_report"><code class="docutils literal notranslate"><span class="pre">generate_dataset_report()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data/dataset.html">Dataset overview Utilities API (<cite>polyglotmol.data.overview</cite>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data/dataset.html#polyglotmol.data.overview.generate_dataset_report"><code class="docutils literal notranslate"><span class="pre">generate_dataset_report()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data/overview.html">Dataset overview Utilities API (<cite>polyglotmol.data.overview</cite>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data/overview.html#polyglotmol.data.overview.generate_dataset_report"><code class="docutils literal notranslate"><span class="pre">generate_dataset_report()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data/index.html#module-polyglotmol.data.io">Module Hierarchy</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType"><code class="docutils literal notranslate"><span class="pre">InputType</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.SMILES"><code class="docutils literal notranslate"><span class="pre">InputType.SMILES</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.RDKIT_MOL"><code class="docutils literal notranslate"><span class="pre">InputType.RDKIT_MOL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.MOLBLOCK"><code class="docutils literal notranslate"><span class="pre">InputType.MOLBLOCK</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.SDF_FILE"><code class="docutils literal notranslate"><span class="pre">InputType.SDF_FILE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.MOL_FILE"><code class="docutils literal notranslate"><span class="pre">InputType.MOL_FILE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.MOL2_FILE"><code class="docutils literal notranslate"><span class="pre">InputType.MOL2_FILE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.PDB_FILE"><code class="docutils literal notranslate"><span class="pre">InputType.PDB_FILE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.PYBEL_MOL"><code class="docutils literal notranslate"><span class="pre">InputType.PYBEL_MOL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.MOLECULE"><code class="docutils literal notranslate"><span class="pre">InputType.MOLECULE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.SEQUENCE"><code class="docutils literal notranslate"><span class="pre">InputType.SEQUENCE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.FASTA_STRING"><code class="docutils literal notranslate"><span class="pre">InputType.FASTA_STRING</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.FASTA_FILE"><code class="docutils literal notranslate"><span class="pre">InputType.FASTA_FILE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.CIF_FILE"><code class="docutils literal notranslate"><span class="pre">InputType.CIF_FILE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.PDB_ID"><code class="docutils literal notranslate"><span class="pre">InputType.PDB_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.ALPHAFOLD_ID"><code class="docutils literal notranslate"><span class="pre">InputType.ALPHAFOLD_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.UNIPROT_ID"><code class="docutils literal notranslate"><span class="pre">InputType.UNIPROT_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.BIOPYTHON_STRUCTURE"><code class="docutils literal notranslate"><span class="pre">InputType.BIOPYTHON_STRUCTURE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.BIOPYTHON_SEQRECORD"><code class="docutils literal notranslate"><span class="pre">InputType.BIOPYTHON_SEQRECORD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.PROTEIN_DATA"><code class="docutils literal notranslate"><span class="pre">InputType.PROTEIN_DATA</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.FILE_PATH"><code class="docutils literal notranslate"><span class="pre">InputType.FILE_PATH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.io.InputType.UNKNOWN"><code class="docutils literal notranslate"><span class="pre">InputType.UNKNOWN</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data/index.html#polyglotmol.data.io.guess_file_type"><code class="docutils literal notranslate"><span class="pre">guess_file_type()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data/index.html#polyglotmol.data.io.is_protein_input_type"><code class="docutils literal notranslate"><span class="pre">is_protein_input_type()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data/index.html#polyglotmol.data.io.is_molecule_input_type"><code class="docutils literal notranslate"><span class="pre">is_molecule_input_type()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data/index.html#polyglotmol.data.io.mol_from_input"><code class="docutils literal notranslate"><span class="pre">mol_from_input()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data/index.html#polyglotmol.data.io.protein_from_input"><code class="docutils literal notranslate"><span class="pre">protein_from_input()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule"><code class="docutils literal notranslate"><span class="pre">Molecule</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.__init__"><code class="docutils literal notranslate"><span class="pre">Molecule.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.from_input"><code class="docutils literal notranslate"><span class="pre">Molecule.from_input()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.from_smiles"><code class="docutils literal notranslate"><span class="pre">Molecule.from_smiles()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.from_file"><code class="docutils literal notranslate"><span class="pre">Molecule.from_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.from_rdkit_mol"><code class="docutils literal notranslate"><span class="pre">Molecule.from_rdkit_mol()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.get_rdkit_mol"><code class="docutils literal notranslate"><span class="pre">Molecule.get_rdkit_mol()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.get_smiles"><code class="docutils literal notranslate"><span class="pre">Molecule.get_smiles()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.smiles"><code class="docutils literal notranslate"><span class="pre">Molecule.smiles</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.get_molblock"><code class="docutils literal notranslate"><span class="pre">Molecule.get_molblock()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.get_pdb_block"><code class="docutils literal notranslate"><span class="pre">Molecule.get_pdb_block()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.to_file"><code class="docutils literal notranslate"><span class="pre">Molecule.to_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.add_property"><code class="docutils literal notranslate"><span class="pre">Molecule.add_property()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.get_property"><code class="docutils literal notranslate"><span class="pre">Molecule.get_property()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.calculate_properties"><code class="docutils literal notranslate"><span class="pre">Molecule.calculate_properties()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.clear_cache"><code class="docutils literal notranslate"><span class="pre">Molecule.clear_cache()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.__repr__"><code class="docutils literal notranslate"><span class="pre">Molecule.__repr__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.Molecule.__str__"><code class="docutils literal notranslate"><span class="pre">Molecule.__str__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data/index.html#polyglotmol.data.molecule.molecules_from_file"><code class="docutils literal notranslate"><span class="pre">molecules_from_file()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset"><code class="docutils literal notranslate"><span class="pre">MolecularDataset</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.__init__"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.ids"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.ids</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.molecules"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.molecules</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.labels"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.labels</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.features"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.features</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.weights"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.weights</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.feature_names"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.feature_names</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.label_names"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.label_names</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.weight_names"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.weight_names</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.get_features"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.get_features()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.get_labels"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.get_labels()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.get_weights"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.get_weights()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.get_molecule"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.get_molecule()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.add_features"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.add_features()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.get_featurization_failures"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.get_featurization_failures()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.drop_featurization_failures"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.drop_featurization_failures()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.concatenate_features"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.concatenate_features()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.itersamples"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.itersamples()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.from_smiles_list"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.from_smiles_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.from_df"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.from_df()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.from_csv"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.from_csv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.from_dual_input_csv"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.from_dual_input_csv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.from_sdf"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.from_sdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.filter_by_error"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.filter_by_error()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.filter_by_label_range"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.filter_by_label_range()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.filter_by_mask"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.filter_by_mask()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.get_dataset_hash"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.get_dataset_hash()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.get_cache_instance"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.get_cache_instance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.has_cached_representation"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.has_cached_representation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.load_cached_representation"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.load_cached_representation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.cache_representation"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.cache_representation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.get_cache_info"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.get_cache_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/index.html#polyglotmol.data.dataset.MolecularDataset.clear_cache"><code class="docutils literal notranslate"><span class="pre">MolecularDataset.clear_cache()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data/index.html#polyglotmol.data.overview.generate_dataset_report"><code class="docutils literal notranslate"><span class="pre">generate_dataset_report()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="models/index.html">Models Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drawings/index.html">Drawings API</a></li>
+</ul>
+</div>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="representations/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Representations Module</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../usage/models/screening_usage_doc.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Multi-Stage Model Screening</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Xufan Gao
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=837179f8"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    </body>
+</html>

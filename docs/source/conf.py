@@ -19,7 +19,6 @@ extensions = [
     "sphinx.ext.intersphinx",# Link external docs
     "sphinx.ext.viewcode",   # Source links
     "sphinx.ext.githubpages",# GitHub Pages support
-    "sphinx_markdown_tables",# Markdown tables
     "sphinxcontrib.mermaid", # Mermaid diagrams
     "sphinx.ext.todo",       # TODO notes
     "sphinx_design",         # <-- Added for grid directive
