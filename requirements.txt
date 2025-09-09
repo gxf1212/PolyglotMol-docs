@@ -7,3 +7,4 @@ sphinx-autodoc-typehints
 sphinx-markdown-tables
 sphinxcontrib-mermaid
 furo
+
