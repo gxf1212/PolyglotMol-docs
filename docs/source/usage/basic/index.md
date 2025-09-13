@@ -7,6 +7,7 @@ This section covers basics.
 :hidden:
 
 featurizers
+../representations/index
 config
 shapes
 ```

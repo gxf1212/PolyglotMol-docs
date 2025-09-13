@@ -11,7 +11,7 @@ Each section of this guide corresponds to a core component of the toolkit. Start
 :gutter: 2
 
 :::{grid-item-card} 🚀 **Complete Workflow**
-:link: quick_start
+:link: ../quickstart
 :link-type: doc
 
 End-to-end example: data loading → screening → visualization → deployment
@@ -51,9 +51,8 @@ Automated model screening and hyperparameter optimization.
 :maxdepth: 1
 :hidden:
 
-quick_start
+../quickstart
 basic/index
-representations/index
 data/index
 models/index
 ```

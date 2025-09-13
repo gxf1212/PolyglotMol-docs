@@ -110,6 +110,7 @@ PolyglotMol organizes sequential representations into several key submodules:
 :maxdepth: 1
 :hidden:
 
-mlm
 tokenizer
+language_model
+mlm
 ```

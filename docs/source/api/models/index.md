@@ -9,4 +9,6 @@ You'll also find helper functions and utilities that allow you to bridge differe
 ```{toctree}
 :maxdepth: 2
 :hidden:
+
+evaluation
 ```

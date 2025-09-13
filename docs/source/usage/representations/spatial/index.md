@@ -17,7 +17,8 @@ PolyglotMol automatically handles conformer generation when 3D coordinates are m
 :gutter: 3
 
 :::{grid-item-card} 📊 **Matrix Representations**
-:link: #matrix-representations
+:link: matrix
+:link-type: doc
 Fixed-size matrix encodings of molecular geometry
 :::
 
@@ -27,7 +28,8 @@ Raw atomic positions with normalization options
 :::
 
 :::{grid-item-card} 🤖 **Uni-Mol Features**
-:link: #uni-mol-representations
+:link: unimol
+:link-type: doc
 Pre-trained 3D molecular embeddings
 :::
 

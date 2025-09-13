@@ -25,7 +25,7 @@ Individual package details:
 -   **`torch` (PyTorch)**: The deep learning framework Uni-Mol models are built upon.
     -   **Installation**: See [PyTorch Official Website](https://pytorch.org/get-started/locally/) for instructions tailored to your system.
 
-Models are typically downloaded automatically by `unimol_tools` (via `huggingface_hub`) to a local cache. For managing cache locations effectively with PolyglotMol, please refer to our guide on [Configuring Model Cache Paths]({doc}`/usage/basic/config`).
+Models are typically downloaded automatically by `unimol_tools` (via `huggingface_hub`) to a local cache. For managing cache locations effectively with PolyglotMol, please refer to our guide on {doc}`../../basic/config`.
 
 ---
 ## Key Concepts

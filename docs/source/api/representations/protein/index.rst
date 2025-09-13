@@ -10,6 +10,4 @@ Protein Representations API (`...protein`)
 .. toctree::
    :maxdepth: 1
    :hidden:
-
-   sequence/index
    

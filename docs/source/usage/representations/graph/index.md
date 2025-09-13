@@ -15,7 +15,7 @@ For detailed API documentation, see:{doc}`/api/representations/graph/index`
 
 ```{toctree}
 :maxdepth: 1
-:caption: Graph
+:hidden:
 
 deepchem
 ```
