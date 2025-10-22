@@ -1,1 +1,1 @@
-../../CHANGELOG.md
+../../../PolyglotMol/CHANGELOG.md
