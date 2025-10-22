@@ -6,12 +6,45 @@ PolyglotMol Docs
 
 **PolyglotMol**: A Multi-Modal Molecular Representation Toolkit.
 
+.. image:: https://img.shields.io/badge/python-3.9+-blue.svg
+   :target: https://www.python.org/downloads/
+   :alt: Python Version
+
+.. image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
+   :target: https://polyglotmol.readthedocs.io/
+   :alt: Documentation Status
+
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
+   :target: https://github.com/gxf1212/PolyglotMol/blob/main/LICENSE
+   :alt: License
+
 Welcome to the documentation for PolyglotMol!
+
+Quick Links
+===========
+
+.. button-link:: https://github.com/gxf1212/PolyglotMol
+   :color: primary
+   :outline:
+
+   :octicon:`mark-github` GitHub Repository
+
+.. button-link:: https://github.com/gxf1212/PolyglotMol/issues
+   :color: secondary
+   :outline:
+
+   :octicon:`issue-opened` Report Issues
+
+.. button-link:: https://github.com/gxf1212/PolyglotMol/discussions
+   :color: secondary
+   :outline:
+
+   :octicon:`comment-discussion` Discussions
 
 .. grid:: 1 2 2 2
    :gutter: 3
 
-   .. grid-item-card:: Getting Started
+   .. grid-item-card:: :octicon:`rocket` Getting Started
       :link: introduction
       :link-type: doc
 
@@ -21,7 +54,7 @@ Welcome to the documentation for PolyglotMol!
       * :doc:`installation`
       * :doc:`quickstart`
 
-   .. grid-item-card:: User Guide
+   .. grid-item-card:: :octicon:`book` User Guide
       :link: usage/index
       :link-type: doc
 
@@ -31,8 +64,9 @@ Welcome to the documentation for PolyglotMol!
       * :doc:`usage/representations/index`
       * :doc:`usage/data/index`
       * :doc:`usage/models/index`
+      * :doc:`usage/dashboard/index`
 
-   .. grid-item-card:: API Reference
+   .. grid-item-card:: :octicon:`code` API Reference
       :link: api/index
       :link-type: doc
 
@@ -40,7 +74,7 @@ Welcome to the documentation for PolyglotMol!
       ^^^
       * :doc:`api/index`
 
-   .. grid-item-card:: Development
+   .. grid-item-card:: :octicon:`tools` Development
       :link: development/index
       :link-type: doc
 
@@ -66,6 +100,7 @@ Welcome to the documentation for PolyglotMol!
    usage/representations/index
    usage/data/index
    usage/models/index
+   usage/dashboard/index
 
 .. toctree::
    :maxdepth: 1
@@ -87,6 +122,7 @@ Welcome to the documentation for PolyglotMol!
    :caption: References
 
    references
+   CHANGELOG
 
 Indices and tables
 ==================
