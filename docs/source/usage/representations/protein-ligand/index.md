@@ -7,6 +7,13 @@ PolyglotMol provides unified access to five state-of-the-art 3D fingerprints wit
 ::::{grid} 1 1 2 3
 :gutter: 3
 
+:::{grid-item-card} 🤖 **Boltz-2 AI Embeddings**
+:link: boltz2
+:link-type: doc
+
+AI-predicted structure geometric features
+:::
+
 :::{grid-item-card} 🧬 **Topology Net 3D**
 :link: topology_net_3d
 :link-type: doc
@@ -78,6 +85,10 @@ print(np.array_equal(fp_mol, fp_rdkit))  # True
   - Type
   - Size
   - Description
+* - `Boltz2Embedder`
+  - Float
+  - 29-33 (global)
+  - AI-predicted structure geometric features (requires protein sequence)
 * - `topology_net_3d`
   - Float
   - 512
@@ -183,6 +194,7 @@ For detailed class and function references, see the full API documentation:
 :maxdepth: 1
 :hidden:
 
+boltz2
 topology_net_3d
 splif_enhanced
 qsar_3d_fields
