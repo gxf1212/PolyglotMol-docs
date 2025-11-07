@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Dataset Splitting Documentation** (`docs/source/usage/data/splitting.md`)
+  - Comprehensive guide to all 5 supported splitting strategies (train_test, train_val_test, nested_cv, cv_only, user_provided)
+  - Detailed implementation references with code locations and line numbers
+  - Visual workflow diagrams for each splitting strategy
+  - Best practice recommendations based on dataset size and use case
+  - Reproducibility guarantees and fixed random seed documentation
+  - Cross-validation protocol details with StratifiedKFold for classification
+  - Decision tree for choosing the right splitting strategy
+  - Performance considerations and memory efficiency comparisons
 - **Boltz-2 AI Structure Prediction Integration** (`src/polyglotmol/representations/AI_fold/boltz2/`)
   - Complete module for extracting embeddings from Boltz-2 protein-ligand complex predictions
   - Support for three embedding types: global (29-33 dim), token-level (4-dim pooled), pairwise distance matrices

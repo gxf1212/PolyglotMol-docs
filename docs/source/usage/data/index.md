@@ -23,32 +23,26 @@ Individual molecular representations with lazy loading
 :::
 
 :::{grid-item-card} 📊 **Dataset Management**
-:link: dataset 
+:link: dataset
 :link-type: doc
 Efficient collection handling with batch operations
 :::
 
-:::{grid-item-card} 🧬 **Protein Support**
-:link: protein
+:::{grid-item-card} 🔀 **Data Splitting**
+:link: splitting
 :link-type: doc
-Specialized handling for protein sequences and structures
+Professional splitting strategies and cross-validation
 :::
 
 :::{grid-item-card} 💾 **I/O Operations**
-:link: #working-with-different-file-formats
-:link-type: ref
 Multi-format loading and saving capabilities
 :::
 
 :::{grid-item-card} ⚡ **Performance**
-:link: #memory-efficient-processing
-:link-type: ref
 Memory-efficient processing for large datasets
 :::
 
 :::{grid-item-card} 🔄 **Caching**
-:link: #caching-strategies
-:link-type: ref
 Intelligent feature caching and storage
 :::
 ::::
@@ -560,4 +554,5 @@ feature_results = robust_featurization(
 
 molecule
 dataset
+splitting
 ```
