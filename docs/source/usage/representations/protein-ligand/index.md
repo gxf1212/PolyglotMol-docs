@@ -1,18 +1,29 @@
 # Protein-Ligand Representations
 
-Specialized 3D fingerprints for protein-ligand complexes, designed for structure-based drug design and binding affinity prediction. These representations capture topological features, pharmacophore interactions, and molecular fields that traditional 2D fingerprints cannot detect.
+Specialized representations for protein-ligand complexes, designed for structure-based drug design and binding affinity prediction. PolyglotMol provides both AI-powered structure prediction embeddings and traditional 3D fingerprints with consistent API and optimized batch processing.
 
-PolyglotMol provides unified access to five state-of-the-art 3D fingerprints with consistent API, flexible input handling, and optimized batch processing for high-throughput virtual screening.
+## AI Structure Prediction
 
-::::{grid} 1 1 2 3
+Deep learning-based structure prediction models that generate embeddings from predicted protein-ligand complex structures.
+
+::::{grid} 1 1 2 2
 :gutter: 3
 
 :::{grid-item-card} 🤖 **Boltz-2 AI Embeddings**
 :link: boltz2
 :link-type: doc
 
-AI-predicted structure geometric features
+Extract geometric features from Boltz-2 predicted structures (global, token, pairwise)
 :::
+
+::::
+
+## Traditional 3D Fingerprints
+
+Classical geometry-based fingerprints capturing topological features, pharmacophore interactions, and molecular fields from 3D structures.
+
+::::{grid} 1 1 2 3
+:gutter: 3
 
 :::{grid-item-card} 🧬 **Topology Net 3D**
 :link: topology_net_3d
@@ -77,7 +88,9 @@ print(np.array_equal(fp_mol, fp_rdkit))  # True
 
 ## Available Featurizers
 
-:::{list-table} **Protein-Ligand 3D Fingerprints**
+### AI Structure Prediction Models
+
+:::{list-table}
 :header-rows: 1
 :widths: 30 15 15 40
 
@@ -89,6 +102,18 @@ print(np.array_equal(fp_mol, fp_rdkit))  # True
   - Float
   - 29-33 (global)
   - AI-predicted structure geometric features (requires protein sequence)
+:::
+
+### Traditional 3D Fingerprints
+
+:::{list-table}
+:header-rows: 1
+:widths: 30 15 15 40
+
+* - Featurizer Key
+  - Type
+  - Size
+  - Description
 * - `topology_net_3d`
   - Float
   - 512

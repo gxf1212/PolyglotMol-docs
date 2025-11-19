@@ -17,22 +17,18 @@ PolyglotMol provides access to comprehensive descriptor collections from RDKit a
 :gutter: 3
 
 :::{grid-item-card} 🧮 **RDKit Descriptors**
-:link: #rdkit-descriptors
 200+ physicochemical and topological descriptors
 :::
 
-:::{grid-item-card} 📊 **Mordred Descriptors**  
-:link: #mordred-descriptors
+:::{grid-item-card} 📊 **Mordred Descriptors**
 1800+ comprehensive molecular descriptors
 :::
 
 :::{grid-item-card} 🎯 **Descriptor Sets**
-:link: #descriptor-collections
 Curated collections for specific applications
 :::
 
 :::{grid-item-card} 🔧 **Missing Values**
-:link: #handling-missing-values
 Robust handling of calculation failures
 :::
 ::::

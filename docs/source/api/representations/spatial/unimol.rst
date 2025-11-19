@@ -1,6 +1,6 @@
 .. default-role:: py:obj
 .. automodule:: polyglotmol.representations.spatial.unimol
-   :members: UniMolFeaturizer, UNIMOL_CONFIGS 
+   :members: UniMolCLSFeaturizer, UniMolAtomicCoordsFeaturizer, UniMolAtomicReprsFeaturizer, UNIMOL_BASE_CONFIGS
    :undoc-members:
    :show-inheritance:
    :inherited-members: BaseFeaturizer
@@ -12,46 +12,39 @@ This module provides an interface to Uni-Mol models for generating molecule-leve
 
 This featurizer relies on the `unimol_tools` library. For installation and setup, refer to the :doc:`/usage/representations/spatial/unimol` guide.
 
-Featurizer Class
-----------------
+Featurizer Classes
+------------------
 
-.. py:class:: UniMolFeaturizer(model_config_name: str = "UniMol-Molecule-V2-84M", remove_hs: Optional[bool] = None, **kwargs)
-   :noindex:
+The module provides three specialized featurizers:
 
-   Generates molecular and atomic representations using pre-trained Uni-Mol models.
-   It wraps `unimol_tools.UniMolPredictor`. The output for each molecule is a dictionary
-   containing ``'cls_repr'`` (molecule-level embedding) and ``'atomic_reprs'`` (atom-level embeddings).
-   Inherits from :py:class:`~polyglotmol.representations.utils.base.BaseFeaturizer`.
+- **UniMolCLSFeaturizer**: Returns molecule-level CLS token representation
+- **UniMolAtomicCoordsFeaturizer**: Returns 3D coordinates of each atom
+- **UniMolAtomicReprsFeaturizer**: Returns representation for each atom
 
-   .. automethod:: polyglotmol.representations.spatial.unimol.UniMolFeaturizer._featurize
-
-   .. automethod:: polyglotmol.representations.spatial.unimol.UniMolFeaturizer.get_output_info
-   
-   *Note: This method is overridden in ``UniMolFeaturizer`` to describe the dictionary output structure.*
+All featurizers handle SMILES strings and RDKit Mol objects as input.
 
 Available Configurations
 ------------------------
 
-.. py:data:: UNIMOL_CONFIGS
+.. py:data:: UNIMOL_BASE_CONFIGS
    :noindex:
 
    A dictionary defining pre-registered Uni-Mol model configurations. Each key is a registered name
-   (e.g., ``"UniMol-Molecule-V2-84M"``) that can be used with 
+   (e.g., ``"UniMol-V2-84M"``) that can be used with
    :py:func:`~polyglotmol.representations.get_featurizer`. The values are dictionaries specifying
-   parameters for the `unimol_tools.UniMolPredictor` (like `data_type`, `model_name`, `version`, `model_size`, `remove_hs`, and an indicative `output_dim`).
+   parameters like `data_type`, `unimol_tools_model_name`, `remove_hs`, and `output_dim`.
 
    **Example structure:**
 
    .. code-block:: python
 
-      UNIMOL_CONFIGS = {
-          "UniMol-Molecule-V2-84M": {
-              "data_type": "molecule", 
-              "model_name": "unimol_plus", 
-              "version": "v2", 
-              "model_size": "84m", 
-              "remove_hs": False, 
-              "output_dim": 512 # Note: output_dim is an estimate
+      UNIMOL_BASE_CONFIGS = {
+          "UniMol-V2-84M": {
+              "data_type": "molecule",
+              "unimol_tools_model_name": "unimolv2",
+              "unimol_tools_model_size": "84m",
+              "remove_hs": False,
+              "output_dim": 512
           },
           # ... other configurations ...
       }

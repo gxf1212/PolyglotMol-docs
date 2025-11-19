@@ -8,26 +8,26 @@ This module provides masked language modeling capabilities for SMILES strings, e
 
 ## Classes
 
-### SmilesMLMFeaturizer
+### ChemBERTFeaturizer
 
 ```{eval-rst}
-.. autoclass:: polyglotmol.representations.sequential.language_model.SmilesMLMFeaturizer
+.. autoclass:: polyglotmol.representations.sequential.language_model.mlm.ChemBERTFeaturizer
    :members:
    :show-inheritance:
 ```
 
-### ChemBERTaMLM
+### ChemBERTaFeaturizer
 
 ```{eval-rst}
-.. autoclass:: polyglotmol.representations.sequential.language_model.ChemBERTaMLM
+.. autoclass:: polyglotmol.representations.sequential.language_model.mlm.ChemBERTaFeaturizer
    :members:
    :show-inheritance:
 ```
 
-### SMILESBERTMLMConfig
+### BaseMolecularLM
 
 ```{eval-rst}
-.. autoclass:: polyglotmol.representations.sequential.language_model.SMILESBERTMLMConfig
+.. autoclass:: polyglotmol.representations.sequential.language_model.mlm.BaseMolecularLM
    :members:
    :show-inheritance:
 ```
@@ -156,5 +156,4 @@ The MLM models use standard transformer architecture:
 ## See Also
 
 - {doc}`../../../../usage/representations/sequential/mlm` - Usage guide
-- {doc}`../tokenizer` - Tokenization utilities
 - {doc}`../../../../usage/representations/sequential/language_model` - Language model usage

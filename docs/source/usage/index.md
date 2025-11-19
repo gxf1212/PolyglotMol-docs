@@ -7,22 +7,10 @@ PolyglotMol is built with flexibility and modularity in mind, supporting a wide 
 Each section of this guide corresponds to a core component of the toolkit. Start with the basics, then dive into data handling, model interfaces, and our multi-modal representation system.
 
 
-::::{grid} 1 1 2 3
+## Core Components
+
+::::{grid} 1 1 2 2
 :gutter: 2
-
-:::{grid-item-card} 🚀 **Complete Workflow**
-:link: ../quickstart
-:link-type: doc
-
-End-to-end example: data loading → screening → visualization → deployment
-:::
-
-:::{grid-item-card} 📚 **Basics**
-:link: basic/index
-:link-type: doc
-
-Get started with fundamental concepts and usage patterns.
-:::
 
 :::{grid-item-card} 🧬 **Representations**
 :link: representations/index
@@ -45,14 +33,22 @@ Read, preprocess, and manipulate molecular datasets.
 Automated model screening and hyperparameter optimization.
 :::
 
+:::{grid-item-card} 🧪 **Interactive Dashboard**
+:link: dashboard/index
+:link-type: doc
+
+Visualize and explore screening results with interactive web interface.
+:::
+
 ::::
 
 ```{toctree}
 :maxdepth: 1
 :hidden:
 
-../quickstart
 basic/index
+representations/index
 data/index
 models/index
+dashboard/index
 ```

@@ -14,3 +14,4 @@ This section contains the auto-generated API documentation for PolyglotMol's pub
    data/index
    models/index
    drawings/index
+   config/index

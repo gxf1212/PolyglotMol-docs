@@ -12,7 +12,7 @@ This guide will walk you through the core concepts of graph construction and how
 These representations are useful for property prediction, molecular classification, and generative modeling.
 
 For detailed API documentation, see:
-{doc}`/api/representations/graph`
+{doc}`/api/representations/index`
 
 ```{toctree}
 :maxdepth: 1

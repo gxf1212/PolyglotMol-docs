@@ -6,7 +6,7 @@ Currently supported models:
 
 * ESM (via `plm.py`)
 
-API: {doc}`/api/representations/protein/sequence/index`
+API: {doc}`/api/representations/protein/index`
 
 
 ```{toctree}

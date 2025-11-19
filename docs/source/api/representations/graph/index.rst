@@ -6,6 +6,7 @@ Graph Representations API (`...graph`)
    :members:
    :undoc-members:
    :show-inheritance:
+   :no-index:
 
 .. toctree::
    :maxdepth: 1

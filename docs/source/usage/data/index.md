@@ -22,7 +22,7 @@ Key capabilities include:
 Individual molecular representations with lazy loading
 :::
 
-:::{grid-item-card} 📊 **Dataset Management**
+:::{grid-item-card} 📊 **Dataset**
 :link: dataset
 :link-type: doc
 Efficient collection handling with batch operations
@@ -32,6 +32,12 @@ Efficient collection handling with batch operations
 :link: splitting
 :link-type: doc
 Professional splitting strategies and cross-validation
+:::
+
+:::{grid-item-card} 🧬 **Protein Handling**
+:link: protein
+:link-type: doc
+Comprehensive protein data management and database retrieval
 :::
 
 :::{grid-item-card} 💾 **I/O Operations**
@@ -553,6 +559,6 @@ feature_results = robust_featurization(
 :hidden:
 
 molecule
+protein
 dataset
-splitting
 ```

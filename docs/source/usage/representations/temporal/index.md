@@ -18,26 +18,18 @@ PolyglotMol provides tools to analyze both molecular dynamics trajectories and m
 :gutter: 3
 
 :::{grid-item-card} 🎬 **MD Trajectories**
-:link: #md-trajectory-analysis
-:link-type: ref
 Statistical features from molecular dynamics simulations
 :::
 
 :::{grid-item-card} 🔄 **Conformer Ensembles**
-:link: #conformational-ensembles
-:link-type: ref
 Multi-conformer analysis and shape diversity
 :::
 
 :::{grid-item-card} 📊 **Time Series**
-:link: #time-series-features
-:link-type: ref
 Temporal statistics and autocorrelation analysis
 :::
 
 :::{grid-item-card} ⚡ **Streaming Processing**
-:link: #memory-efficient-processing
-:link-type: ref
 Handle large trajectories with memory efficiency
 :::
 ::::

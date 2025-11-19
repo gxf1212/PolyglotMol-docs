@@ -10,32 +10,26 @@ RDKit fingerprints encode molecular structure as fixed-length bit vectors or cou
 :gutter: 3
 
 :::{grid-item-card} 🔄 **Morgan Fingerprints**
-:link: #morgan-fingerprints
 Circular fingerprints capturing atom neighborhoods
 :::
 
 :::{grid-item-card} 🌐 **Topological Fingerprints**
-:link: #topological-fingerprints
 Path-based structural fingerprints
 :::
 
 :::{grid-item-card} 🔑 **MACCS Keys**
-:link: #maccs-keys
 166 predefined structural keys
 :::
 
 :::{grid-item-card} 👥 **Atom Pair Fingerprints**
-:link: #atom-pair-fingerprints
 Encode atom pairs and distances
 :::
 
 :::{grid-item-card} 🔀 **Torsion Fingerprints**
-:link: #torsion-fingerprints
 Four-atom topological paths
 :::
 
 :::{grid-item-card} ⚡ **Batch Processing**
-:link: #batch-processing
 Parallel computation support
 :::
 ::::

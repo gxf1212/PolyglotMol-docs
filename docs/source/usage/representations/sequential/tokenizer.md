@@ -111,7 +111,7 @@ atom_tokenizer = get_featurizer('DeepChem-GroverAtomTokenizer',
 
 ## API Reference
 
-For full class and method documentation, see the {doc}`/api/representations/sequential/tokenizer` page.
+For full class and method documentation, see the the API documentation page.
 
 ---
 

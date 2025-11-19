@@ -29,6 +29,12 @@ Quick Links
 
    :octicon:`mark-github` GitHub Repository
 
+.. button-link:: https://github.com/gxf1212/PolyglotMol-docs
+   :color: primary
+   :outline:
+
+   :octicon:`book` Documentation Source
+
 .. button-link:: https://github.com/gxf1212/PolyglotMol/issues
    :color: secondary
    :outline:
@@ -97,10 +103,6 @@ Quick Links
    :caption: User Guide
 
    usage/index
-   usage/representations/index
-   usage/data/index
-   usage/models/index
-   usage/dashboard/index
 
 .. toctree::
    :maxdepth: 1

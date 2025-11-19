@@ -1,8 +1,8 @@
-#########################################
-Dataset overview Utilities API (`polyglotmol.data.overview`)
-#########################################
+###############################################################
+Molecule Class API (`polyglotmol.data.molecule`)
+###############################################################
 
-.. automodule:: polyglotmol.data.overview
+.. automodule:: polyglotmol.data.molecule
    :members:
    :undoc-members:
    :show-inheritance:

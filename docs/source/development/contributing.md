@@ -1,42 +1,162 @@
 # Contributing to PolyglotMol
 
-We welcome contributions to PolyglotMol! Whether it's reporting bugs, suggesting features, improving documentation, or submitting code changes, your help is appreciated.
+Thank you for your interest in contributing to PolyglotMol! This guide will help you get started.
+
+## Code of Conduct
+
+By participating in this project, you agree to maintain a respectful, inclusive, and collaborative environment. Be kind, constructive, and professional in all interactions.
 
 ## Ways to Contribute
 
-* **Reporting Bugs:** If you find a bug, please open an issue on our GitHub repository. Include details about the error, how to reproduce it, your environment (OS, Python version, package versions), and any relevant code snippets or tracebacks.
-* **Suggesting Enhancements:** Have an idea for a new feature or an improvement to an existing one? Open an issue to discuss it.
-* **Improving Documentation:** Found a typo, unclear explanation, or missing information in the docs? Feel free to open an issue or submit a pull request with corrections.
-* **Adding Code:** If you want to add new featurizers, fix bugs, or implement new features, please follow the development workflow below.
+### 1. Report Issues
+
+Found a bug or have a feature request?
+
+**Bug Reports:**
+- Check if the issue already exists
+- Use the bug report template
+- Include: OS, Python version, PolyglotMol version
+- Provide minimal reproducible example
+- Include error messages and stack traces
+
+**Feature Requests:**
+- Explain the use case
+- Describe expected behavior
+- Suggest potential implementation (optional)
+- Link to relevant papers/resources
+
+### 2. Improve Documentation
+
+Documentation contributions are highly valued:
+- Fix typos, unclear explanations
+- Add examples and tutorials
+- Improve API docstrings
+- Create how-to guides
+
+### 3. Contribute Code
+
+See detailed workflow below.
 
 ## Development Workflow
 
-1.  **Fork the Repository:** Create your own fork of the main PolyglotMol repository on GitHub (github.com/gxf1212/PolyglotMol).
-2.  **Clone Your Fork:** Clone your forked repository to your local machine:
-    ```bash
-    git clone [https://github.com/gxf1212/PolyglotMol.git](https://github.com/gxf1212/PolyglotMol.git) # Using your username
-    cd PolyglotMol
-    ```
-3.  **Set up Development Environment:** Follow the instructions in the :doc:`setup_dev_env` guide.
-4.  **Create a Branch:** Create a new branch for your changes:
-    ```bash
-    git checkout -b my-feature-branch # Or fix/bug-name, etc.
-    ```
-5.  **Make Changes:** Implement your feature, fix the bug, or improve the documentation.
-6.  **Write Tests:** Add tests for any new code functionality. Ensure existing tests pass. See the :doc:`testing` guide.
-7.  **Format and Lint:** Ensure your code conforms to the project's style guidelines (e.g., using Black, Ruff, or pre-commit hooks if configured).
-8.  **Update Documentation:** If you added or changed features, update the relevant documentation pages (both usage guides and API references/docstrings).
-9.  **Commit Changes:** Commit your changes with clear and concise commit messages.
-10. **Push to Your Fork:**
-    ```bash
-    git push origin my-feature-branch
-    ```
-11. **Submit a Pull Request:** Go to the main PolyglotMol repository on GitHub (github.com/gxf1212/PolyglotMol) and open a pull request from your branch to the main development branch (e.g., `main` or `develop`). Provide a clear description of your changes.
+### 1. Fork and Clone
 
-## Code Style
+```bash
+# Fork the repository on GitHub
+# Then clone your fork
+git clone https://github.com/YOUR_USERNAME/PolyglotMol.git
+cd PolyglotMol
 
-(To be defined - e.g., We follow PEP 8 and use Black for formatting.)
+# Add upstream remote
+git remote add upstream https://github.com/gxf1212/PolyglotMol.git
+```
 
-## Questions?
+### 2. Create a Branch
 
-Feel free to open an issue if you have questions about contributing.
+```bash
+# Update your main branch
+git checkout main
+git pull upstream main
+
+# Create a feature branch
+git checkout -b feat/your-feature-name
+# or
+git checkout -b fix/bug-description
+```
+
+**Branch Naming:**
+- `feat/` - New features
+- `fix/` - Bug fixes
+- `docs/` - Documentation changes
+- `refactor/` - Code refactoring
+- `test/` - Test additions/fixes
+
+### 3. Set Up Development Environment
+
+```bash
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install in editable mode with dev dependencies
+pip install -e ".[dev,test]"
+
+# Install pre-commit hooks
+pre-commit install
+```
+
+### 4. Make Changes
+
+**Before coding:**
+- Read relevant architecture documentation
+- Check style guidelines
+- Look at similar existing code
+
+**While coding:**
+- Write clean, documented code
+- Follow PEP 8 and type hint guidelines
+- Add docstrings (Google style)
+- Handle errors gracefully
+
+### 5. Write Tests
+
+**Every code change must include tests.**
+
+Run tests locally:
+```bash
+# Run all tests
+pytest
+
+# Run specific test file
+pytest tests/test_your_feature.py
+
+# Run with coverage
+pytest --cov=polyglotmol --cov-report=html
+```
+
+### 6. Commit Changes
+
+**Commit Message Format** (Conventional Commits):
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+**Example:**
+```
+feat(representations): add MACCS fingerprint featurizer
+
+Implements MACCS keys fingerprint using RDKit. Supports both
+166-bit and 167-bit versions.
+
+Closes #123
+```
+
+**Types:**
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation only
+- `style`: Code style (formatting, no logic change)
+- `refactor`: Code restructuring
+- `test`: Adding/updating tests
+- `chore`: Maintenance tasks
+
+### 7. Push and Create Pull Request
+
+```bash
+# Push to your fork
+git push origin feat/your-feature-name
+```
+
+**PR Checklist:**
+- [ ] Tests pass locally
+- [ ] Code follows style guidelines
+- [ ] Documentation updated
+- [ ] CHANGELOG.md updated
+- [ ] Branch is up-to-date with main
+
+Thank you for making PolyglotMol better! 🚀

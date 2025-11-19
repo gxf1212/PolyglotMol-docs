@@ -6,3 +6,4 @@ Representation Utilities API (`...utils`)
    :members:
    :undoc-members:
    :show-inheritance:
+   :exclude-members: InputType, mol_from_input

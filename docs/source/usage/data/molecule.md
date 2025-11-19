@@ -90,7 +90,7 @@ print(mol.get_coordinates())   # -> numpy array or None
 
 ## API References
 
-* Input parsing: {doc}`/api/representations/io`
+* Input parsing: {doc}`/api/data/index`
 * RDKit feature extraction: {doc}`/api/representations/fingerprints/rdkit`
 * DeepChem and others: {doc}`/api/representations/fingerprints/deepchem`
 

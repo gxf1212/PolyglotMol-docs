@@ -1,5 +1,19 @@
 
 
+### Changelog管理
+- **CHANGELOG.md维护**: docs/source的CHANGELOG.md是唯一官方变更记录来源
+- **格式标准**: 遵循[Keep a Changelog](https://keepachangelog.com/)格式，使用语义化版本
+- **实时更新**: 每次功能开发或bug修复都必须同步更新CHANGELOG.md的[Unreleased]部分. write into CHANGELOG every time we git push.
+- make html for the new doc every time the docs change. don't forget to push the docs repo too.
+- **分类记录**: 变更分为Added(新功能)、Changed(功能修改)、Deprecated(即将弃)、Removed(已删除)、Fixed(bug修复)、Security(安全修复)
+- **提交规范**: 使用Conventional Commits格式，如`feat(dashboard): add new chart`、`fix(models): resolve compatibility issue`
+- **版本发布**: 发布新版本时，将[Unreleased]内容移至带日期的版本标签下，如`## [0.2.0] - 2025-10-22`
+
+
+### build and write
+
+每次改完文档都make html一下，记得新page加到sidebar toc里面
+
 To build the docs, run: `make html`
 
 - try to write .md if possible for usage and rst for API (if no complex notes). 
@@ -36,3 +50,37 @@ cdk
 deepchem
 datamol
 ```
+
+### Avoiding TOC Duplication
+
+**Two Rules**:
+1. **In `.md` files**: Always use `:maxdepth: 1` and `:hidden:` in toctrees
+2. **In `index.rst`**: Only list parent pages, NOT their children (children already in parent's toctree)
+
+**Example** - `index.rst` should only reference parent:
+```rst
+.. toctree::
+   :caption: User Guide
+
+   usage/index          ← ✅ Parent only
+```
+
+NOT:
+```rst
+.. toctree::
+   :caption: User Guide
+
+   usage/index
+   usage/representations/index  ← ❌ Child (already in usage/index toctree)
+   usage/data/index             ← ❌ Child
+```
+
+**Why**:
+- `:maxdepth: 2+` renders nested TOCs as page content
+- Listing children in `index.rst` duplicates sidebar navigation
+
+**Checklist**:
+- ✅ All `.md` toctrees: `:maxdepth: 1` + `:hidden:`
+- ✅ `index.rst`: only parent pages
+- ✅ After changes: `make clean && make html`
+- ✅ Hard refresh browser (Ctrl+Shift+R) to clear cache

@@ -23,19 +23,23 @@ This section covers the **PolyglotMol** Data module, including classes and funct
    :members:
    :undoc-members:
    :show-inheritance:
+   :no-index:
 
 .. automodule:: polyglotmol.data.molecule
    :members:
    :undoc-members:
    :show-inheritance:
+   :no-index:
 
 .. automodule:: polyglotmol.data.dataset
    :members:
    :undoc-members:
    :show-inheritance:
+   :no-index:
 
 .. automodule:: polyglotmol.data.overview
    :members:
    :undoc-members:
    :show-inheritance:
+   :no-index:
 ```

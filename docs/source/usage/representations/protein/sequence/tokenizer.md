@@ -4,4 +4,4 @@ Learn how to handle and featurize protein sequences (e.g., amino acid sequences 
 
 (Content coming soon... covering sequence loading, tokenization, embeddings like ESM, etc.)
 
-See also the {doc}`/api/representations/protein/sequential/tokenizer` for detailed API documentation.
+See also the {doc}`/api/representations/protein/sequence/tokenizer` for detailed API documentation.

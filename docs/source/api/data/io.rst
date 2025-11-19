@@ -1,8 +1,8 @@
-#########################################
-Dataset overview Utilities API (`polyglotmol.data.overview`)
-#########################################
+###############################################################
+Input/Output Utilities API (`polyglotmol.data.io`)
+###############################################################
 
-.. automodule:: polyglotmol.data.overview
+.. automodule:: polyglotmol.data.io
    :members:
    :undoc-members:
    :show-inheritance:

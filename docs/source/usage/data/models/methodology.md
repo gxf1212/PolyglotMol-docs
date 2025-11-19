@@ -20,6 +20,12 @@ All models are evaluated on the **same test set** with **fixed random seeds** to
 
 ## Data Splitting Strategy
 
+```{admonition} Advanced Splitting Strategies
+:class: seealso
+
+This section covers the **internal train/test splitting** used during model screening. For comprehensive dataset splitting strategies (scaffold split, temporal split, etc.) to prepare your data **before** running screening, see {doc}`/usage/data/splitting`.
+```
+
 ### Train/Test Split
 
 PolyglotMol uses sklearn's `train_test_split` to divide your dataset into training and test sets.

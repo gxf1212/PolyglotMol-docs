@@ -1,57 +1,127 @@
-# Running Tests
+# Testing Guidelines
 
-PolyglotMol uses [pytest](https://docs.pytest.org/) for testing. Writing and running tests is crucial to ensure code correctness and prevent regressions.
+Comprehensive testing ensures PolyglotMol reliability and maintainability.
 
-## Prerequisites
+## Test Structure
 
-* A working development environment (see :doc:`setup_dev_env`). Ensure all core and test dependencies are installed (`pip install -e .[tests]` or `pip install -e .[dev]`).
+```
+tests/
+├── test_representations/
+│   ├── test_fingerprints.py
+│   ├── test_descriptors.py
+│   └── test_spatial.py
+├── test_data/
+│   ├── test_molecule.py
+│   └── test_dataset.py
+├── test_models/
+│   └── test_screening.py
+└── conftest.py  # Shared fixtures
+```
 
 ## Running Tests
 
-1.  **Activate Environment:** Make sure your conda development environment (e.g., `polyglotmol-dev`) is activated.
-    ```bash
-    conda activate polyglotmol-dev
-    ```
+```bash
+# Run all tests
+pytest
 
-2.  **Navigate to Root Directory:** Change to the root directory of the PolyglotMol repository (the one containing `pyproject.toml` and the `tests` directory).
+# Run specific file
+pytest tests/test_representations/test_fingerprints.py
 
-3.  **Run Pytest:** Execute the `pytest` command.
+# Run with coverage
+pytest --cov=polyglotmol --cov-report=html
 
-    ```bash
-    # Run all tests
-    pytest
-    ```
-    Pytest will automatically discover and run all files matching the pattern `test_*.py` or `*_test.py` inside the `tests` directory and its subdirectories.
+# Run specific test
+pytest tests/test_molecule.py::test_smiles_validation
 
-    **Common Options:**
-    * **Run tests in a specific file:**
-      ```bash
-      pytest tests/representations/fingerprints/test_rdkit.py
-      pytest tests/representations/fingerprints/test_deepchem.py
-      # Add other specific test files as needed
-      ```
-    * **Run specific test function:** `pytest tests/representations/fingerprints/test_rdkit.py::test_rdkit_fp_instantiation`
-    * **Run tests with a specific marker:** `pytest -m "slow"` (if markers are used)
-    * **Stop on first failure:** `pytest -x`
-    * **Verbose output:** `pytest -v`
-    * **Show print statements:** `pytest -s`
-    * **Show local variables on failure:** `pytest -l`
-    * **Run with coverage:** (Requires `pytest-cov`) `pytest --cov=polyglotmol --cov-report=html`
-
-为了更好地管理需要网络连接或可选依赖的测试，我将使用 pytest.mark.skipif 来标记这些测试，而不是将文件拆分。这样你可以在运行时通过标记来选择性地运行测试（例如，运行 pytest -m "not internet" 来跳过需要网络的测试）。
-
-
+# Run in parallel
+pytest -n auto
+```
 
 ## Writing Tests
 
-* Tests should be placed in the `tests` directory, mirroring the structure of the `src/polyglotmol` directory where possible.
-* Test filenames should start with `test_` or end with `_test.py`.
-* Test function names should start with `test_`.
-* Use clear and descriptive names for test functions.
-* Use `assert` statements to check for expected outcomes.
-* Use `pytest.raises` to check for expected exceptions.
-* Use fixtures (`@pytest.fixture`) for setting up reusable test data or resources.
-* Parameterize tests (`@pytest.mark.parametrize`) to run the same test logic with different inputs.
-* Aim for good test coverage for any new code added.
+### Basic Test
 
-Refer to the [pytest documentation](https://docs.pytest.org/) for more details on writing tests.
+```python
+def test_featurizer_basic():
+    """Test basic featurizer functionality."""
+    featurizer = MorganFingerprint(n_bits=1024)
+    result = featurizer.featurize("CCO")
+    
+    assert isinstance(result, np.ndarray)
+    assert result.shape == (1024,)
+    assert not np.isnan(result).any()
+```
+
+### Parametric Test
+
+```python
+@pytest.mark.parametrize("smiles,expected_valid", [
+    ("CCO", True),
+    ("invalid", False),
+    ("C1CCCCC1", True),
+    ("", False),
+])
+def test_molecule_validation(smiles, expected_valid):
+    """Test molecule validation with various inputs."""
+    result = is_valid_smiles(smiles)
+    assert result == expected_valid
+```
+
+### Fixtures
+
+```python
+# conftest.py
+import pytest
+
+@pytest.fixture
+def sample_molecules():
+    """Provide sample molecules for testing."""
+    return ["CCO", "CCN", "CCC"]
+
+@pytest.fixture
+def test_dataset(sample_molecules, tmp_path):
+    """Create test dataset."""
+    df = pd.DataFrame({"SMILES": sample_molecules, "y": [1, 2, 3]})
+    return MolecularDataset.from_dataframe(df)
+
+# Usage in tests
+def test_screening(test_dataset):
+    """Test screening with fixture."""
+    results = quick_screen(test_dataset, target_column="y")
+    assert "best_score" in results
+```
+
+### Error Testing
+
+```python
+def test_invalid_input_raises():
+    """Test that invalid input raises appropriate error."""
+    featurizer = MyFeaturizer()
+    
+    with pytest.raises(InvalidInputError, match="Empty molecule"):
+        featurizer.featurize("")
+```
+
+## Coverage Requirements
+
+- **New features**: Minimum 80% coverage
+- **Bug fixes**: Add test reproducing the bug
+- **Refactoring**: Maintain existing coverage
+
+Check coverage:
+```bash
+pytest --cov=polyglotmol --cov-report=term-missing
+```
+
+## Best Practices
+
+1. **Test behavior, not implementation**
+2. **One assert per test** (when possible)
+3. **Clear test names** describing what is tested
+4. **Use fixtures** for common setup
+5. **Mock expensive operations** (network, GPU)
+
+## See Also
+
+- {doc}`contributing` - Contribution workflow
+- {doc}`style` - Code style guidelines

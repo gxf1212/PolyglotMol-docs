@@ -1,14 +1,56 @@
-# Models Module
+# Models API Reference
 
-At the heart of PolyglotMol is a powerful system for handling molecular representations across multiple modalities — chemical, structural, sequential, visual, and more.
+Automated machine learning API for molecular property prediction with multi-modal support.
 
-This section introduces the different kinds of representations available in the toolkit, from traditional fingerprints (like RDKit or CDK) to deep learning-based encodings and even image-based representations. Each modality comes with its own interface, conversion utilities, and compatible downstream tools.
+## Overview
 
-You'll also find helper functions and utilities that allow you to bridge different representations, chain transformations, and prepare features for modeling tasks.
+The models module provides comprehensive machine learning capabilities:
+
+- **Automated Screening**: Test 28+ models across multiple representations
+- **Multi-Modal Support**: VECTOR, STRING, MATRIX, IMAGE modalities
+- **Intelligent Scheduling**: Optimal CPU/GPU utilization
+- **Results Management**: SQLite database with dashboard visualization
+
+## Quick Example
+
+```python
+from polyglotmol.models.api import universal_screen
+from polyglotmol.data import MolecularDataset
+
+# Load dataset
+dataset = MolecularDataset.from_csv("data.csv",
+                                     input_column="SMILES",
+                                     label_columns=["activity"])
+
+# One-command screening
+results = universal_screen(dataset, target_column="activity")
+
+# View results
+# polyglotmol view ./results_folder
+```
+
+## API Documentation
 
 ```{toctree}
 :maxdepth: 2
 :hidden:
 
-evaluation
+screening
+corpus
+modality_models
+core
+utils
 ```
+
+### Main Sections
+
+- **{doc}`screening`** - Core screening functions (`universal_screen`, `quick_screen`)
+- **{doc}`corpus`** - Model definitions and parameter grids
+- **{doc}`modality_models`** - Modality-specific wrappers (CNN, VAE, Transformers)
+- **{doc}`core`** - Core types and base classes
+- **{doc}`utils`** - Database, validation, caching utilities
+
+## See Also
+
+- {doc}`../../usage/models/index` - Usage guide with examples
+- {doc}`../../development/architecture` - System design overview

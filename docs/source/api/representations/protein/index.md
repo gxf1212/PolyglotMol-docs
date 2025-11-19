@@ -12,21 +12,16 @@ This module provides protein-specific representations including sequence-based f
 :maxdepth: 2
 :hidden:
 
-sequential/tokenizer
-structure/index
+sequence/plm
+sequence/tokenizer
 ```
 
 ## Sequential Representations
 
 Protein sequence-based representations including tokenizers and language models.
 
-- {doc}`sequential/tokenizer` - Protein sequence tokenization
-
-## Structure Representations  
-
-Protein structure-based representations including surface features and geometric descriptors.
-
-- {doc}`structure/index` - Protein structure analysis
+- {doc}`sequence/plm` - Protein language models (ESM-2, ProtT5, Ankh, etc.)
+- {doc}`sequence/tokenizer` - Protein sequence tokenization
 
 ## See Also
 

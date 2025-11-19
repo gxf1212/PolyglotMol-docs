@@ -22,8 +22,7 @@ PolyglotMol automatically handles conformer generation when 3D coordinates are m
 Fixed-size matrix encodings of molecular geometry
 :::
 
-:::{grid-item-card} 🧬 **3D Coordinates** 
-:link: #coordinates-representations
+:::{grid-item-card} 🧬 **3D Coordinates**
 Raw atomic positions with normalization options
 :::
 
@@ -34,7 +33,6 @@ Pre-trained 3D molecular embeddings
 :::
 
 :::{grid-item-card} ⚡ **Auto-Conformers**
-:link: #conformer-handling
 Automatic 3D structure generation
 :::
 ::::
