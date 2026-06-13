@@ -20,6 +20,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **XGBoost Optuna Crash Fix** (2026-06-12)
   - Removed duplicate `subsample` parameter suggestion in Optuna search space that caused all xgboost trials to fail with `ValueError`
 
+- **Model Export Functionality Overhaul** (2026-06-13)
+  - Fixed `pprint.pformat` rendering `float('nan')` as bare `nan` → `NameError` in generated scripts (XGBoost `"missing": NaN`)
+  - Fixed top-N export filename collisions when same model+representation appears in multiple rows (now uses rank-indexed filenames)
+  - Added `_MODEL_EXPORT_MAP` + `_CLASSIFIER_MAP` covering 15+ model types for runnable code generation
+  - Added classification support: auto-detects `task_type` from DB, generates Classifier classes and classification metrics
+  - Fixed `--metric` parameter ignored in CLI export (now sorts by requested metric with correct direction for MAE/RMSE)
+  - Added `input_column` CSV header validation with auto-correction fallback to `SMILES`
+  - Expanded SQL queries to include `best_params`, `all_metrics`, `train_indices`, `test_indices`
+  - Fixed duplicate `train_test_split` in GradientBoosting branch and duplicate `random_state` kwargs
+
 - **Data Split Strategy Parameter Exposure** (2026-06-12)
   - Exposed 8 new split parameters: `scaffold_func`, `split_method`, `maxmin_mode`, `dnr_split_mode`, `dnr_threshold`, `high_dnr_in_test`, `similarity_threshold`, `property_diff_threshold`
   - Added UMAP n_components auto-clamping for small datasets (`<52` samples) to prevent spectral crash
