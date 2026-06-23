@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- **Unified Metric Direction Handling** (2026-06-23)
+  - Centralized metric direction logic in `molblender.metrics.get_metric_sort_ascending()`
+  - Replaced hardcoded `LOWER_IS_BETTER` sets across CLI, Dashboard, and screening engine
+  - Fixed ranking to respect metric direction (MAE/RMSE ascending, R²/accuracy descending)
+  - Improved `BaseScreener.top_n()` to use `min` for lower-is-better metrics instead of `max`
+  - Enhanced `ProfessionalResultProcessor` summary: `best_score`/`worst_score` now metric-aware
+  - Updated `rank_results()` to auto-detect direction when `ascending=None`
+  - Applied to: `export.py`, `processors.py`, `result_processor.py`, `base.py`, `ranking.py`, `parallel_strategies.py`
+  - Test coverage: added `tests/models/api/screening_engine/test_metric_direction_ranking.py`
+
+- **HPO Parallel Worker Calculation** (2026-06-23)
+  - Fixed `_resolve_parallel_jobs()` to handle `cv_splits` parameter explicitly
+  - Improved `GridSearchCV.fit()` to skip `groups` parameter when None
+  - Enhanced worker cap logic for better resource utilization
+
 - **Optuna Warm-Start Improvements** (2026-06-12)
   - Removed `hpo_method='grid'` filter — warm-start now loads priors from any prior method (grid, random, optuna)
   - Now reads `grid_search_results` JSON column for full param combos instead of only `best_params`
