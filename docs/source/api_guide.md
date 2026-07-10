@@ -502,7 +502,7 @@ results = screen_models(
 - `smiles_data` (`list[str]`): SMILES molecule list
 - `representations` (`list[str]`): molecular representation list
 - `models` (`list[str]` | `None`): model list（Nonemeans auto-select）
-- `task_type` (`str`): task type（"classification" or "regression"）
+- `task_type` (`str`): task type（"binary_classification", "multiclass_classification", or "regression"）
 - `target_values` (`list[float]`): target value
 - `save_path` (`str | None`): result save path
 - `session_name` (`str | None`): session name
@@ -653,21 +653,21 @@ print(f"completed {len(results)} models-representation combination screening")
 run_dashboard("results.db")
 ```
 
-### example2: classification task
+### example2: binary classification task
 
 ```python
 from molblender.api import screen_models
 
-# Classification data
+# Binary classification data
 smiles = [...]
 labels = [0, 1, 0, 1, ...]  # 0: inactive, 1: active
 
-# Run classification screening
+# Run binary classification screening
 results = screen_models(
     smiles_data=smiles,
     representations=["morgan_fp", "chemberta"],
     models=["random_forest", "xgboost", "logistic_regression"],
-    task_type="classification",
+    task_type="binary_classification",
     target_values=labels,
     save_path="classification_results.db",
     session_name="classification_screening",

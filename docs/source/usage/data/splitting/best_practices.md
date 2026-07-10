@@ -156,7 +156,7 @@ results = universal_screen(
 results = universal_screen(
     dataset=dataset,
     target_column="class_label",
-    task_type="classification",
+    task_type="binary_classification",
     split_strategy="train_test",
     test_size=0.2,
     cv_folds=5,      # StratifiedKFold (maintains class balance)
@@ -409,7 +409,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 # ✅ GOOD: Automatic StratifiedKFold for classification
 results = universal_screen(
     dataset=imbalanced_dataset,
-    task_type="classification",  # Auto-stratification
+    task_type="binary_classification",  # Auto-stratification
     split_strategy="train_test",
     test_size=0.2
 )

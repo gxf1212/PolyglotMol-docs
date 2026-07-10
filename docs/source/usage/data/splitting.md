@@ -1174,8 +1174,7 @@ def _cross_validate(self, model, X, y):
 
 ```python
 # Create CV splitter based on task type
-if self.config.task_type in [TaskType.CLASSIFICATION,
-                             TaskType.BINARY_CLASSIFICATION]:
+if is_classification_task(self.config.task_type):
     # Use StratifiedKFold for classification
     cv_splitter = StratifiedKFold(
         n_splits=cv_folds,
