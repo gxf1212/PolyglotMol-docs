@@ -8,7 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
-- **Unified Metric Direction Handling** (2026-06-23)
+- **Task Type Compatibility Logic** (2026-07-10)
+  - Refined `supports_task()` to treat CLASSIFICATION as family base with binary/multiclass as variants
+  - Added `_CLASSIFICATION_VARIANTS` constant for clearer classification handling
+  - Improved task type fallback logic for better model-registry compatibility
+
+- **Model Corpus Consistency** (2026-07-09)
+  - Fixed MINIMAL corpus to use existing model name `svm_linear` instead of non-existent `svr`
+  - Unified `minimal` string mapping across standard_helpers and comparative_helpers to `ModelCorpus.MINIMAL`
+  - Prevented inconsistent model sets when using `minimal` parameter from different entry points
   - Centralized metric direction logic in `molblender.metrics.get_metric_sort_ascending()`
   - Replaced hardcoded `LOWER_IS_BETTER` sets across CLI, Dashboard, and screening engine
   - Fixed ranking to respect metric direction (MAE/RMSE ascending, R²/accuracy descending)
@@ -81,6 +89,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Preserved necessary architectural abstractions (no breaking changes)
 
 ### Added
+
+- **HPO Selection Unit Modes** (2026-07-10)
+  - Added `hpo_selection_unit` configuration to control HPO candidate selection granularity
+  - "combo" mode: optimize top model-representation pairs from Stage 1 (default)
+  - "representation_existing" mode: select top representations, then optimize Stage 1-evaluated pairs for them
+  - "representation_all_routed" mode: (planned) select top representations, then expand to all compatible models via routing
+  - Added `select_by_representation_for_hpo()` for Stage 1-evaluated expansion
+  - Fixed bug where `representation_existing` mode was never activated due to incorrect conditional after alias mapping
+  - Updated `ScreeningConfig.hpo_selection_unit` and `HPOConfig.selection_unit` fields
+  - Test coverage: `tests/models/api/multimodal/test_hpo_selection_unit.py`
 
 - **Optuna Per-Fold CV Scores** (2026-06-12)
   - Optuna trials now store individual fold scores in `cv_fold_scores` and `split{i}_test_score` keys
