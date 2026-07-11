@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Modality Compatibility Routing Refactor** (2026-07-11)
+  - Consolidated modality-model compatibility to a single rule based on `supported_modalities`; added `VALID_MODALITIES` (`{vector, matrix, image, string, graph}`) as the single source of truth in `screening_engine/base.py`
+  - `is_model_compatible_with_modality()` rejects unknown or empty modality strings with `ValueError` (no silent default-allow)
+  - `list_models()` gained a `data_modality` filter that reuses the shared compatibility helper, replacing the previous in-line implementation
+  - Extracted `resolve_vector_candidate_models(task_type, include_vae)` on the registry; vector handler now delegates auto/comprehensive candidate resolution to it instead of duplicating the VAE-by-family check
+  - `_validate_registry()` now enforces `supported_tasks`, `categories`, `family`, `supported_modalities` (must be in `VALID_MODALITIES`), and `subtypes` (required for `TRADITIONAL_ML`); all violations are reported in a single `ValueError`
+  - Patent terminology aligned with code: removed unsupported "auto mode adaptive selection" claim, clarified default mode may exclude VAE family from vector candidates, switched Table 1 modality labels to Chinese curly quotes
+
+- **Model Family / Subtype Classification** (2026-07-11)
+  - Promoted `family` and `subtypes` to first-class fields on `ModelConfig`; every registered model now declares a `ModelFamily` (TRADITIONAL_ML, FEED_FORWARD_NEURAL_NETWORK, CNN, TRANSFORMER, VAE, GRAPH_NEURAL_NETWORK) and one or more `ModelSubtype` values
+  - Added `get_hpo_group()` helper for HPO grouping by family/subtype; HPO selection unit modes (`combo`, `representation_existing`) operate on this canonical grouping
+
+- **Task Type Compatibility Refinements** (2026-07-10)
+  - `supports_task()` treats CLASSIFICATION as the family base with binary/multiclass as variants via `_CLASSIFICATION_VARIANTS`
+  - Strict user-facing task type policy: only canonical `TaskType` values are accepted at the public API surface
+
+### Added
+- `tests/models/api/screening_engine/test_modality_compatibility.py` (11 cases): registry capability routing, auto/comprehensive vector modes (with optional VAE), unknown/empty modality rejection
+- `tests/models/api/screening_engine/test_list_models_corpus_consistency.py` (7 cases): `list_models` ↔ `filter_by_corpus` result parity across all corpora
+- `tests/models/api/multimodal/test_hpo_group_consistency.py` (10 cases): family/subtype grouping, combo/representation_existing path consistency, alias top-N
+
 ### Fixed
 - **Task Type Compatibility Logic** (2026-07-10)
   - Refined `supports_task()` to treat CLASSIFICATION as family base with binary/multiclass as variants
