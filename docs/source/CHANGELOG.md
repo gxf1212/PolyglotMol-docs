@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- **Registration-order Representation Truncation** (2026-07-14)
+  - Removed `max_string_representations` / `max_matrix_representations` config fields, `_apply_representation_limit` helper, and `modality_handlers/_truncation_helper.py` module. Default string/matrix routes now execute every compatible candidate returned by the registry; explicit `route.representations` continue to execute alone. Modality handlers check explicit route first so an empty default universe no longer invalidates an explicit selection. Matrix default universe is now `spatial/matrix` only (4 candidates: adjacency_matrix, coulomb_matrix, coulomb_matrix_eig, edge_matrix) so UniMol-style coordinates/embeddings are no longer swept into MATRIX_CNN. Renamed `test_representation_truncation.py` → `test_string_matrix_representation_selection.py`.
+
 ### Changed
+- **Atom-sphere Point Cloud Renamed** (2026-07-12)
+  - Renamed `surface_descriptors` (`SurfaceDescriptors`) featurizer to `atom_sphere_point_cloud` (`AtomSpherePointCloud`). The old name implied a Connolly/SAS/SES molecular surface that the implementation never produced — the rows are actually a Fibonacci-sphere point cloud on probe-expanded atomic spheres.
+  - `LEGACY_FEATURIZER_ALIASES` plus a Python class alias keep old configs and `from molblender.representations import SurfaceDescriptors` working; `get_featurizer("surface_descriptors", ...)` returns the new implementation.
+  - Sampling is now a deterministic Fibonacci sphere (no RNG); points are distributed across heavy atoms so the returned array no longer pads with ~90% zero rows.
+  - Auto-embedded 3D conformers are reproducible through a new `random_seed` parameter (RDKit `ETKDG().randomSeed`) without leaking into the global Python/NumPy RNG state on modern RDKit builds.
+
 - **Modality Compatibility Routing Refactor** (2026-07-11)
   - Consolidated modality-model compatibility to a single rule based on `supported_modalities`; added `VALID_MODALITIES` (`{vector, matrix, image, string, graph}`) as the single source of truth in `screening_engine/base.py`
   - `is_model_compatible_with_modality()` rejects unknown or empty modality strings with `ValueError` (no silent default-allow)
