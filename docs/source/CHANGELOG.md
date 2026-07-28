@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Vector Representation Fusion (concat-based)** (2026-07-23)
+  - New `FusionConfig` (`enabled`, `groups`, `strategy="concat"`, `name_prefix`, `include_original`, `max_components`, `max_total_features`, `on_invalid`, `dtype="float32"`) on `universal_screen` produces synthetic 2D vector representations by concatenating dense fingerprints and descriptors. Each fusion row is named `fusion__A__B__hxxxxxxxx` (SHA-256 hash suffix over the ordered component list) so its component order and identity are stable across runs.
+  - The fusion row stores version 2 `representation_config` metadata, including ordered component ranges and replayable quality operations (`replace_non_finite`, initial mask, imputation, scaler, and variance mask). Same-process HPO distinguishes post-quality cache arrays from raw cross-process arrays.
+  - Dashboard wiring recognises fusion rows as `vector_fusion`, parses their component metadata from real SQLite rows, and shows component breakdowns. Generated export scripts call the same core `featurize_fusion_features` reconstruction helper used by production code.
+  - DB resume round-trips `representation_config`; public `universal_screen()` smoke coverage verifies persistence and same-session skip-existing behavior. Small real GridSearchCV and three-trial Optuna workflows verify stage-2 fusion rows and metadata persistence.
+  - Scope remains experimental and explicit: dense 2D vector concatenation only, disabled by default. It does not claim general multimodal or learned fusion. See `Archive/vector_representation_fusion_implementation_plan.md` for implementation evidence and remaining release work.
+
+### Changed
+
+- **HPO parameter rename** (2026-07-21)
+  - Renamed `HPOConfig.selection_strategy` → `selection_scope`, `ScreeningConfig.hpo_selection_strategy` → `hpo_selection_scope`, and all legacy kwarg keys accordingly. The parameter controls which group top-N candidates are selected from ("global", "per_type", "per_subtype"). The old name `selection_strategy` was ambiguous with HPO search algorithm selection.
+
 ### Removed
 - **Registration-order Representation Truncation** (2026-07-14)
   - Removed `max_string_representations` / `max_matrix_representations` config fields, `_apply_representation_limit` helper, and `modality_handlers/_truncation_helper.py` module. Default string/matrix routes now execute every compatible candidate returned by the registry; explicit `route.representations` continue to execute alone. Modality handlers check explicit route first so an empty default universe no longer invalidates an explicit selection. Matrix default universe is now `spatial/matrix` only (4 candidates: adjacency_matrix, coulomb_matrix, coulomb_matrix_eig, edge_matrix) so UniMol-style coordinates/embeddings are no longer swept into MATRIX_CNN. Renamed `test_representation_truncation.py` → `test_string_matrix_representation_selection.py`.
@@ -1189,11 +1202,11 @@ infrastructure/telemetry/
     - `hpo_method='grid'/'random'`: GridSearchCV or RandomizedSearchCV (default: 'grid')
     - `top_n_for_hpo=N`: Number of top Stage 1 performers to optimize (default: 10)
     - `hpo_cv_folds=K`: CV folds for HPO (default: None, uses `cv_folds` or `inner_cv_folds`)
-    - `hpo_selection_strategy='global'/'per_type'/'per_subtype'`: Model selection strategy for HPO (default: 'global')
+    - `hpo_selection_scope='global'/'per_type'/'per_subtype'`: Model selection scope for HPO: which group to pick top-N from (default: 'global')
       - **'global'**: Select top N performers overall across all model types (default behavior)
       - **'per_type'**: Select top N from Traditional ML AND top N from Deep Learning separately
         - Ensures balanced HPO coverage when one model category dominates Stage 1 performance
-        - Example: `hpo_selection_strategy='per_type', top_n_for_hpo=5` → 5 Traditional ML + 5 Deep Learning = 10 total HPO runs
+        - Example: `hpo_selection_scope='per_type', top_n_for_hpo=5` → 5 Traditional ML + 5 Deep Learning = 10 total HPO runs
         - Use case: CNN/VAE/Transformer models receive HPO even if Traditional ML models have higher Stage 1 scores
       - **'per_subtype'**: Select top N from each fine-grained model category (LINEAR, TREE, BOOSTING, VAE, CNN, TRANSFORMER)
         - Most granular option for comprehensive model type coverage across all architectures
@@ -1702,4 +1715,3 @@ infrastructure/telemetry/
     - `search_featurizers()` → `FeaturizerQuery.search()`
   - Updated all tests to use registry/ module instead
   - Impact: Single source of truth, cleaner architecture, less confusion
-

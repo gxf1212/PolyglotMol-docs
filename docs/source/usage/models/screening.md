@@ -660,7 +660,7 @@ results = universal_screen(
     hpo_stage="coarse",        # "coarse" | "fine" | "custom"
     hpo_method="grid",         # "grid" | "random"
     top_n_for_hpo=5,           # Optimize top 5 models
-    hpo_selection_strategy="global",  # "global" | "per_type" | "per_subtype"
+    hpo_selection_scope="global",  # "global" | "per_type" | "per_subtype"
     hpo_cv_folds=3,            # Use 3-fold CV for HPO (faster)
     enable_db_storage=True     # Track all stages in database
 )
@@ -668,7 +668,7 @@ results = universal_screen(
 
 ### HPO Selection Strategies
 
-`hpo_selection_strategy` controls which models are selected for Stage 2 optimization:
+`hpo_selection_scope` controls which models are selected for Stage 2 optimization:
 
 - **`"global"`** (default) - Top N models overall by primary metric
 - **`"per_type"`** - Top N Traditional ML + Top N Deep Learning

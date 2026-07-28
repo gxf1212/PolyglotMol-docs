@@ -705,10 +705,39 @@ class LoSplitter:
 ## Integration with Universal Screening
 
 ```{note}
-Currently, advanced splitting methods (`perimeter`, `molecular_weight`, `mood`, `lead_opt`) are available via the `MolecularDataset.train_test_split()` method and functional API, but not yet fully integrated into `universal_screen`. Full integration planned for future release.
+`perimeter`, `molecular_weight`, `mood`, and `max_dissimilarity` are now available via `universal_screen()` through the `split_strategy` parameter. `lead_opt` is available through the `MolecularDataset` API only.
 ```
 
-**Current Usage:**
+**Current Usage via `universal_screen()`:**
+```python
+from molblender.models import universal_screen
+
+# MOOD split — deployment-aware strategy selection
+results = universal_screen(
+    dataset=dataset,
+    target_column="activity",
+    split_strategy="splito_mood",            # MOOD split
+    splito_deployment_smiles=deployment_smiles,  # Required: known deployment molecules
+    splito_candidate_methods=candidates,     # Optional: custom candidate splitters
+)
+```
+
+**Or use `split_strategy` aliases directly:**
+```python
+# Perimeter
+results = universal_screen(
+    dataset=dataset, target_column="activity",
+    split_strategy="splito_perimeter",
+)
+
+# Molecular weight
+results = universal_screen(
+    dataset=dataset, target_column="activity",
+    split_strategy="splito_molecular_weight",
+)
+```
+
+**Legacy workaround (pre-split then screen):**
 ```python
 from molblender.data import MolecularDataset
 
@@ -724,9 +753,7 @@ from molblender.models import universal_screen
 results = universal_screen(
     dataset=train,  # Train on perimeter split
     target_column="activity",
-    # ... screening parameters
 )
-```
 
 ---
 

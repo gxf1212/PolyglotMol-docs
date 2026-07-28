@@ -97,7 +97,7 @@ results_stage2 = universal_screen(
     dataset=dataset,
     target_column="activity",
     enable_hpo=True,
-    hpo_selection_strategy="global",  # Top 5 overall
+    hpo_selection_scope="global",  # Top 5 overall
     top_n_for_hpo=5,
     hpo_stage="coarse",
     hpo_cv_folds=3,  # Faster HPO with 3-fold CV
@@ -107,30 +107,30 @@ results_stage2 = universal_screen(
 
 ## HPO Configuration Parameters
 
-### Selection Strategy
+### Selection Scope
 
-`hpo_selection_strategy`: `str`, default=`"global"`
+`hpo_selection_scope`: `str`, default=`"global"`
 : How to select models for Stage 2 optimization
 
   - **`"global"`** - Select top N models overall by primary metric (recommended)
     ```python
     # Example: Top 5 models regardless of type
     # Could be: 4 XGBoost + 1 Random Forest
-    top_n_for_hpo=5, hpo_selection_strategy="global"
+    top_n_for_hpo=5, hpo_selection_scope="global"
     ```
 
   - **`"per_type"`** - Select top N Traditional ML + top N Deep Learning
     ```python
     # Example: Top 3 Traditional ML + Top 3 Deep Learning = 6 total
     # Ensures both categories are optimized
-    top_n_for_hpo=3, hpo_selection_strategy="per_type"
+    top_n_for_hpo=3, hpo_selection_scope="per_type"
     ```
 
   - **`"per_subtype"`** - Select top N from each model family
     ```python
     # Example: Top 2 from each subtype (LINEAR, TREE, BOOSTING, etc.)
     # Could result in 2×7 = 14 models optimized
-    top_n_for_hpo=2, hpo_selection_strategy="per_subtype"
+    top_n_for_hpo=2, hpo_selection_scope="per_subtype"
     ```
 
 **Model Subtypes**:
@@ -318,7 +318,7 @@ results_ultrafine = universal_screen(
 
   ```python
   # Select top 3 from each subtype (could be 3×7 = 21 models)
-  hpo_selection_strategy="per_subtype",
+  hpo_selection_scope="per_subtype",
   hpo_models_per_type=3
   ```
 
@@ -355,6 +355,8 @@ universal_screen(
 ```
 
 **Val-Aware HPO**: When using `split_strategy="train_val_test"`, HPO automatically uses the validation set for hyperparameter tuning instead of cross-validation, eliminating optimistic bias from test set contamination.
+
+**Custom Stratification Support**: When `config.stratify` provides custom stratification labels, the HPO pipeline precomputes fold indices from those labels (not raw `y_train`) so fold boundaries match the intended stratification. This applies to both GridSearchCV and Optuna optimizers, and works with group-aware splitters (GroupKFold, LeaveOneGroupOut) via the `groups` parameter. If the precompute fails (e.g., incompatible splitter), a `ValueError` with diagnostic context is raised instead of silently falling back to a different CV path.
 
 ## Parameter Grids
 
@@ -506,7 +508,7 @@ results = universal_screen(
     dataset=dataset,
     target_column="activity",
     enable_hpo=True,
-    hpo_selection_strategy="per_subtype",  # Try different strategy
+    hpo_selection_scope="per_subtype",  # Try different strategy
     db_path="screening_results.db",  # Reuse same database
     session_id="session_xyz_extended"  # New session ID
 )
@@ -574,7 +576,7 @@ results = universal_screen(
     dataset=dataset,
     target_column="activity",
     enable_hpo=True,
-    hpo_selection_strategy="per_subtype",
+    hpo_selection_scope="per_subtype",
     hpo_models_per_type=2,  # Top 2 from each subtype
     hpo_stage="coarse",
     hpo_cv_folds=3
@@ -592,7 +594,7 @@ results = universal_screen(
     dataset=dataset,
     target_column="activity",
     enable_hpo=True,
-    hpo_selection_strategy="per_type",
+    hpo_selection_scope="per_type",
     top_n_for_hpo=5,  # Top 5 Traditional ML + Top 5 DL = 10 total
     hpo_stage="coarse"
 )
