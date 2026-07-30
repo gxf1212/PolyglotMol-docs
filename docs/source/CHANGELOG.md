@@ -138,6 +138,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fixed UMAP optional labels handling to prevent KeyError on label-less datasets
   - Fixed splito_scaffold hardcoded parameters to respect user-specified values
 
+- **Splitting StrategySpec Registry & MultiIndex Label Contract** (2026-07-30)
+  - Introduced `StrategySpec` frozen dataclass registry (`contracts.py`) as single source of truth for splitting strategies, with context-aware `resolve_strategy(name, entry_point)` alias resolution (e.g. "random" maps to `train_test` in `split_dataset` but to `cv_only` in `cross_validate`) and `check_prerequisites()` fail-closed input validation
+  - `DataSplitter` constructor now resolves strategies via `resolve_strategy` instead of hardcoded aliases; `split_dispatch.py` delegates to per-strategy modules through the registry; CV/nested-CV modes share folds via `build_inner_cv_for_outer_fold`
+  - `split_dataset()` MultiIndex label extraction: `label_col` as string routes through `get_labels(include_errors=False)` which auto-selects the "value" sub-column in standard `("target","value")+("target","error")` layouts, producing a correct 1D y; full MultiIndex tuples (e.g. `("task1","a")`) are accepted and read directly from `dataset.labels`
+  - Fail-closed guards: non-existent `label_col` raises with available column names; user-provided `smiles` kwarg is explicitly rejected (indices must align with dataset molecules); non-standard MultiIndex without a "value" sub-column raises "resolves to N columns"; DNR strategy rejects full MultiIndex tuples at preflight with a clear hint to use a top-level name
+  - `optuna_optimizer.py` forwards `apply_phase2_transformer` to the GridSearchCV fallback; test mock no longer swallows unknown kwargs
+  - New test suite `test_public_entrypoints.py` (54 cases) covers facade contracts, MultiIndex standard/non-standard convention (capturing y and asserting 1D correctness), DNR + tuple rejection, and val_size compatibility; `test_grouped_nested_cv.py` adds Optuna→GridSearch fallback forwarding tests
+
 ### Changed
 - **Expanded Fine/Ultrafine HPO Grids** (2026-06-12)
   - Ridge ultrafine: expanded alpha range (1e-6 to 1e7), added `tol`, `max_iter`, `sparse_cg` solver
