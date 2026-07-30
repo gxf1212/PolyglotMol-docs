@@ -58,6 +58,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Registration-order Representation Truncation** (2026-07-14)
   - Removed `max_string_representations` / `max_matrix_representations` config fields, `_apply_representation_limit` helper, and `modality_handlers/_truncation_helper.py` module. Default string/matrix routes now execute every compatible candidate returned by the registry; explicit `route.representations` continue to execute alone. Modality handlers check explicit route first so an empty default universe no longer invalidates an explicit selection. Matrix default universe is now `spatial/matrix` only (4 candidates: adjacency_matrix, coulomb_matrix, coulomb_matrix_eig, edge_matrix) so UniMol-style coordinates/embeddings are no longer swept into MATRIX_CNN. Renamed `test_representation_truncation.py` → `test_string_matrix_representation_selection.py`.
 
+### Fixed
+- **`calculate_r2_score` sklearn `force_finite=True` parity** (`metrics/core.py`): constant target + perfect prediction → 1.0 (was 0.0), constant + imperfect → 0.0. Single-sample input (`size < 2`) → 0.0 (sklearn returns NaN + warning). NaN/inf divergence documented as intentional robustness choice.
+- **`calculate_r2` emits `DeprecationWarning`** (`metrics/core.py`): alias now calls `warnings.warn(DeprecationWarning, stacklevel=2)` pointing to `calculate_pearson_r2` / `calculate_r2_score`.
+- **`calculate_pearson_correlation` / `calculate_pearson_r` constant-input guard** (`metrics/core.py`): check `np.std == 0` before `np.corrcoef` → 0.0, no `RuntimeWarning`.
+- **`calculate_kendall_tau` constant-input guard** (`metrics/core.py`): NaN → 0.0, `ConstantInputWarning` no longer propagates.
+- **`statistical_significance_test` t-test NaN propagation** (`metrics/validation.py`): identical constant groups → returns `statistic=None, p_value=None, significant=False` (was NaN).
+- **Dashboard fallback metrics delegated to `molblender.metrics.core`** (`dashboard/metrics/calculations/regression_metrics.py`, `dashboard/metrics/validators.py`): removed duplicate self-computation with `ss_tot + 1e-10` epsilon producing wildly negative values on constant targets. Both `basic_regression_metrics` and `_basic_regression_metrics` now delegate to `calculate_comprehensive_metrics`.
+- **Dashboard import missing `calculate_r2_score`** (`dashboard/data/metrics.py`): added to import list; `except Exception: pass` was swallowing `NameError` and returning `{}`.
+- **`data_handler.py` DNR docstring** (`screening_engine/data_handler.py`): corrected claim that `label_col` is inferred from `y` — code reads `self._target_column` only, no inference.
+- **`metrics_semantics.md` stale TODOs §7 removed** (`docs/source/development/metrics_semantics.md`): removed §7 (calculate_r2, catalog, compatibility split — all done). Updated §4.1/4.2 with single-sample divergence and constant-target parity docs. Updated §5 test-reference to `test_core.py`.
+
 ### Changed
 - **Atom-sphere Point Cloud Renamed** (2026-07-12)
   - Renamed `surface_descriptors` (`SurfaceDescriptors`) featurizer to `atom_sphere_point_cloud` (`AtomSpherePointCloud`). The old name implied a Connolly/SAS/SES molecular surface that the implementation never produced — the rows are actually a Fibonacci-sphere point cloud on probe-expanded atomic spheres.
@@ -446,6 +457,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fixed bandit B307 security issue: replaced eval() with ast.literal_eval()
   - Updated test imports from old registry_* paths to new registry/ module paths
   - Impact: All lint checks passing, improved type safety, better security
+
+- **Session Merge Core — shared fail-closed merge primitives** (2026-07-30)
+  - Extracted `session_merge_core.py` (no DB dependencies) with shared
+    `merge_resolved_session_payload()` and `validate_session_metadata_compatibility()`
+    used by both explicit ``merge_all_sessions(db_path, session_ids=...)`` and the
+    default ``get_all_database_results_record()`` all-DB aggregation path — the two
+    callers now honour the same validation, metric-resolution and score-filtering
+    rules instead of the default path silently bypassing all of them.
+  - ``merge_resolved_session_payload()`` now validates every result row is a dict
+    (previously only checked that the payload is a dict and that ``results`` is a list).
+    Non-dict rows raise ``SessionMergeError`` carrying the session_id and row index,
+    instead of the outer broad ``except Exception`` in ``merge_all_sessions()``
+    swallowing the ``AttributeError`` into a ``None`` return that is indistinguishable
+    from "no sessions at all".
+  - ``validate_session_metadata_compatibility()`` now uses canonical
+    ``_canonical_metric_name()`` (strip + lowercase) for cross-session metric
+    comparison so ``"MAE"`` / ``" mae "`` / ``"mae"`` are not spuriously rejected;
+    the error message preserves the original raw values so operators see what
+    actually arrived.  The multi-session missing-metric rejection is fixed-closed
+    for all primary_metric values (including ``None`` and ``""``), not only for
+    present strings — one session with ``mae`` and another with ``None`` now raises
+    rather than silently defaulting.  The task_type check fires before the metric
+    check and its error message surfaces ``None`` for missing values instead of
+    hiding them behind a single-value set.
+  - Empty result sets (session exists, zero rows) return a standard empty payload
+    with ``model_results=[]`` and ``best_model.model_name="Unknown"``; ``None`` is
+    reserved for "no sessions at all" or a real read failure, matching the explicit
+    path contract so callers never need to branch on which route was taken.
+  - Ten new tests (``test_session_merge_malformed_payload.py``,
+    ``test_session_merge_row_shape_and_canonical_metric.py``, plus additions to the
+    default-path, invalid-scores and strict-metadata suites) cover: non-dict payload,
+    non-list results, per-row None/str/int rejection with row position, default-path
+    ``get_session_results`` returning a junk row, case/whitespace-correct metric
+    comparison (``"MAE"`` vs ``"mae"``, ``" mae "`` vs ``"mae"``, uppercase session
+    value), two sessions with mixed ``"MAE"``/``"mae"``/``" mae "``, mixed
+    ``mae``/``None`` in loose mode, ``mae``/``""`` in loose mode, different
+    ``task_type`` with identical metric, and missing-vs-present ``task_type`` error
+    text including ``None``.
 
 ### Removed
 
