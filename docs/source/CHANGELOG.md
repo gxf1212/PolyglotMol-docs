@@ -55,10 +55,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Renamed `HPOConfig.selection_strategy` → `selection_scope`, `ScreeningConfig.hpo_selection_strategy` → `hpo_selection_scope`, and all legacy kwarg keys accordingly. The parameter controls which group top-N candidates are selected from ("global", "per_type", "per_subtype"). The old name `selection_strategy` was ambiguous with HPO search algorithm selection.
 
 ### Removed
+- **Dead-code facades removed** (2026-07-30)
+  - Deleted `models/api/core/` (8 files) — entire deprecated compatibility facade tree. Real implementations live in `models/api/screening_engine/`. Legacy facade contract tests verify the old paths are now unimportable (intentional, prevents regression).
+  - Deleted `dashboard/data/calculations.py` (91 lines) — re-export of `metrics.core`. All callers now import directly from `molblender.metrics.core`.
+  - Deleted `data/dataset/splitting/{butina,diversity,dnr,feature_clustering,scaffold,umap_clustering}.py` (6 files) — one-liner re-exports forwarding to `strategies/*`. All callers use the canonical strategy modules.
+  - Deleted `models/api/compatibility.py` (already done in prior commit) — re-export of `legacy_parameters.py`.
+  - Deleted `screening_engine/models/compatibility.py` (already done in prior commit) — split re-export of `eligibility.py` + `corpus_filter.py`.
 - **Registration-order Representation Truncation** (2026-07-14)
   - Removed `max_string_representations` / `max_matrix_representations` config fields, `_apply_representation_limit` helper, and `modality_handlers/_truncation_helper.py` module. Default string/matrix routes now execute every compatible candidate returned by the registry; explicit `route.representations` continue to execute alone. Modality handlers check explicit route first so an empty default universe no longer invalidates an explicit selection. Matrix default universe is now `spatial/matrix` only (4 candidates: adjacency_matrix, coulomb_matrix, coulomb_matrix_eig, edge_matrix) so UniMol-style coordinates/embeddings are no longer swept into MATRIX_CNN. Renamed `test_representation_truncation.py` → `test_string_matrix_representation_selection.py`.
 
 ### Fixed
+- **GPU cleanup `AttributeError` silently skipped** (`evaluation/utilities.py`): `cleanup_model_memory()` caught `NameError` from missing `get_gpu_manager` in a broad `except Exception`, skipping torch cache clear and gc. Each cleanup step now has its own narrow try/except block.
+- **GPUManager missing `is_available`/`clear_memory` interface** (`utils/gpu/manager.py`): `utilities.py` called `gpu_manager.is_available()` on a `GPUManager` that had no such method, triggering `AttributeError` swallowed by the broad except. Added both methods.
+- **`get_free_memory_mb` used process-local torch reserved memory** (`utils/gpu/manager.py`): fallback to `torch.cuda.memory_reserved()` reflected only the current process's PyTorch allocations, not real global free memory. Now uses NVML exclusively; returns `None` when unavailable so callers never mistake stale data for real free memory.
+
+### Changed
+- **GPU management consolidated into `utils/gpu/`** (2026-07-30): previously scattered across `utils/gpu/`, `utils/gpu_manager.py`, `utils/gpu_helpers.py`, `screening_engine/evaluation/gpu_manager.py`. Unified implementation lives in `utils/gpu/` with `GPUManager` exposing `is_available()`, `clear_memory()`, `get_free_memory_mb()` (NVML strict). `screening_engine/evaluation/gpu_manager.py` is now a backward-compatible shim with `DeprecationWarning`.
+- **Device selection distinguishes CUDA/MPS/CPU** (`utils/gpu/utils.py`): `auto_select_device()` and `suggest_device()` return `"cuda"`, `"mps"`, or `"cpu"` instead of the old `"gpu"/"cpu"` binary. MPS no longer treated as CUDA. Memory thresholds only apply to CUDA devices.
+- **`auto_select_device` is now a pure function** (`utils/gpu/utils.py`): no longer mutates `os.environ`. Added `build_subprocess_env(device, gpu_id)` for subprocess workers that need `CUDA_VISIBLE_DEVICES` set.
+- **`check_gpu_available` strict mode** (`utils/gpu/utils.py`): returns `False` when NVML cannot determine real free memory (was `True` with an optimistic "assuming OK" message). Callers must explicitly opt in if they want to proceed without NVML.
 - **`calculate_r2_score` sklearn `force_finite=True` parity** (`metrics/core.py`): constant target + perfect prediction → 1.0 (was 0.0), constant + imperfect → 0.0. Single-sample input (`size < 2`) → 0.0 (sklearn returns NaN + warning). NaN/inf divergence documented as intentional robustness choice.
 - **`calculate_r2` emits `DeprecationWarning`** (`metrics/core.py`): alias now calls `warnings.warn(DeprecationWarning, stacklevel=2)` pointing to `calculate_pearson_r2` / `calculate_r2_score`.
 - **`calculate_pearson_correlation` / `calculate_pearson_r` constant-input guard** (`metrics/core.py`): check `np.std == 0` before `np.corrcoef` → 0.0, no `RuntimeWarning`.
