@@ -146,6 +146,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `optuna_optimizer.py` forwards `apply_phase2_transformer` to the GridSearchCV fallback; test mock no longer swallows unknown kwargs
   - New test suite `test_public_entrypoints.py` (54 cases) covers facade contracts, MultiIndex standard/non-standard convention (capturing y and asserting 1D correctness), DNR + tuple rejection, and val_size compatibility; `test_grouped_nested_cv.py` adds Optuna→GridSearch fallback forwarding tests
 
+- **Dashboard session metadata validation & metric-aware sorting** (2026-07-30)
+  - New `validate_session_metadata_compatibility(require_complete)` in `session_merger.py`: strict mode rejects sessions with mixed `task_type` / `primary_metric` or missing metadata before cross-session comparison
+  - Dashboard `load_sqlite_results` now calls validator with `require_complete=True` for multi-session loads; catches `SessionMergeError` and displays via `st.error`
+  - `results_aggregation._sort_results_by_metric` uses `is_higher_better()` so MAE/RMSE sort ascending (best-first), replacing SQL `ORDER BY DESC` which only works for higher-better metrics
+  - `_df_index` positional fix in `selectors.py` (now stores `np.arange(len(df_subset))` instead of `df_subset.index`) and `selection.py` (validates `0 <= df_index < len(df)` before `df.iloc`) to fix wrong-row lookup on filtered DataFrames
+  - Removed `dashboard/data/legacy.py` and legacy re-exports from `__init__.py`
+  - New tests: `test_load_sqlite_results_mixed_metadata.py`, `test_load_sqlite_results_single_session.py`, `test_load_sqlite_results_connection.py`, `test_load_result_rows_sort_edge_cases.py`, `test_metrics_ground_truth_isolation.py`
+
+- **Aggregation metric direction & SessionMergeError** (2026-07-30)
+  - New `database/exceptions.py` defines `SessionMergeError` (ValueError subclass) shared between `aggregation.py` and `session_merger.py` to avoid circular imports
+  - `aggregation.get_all_database_results_record` now detects mixed `task_type` / `primary_metric` across sessions and raises `SessionMergeError` with the exact mismatched sets, logging the warning (fail-closed)
+  - `best_score` / `worst_score` now respect metric direction (higher_better: best=max/worst=min; lower_better: best=min/worst=max) using local variables instead of the brittle `combined_stats` dict
+  - `session_merger.merge_all_sessions` with explicit `session_ids` now sorts results by metric-aware direction before selecting `best_model`, making it equivalent to the default (no `session_ids`) aggregation path
+  - `optuna_optimizer.py` forwards `apply_phase2_transformer` to the GridSearchCV fallback
+
+- **Drawings module reorganization** (2026-07-30)
+  - Removed deprecated `drawings/multimodal/` (4 files), `drawings/plot_utils.py`, `drawings/graph.py`
+  - Updated `drawings/__init__.py` imports and added `plot_screening_results`; updated `drawings/CLAUDE.md`
+  - Removed `representations/sequential/language_model/bert_models.py` (re-export wrapper); `__init__.py` now imports directly from `.bert`
+
 ### Changed
 - **Expanded Fine/Ultrafine HPO Grids** (2026-06-12)
   - Ridge ultrafine: expanded alpha range (1e-6 to 1e7), added `tol`, `max_iter`, `sparse_cg` solver
