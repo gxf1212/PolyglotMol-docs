@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Phase 3 persistence layer extraction** (`api/persistence/`, `multimodal/processors/hpo/processor.py`, `screening/standard.py`) (2026-08-12)
+  - HPO/session/resume SQL 收口到 `hpo_ops.py`、`result_queries.py`、`stage1_ops.py`、`dataset_info_reads.py`；processor 通过 `_check_and_load_resume()` 调用，不再读取 `param_generator`
+  - Grid resume 明确 `GridResumable` 协议，非 Grid/旧 mock 不伪造 `n_trials_completed`
+  - Standard `_DBManagerShim` 迁移到调用 persistence 层，66 文件重构
+
+- **P0: Universal SelectionOutcome 直传 ResultProcessor** (`multimodal/screening_postprocess.py`, `screeners.py`) (2026-08-12)
+  - 禁止 postprocess 二次选优；`format_multimodal_results()` 接收 `SelectionOutcome` 确保 CV/HPO-only selection 执行
+
+- **P1: Session SQL 统一走 persistence** (`api/persistence/session_write.py`) (2026-08-12)
+  - `create_session()`/`get_session_summary()` 统一走 `db._get_connection()`，兼容 facade 保留
+
+- **Mypy compliance** (`config/`, `models/api/`, `data/dataset/`) (2026-08-12)
+  - 类型标注：`_method_cache`、`suggested`、`all_results`；返回类型兼容性；SQLite set→list；`CalledProcessError` 修复
+
+
+
+
 - **ScreeningRun callback hooks architecture** (`screening_runtime/contracts.py`, `screening_runtime/stage1.py`, `screening_runtime/run.py`, `screening/standard.py`, `multimodal/screeners.py`, `test_contracts.py`) (2026-08-11)
   - `ScreeningCallbacks(on_repr_complete, on_stage1_complete)`：生命周期钩子，支持 per-representation DB 持久化和 Stage-1 完成后的 HPO 增强或 DB 回退加载
   - `ScreeningRunRequest.callbacks`：通过 `ScreeningCallbacks` 传递运行时扩展点，`ScreeningRun.run()` 内部转换为 `Stage1Hooks`
