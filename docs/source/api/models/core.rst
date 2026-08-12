@@ -1,14 +1,15 @@
-Core Types
-==========
+Screening Engine
+================
 
-Core classes and types used throughout the models module.
+Internal screening-engine classes and types. User workflows should use
+``molblender.api`` or ``molblender.models`` instead.
 
-.. currentmodule:: molblender.models.api.core
+.. currentmodule:: molblender.models.api.screening_engine
 
 Base Classes
 ------------
 
-.. automodule:: molblender.models.api.core.base
+.. automodule:: molblender.models.api.screening_engine.base
    :members:
    :undoc-members:
    :show-inheritance:
@@ -16,7 +17,7 @@ Base Classes
 Data Handling
 -------------
 
-.. automodule:: molblender.models.api.core.data_handler
+.. automodule:: molblender.models.api.screening_engine.data_handler
    :members:
    :undoc-members:
    :show-inheritance:
@@ -24,7 +25,7 @@ Data Handling
 Model Registry
 --------------
 
-.. automodule:: molblender.models.api.core.model_registry
+.. automodule:: molblender.models.api.screening_engine.model_registry
    :members:
    :undoc-members:
    :show-inheritance:
@@ -32,7 +33,7 @@ Model Registry
 Result Processing
 -----------------
 
-.. automodule:: molblender.models.api.core.result_processor
+.. automodule:: molblender.models.api.screening_engine.result_processor
    :members:
    :undoc-members:
    :show-inheritance:
@@ -40,7 +41,7 @@ Result Processing
 Metrics
 -------
 
-.. automodule:: molblender.models.api.core.metrics
+.. automodule:: molblender.models.api.screening_engine.evaluation.metrics
    :members:
    :undoc-members:
    :show-inheritance:
@@ -48,7 +49,7 @@ Metrics
 Evaluation
 ----------
 
-.. automodule:: molblender.models.api.core.evaluation
+.. automodule:: molblender.models.api.screening_engine.evaluation
    :members:
    :undoc-members:
    :show-inheritance:

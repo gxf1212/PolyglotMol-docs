@@ -38,7 +38,7 @@ MolBlender now exposes package-role metadata directly in code. The main roles ar
 | `molblender.drawings` | Static plotting utilities | Supported |
 | `molblender.dashboard` | Interactive dashboard UI | Supported |
 | `molblender.data.diagnostics.dashboard` | Interactive diagnostics dashboard | Specialized |
-| `molblender.models.api.core` | Screening engine core | Internal |
+| `molblender.models.api.screening_engine` | Screening engine core | Internal |
 | `molblender.models.api.infrastructure` | Screening runtime infrastructure | Internal |
 | `molblender.representations.utils` | Generic batching/caching helpers | Supported |
 | `molblender.models.execution` | Legacy model execution | Compatibility |
@@ -327,7 +327,7 @@ For user-facing code, prefer:
 - `molblender.drawings` for static figures
 - `molblender.dashboard` for interactive result exploration
 
-Avoid using internal packages such as `molblender.models.api.core` or `molblender.models.api.infrastructure` unless you are extending MolBlender itself.
+Avoid using internal packages such as `molblender.models.api.screening_engine` or `molblender.models.api.infrastructure` unless you are extending MolBlender itself.
 
 ## Design Patterns
 

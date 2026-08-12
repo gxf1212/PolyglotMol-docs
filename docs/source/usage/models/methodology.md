@@ -41,24 +41,27 @@ random_state: int = 42       # Random seed for reproducibility
 
 #### Implementation Details
 
-**Code Location**: `src/molblender/models/api/core/data_handler.py:120-125`
+**Code Location**: `src/molblender/models/api/screening_engine/data_handler.py`
 
 ```python
-def split_data(self, X: np.ndarray, y: np.ndarray):
-    """Split data into training and test sets."""
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y,
-        test_size=self.config.test_size,        # Default: 0.2 (20%)
-        random_state=self.config.random_state,  # Default: 42
-        shuffle=True                            # Shuffle before splitting
+def split_data(self, X: np.ndarray, y: np.ndarray, stratify=None):
+    splitter = DataSplitter(
+        strategy=self.config.split_strategy,
+        test_size=self.config.test_size,
+        cv_folds=self.config.cv_folds,
+        random_state=self.config.random_state,
+        # strategy-specific options are forwarded from ScreeningConfig
     )
-    return {
-        'X_train': X_train,  # 80% of data
-        'X_test': X_test,    # 20% of data
-        'y_train': y_train,
-        'y_test': y_test
-    }
+    return splitter.split(
+        X=X, y=y, dataset=self.dataset, smiles=self.smiles_list,
+        is_classification=is_classification_task(self.config.task_type),
+        stratify=stratify,
+    )
 ```
+
+The configured strategy, rather than this method, determines whether the
+result is a holdout split, a CV-only split, nested CV, or a chemistry-aware
+split. The returned keys therefore depend on that strategy.
 
 #### Numerical Example
 
@@ -116,46 +119,30 @@ Cross-validation is performed **only on the training set** to estimate model per
 
 #### Implementation Details
 
-**Code Location**: `src/molblender/models/api/core/evaluation/evaluator.py:285-327`
+**Code Location**: `src/molblender/models/api/screening_engine/evaluation/cross_validation.py`
 
 ```python
-def _cross_validate(self, model: Any, X: np.ndarray, y: np.ndarray):
-    """Perform cross-validation with fixed random_state for reproducibility."""
-
-    cv_folds = self.config.cv_folds  # Default: 5
-
-    # Create KFold object with fixed random_state for reproducibility
-    if self.config.task_type in [TaskType.CLASSIFICATION, ...]:
-        # Use StratifiedKFold for classification to maintain class balance
-        cv_splitter = StratifiedKFold(
-            n_splits=cv_folds,
-            shuffle=True,
-            random_state=self.config.random_state  # Fixed: 42
-        )
-    else:
-        # Use KFold for regression
-        cv_splitter = KFold(
-            n_splits=cv_folds,
-            shuffle=True,
-            random_state=self.config.random_state  # Fixed: 42
-        )
-
-    # Perform cross-validation with fixed splitting
-    cv_scores = cross_val_score(
-        model, X, y,                              # X, y are TRAINING data only
-        cv=cv_splitter,                           # Use splitter object with fixed random_state
-        scoring=scoring,                          # e.g., 'r2' for regression
-        n_jobs=self.config.max_workers_per_model  # Parallel execution
+def perform_cross_validation(model, X, y, config, model_requires_scaling=False):
+    cv_splitter = create_cv_splitter(
+        task_type=config.task_type,
+        cv_folds=config.cv_folds,
+        random_state=config.random_state,
+        stratify_labels=config.stratify,
     )
-
-    return cv_scores  # Returns [score1, score2, score3, score4, score5]
+    # The implementation validates feasible fold counts and wraps scaling in
+    # the per-fold pipeline when required, preventing preprocessing leakage.
+    return cross_val_score(
+        maybe_wrap_in_scaling_pipeline(model, model_requires_scaling),
+        X, y, cv=cv_splitter,
+        scoring=get_sklearn_scoring(config.task_type, config.primary_metric),
+    )
 ```
 
-**Cross-Validation Call**: `evaluator.py:139`
+**Cross-Validation Call**: `evaluator.py` calls `perform_cross_validation()`
 
 ```python
 # Called during model evaluation
-cv_scores = self._cross_validate(model, X_train, y_train)
+cv_scores = perform_cross_validation(model, X_train, y_train, config)
 ```
 
 #### How sklearn Splits the Data
@@ -213,7 +200,7 @@ MolBlender now uses `KFold(random_state=42)` for cross-validation, ensuring **co
 
 After cross-validation, the model is trained on the **entire training set** to maximize performance.
 
-**Code Location**: `models/api/core/evaluation/evaluator.py`
+**Code Location**: `models/api/screening_engine/evaluation/evaluator.py`
 
 ```python
 # Train final model using ALL training data

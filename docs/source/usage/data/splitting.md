@@ -104,7 +104,7 @@ train_test_split(test_size=0.2, random_state=42)
 
 #### Implementation Details
 
-**Code Location**: `src/molblender/models/api/core/splitting/strategies.py:26-84`
+**Code Location**: `src/molblender/data/dataset/splitting/strategy_core.py`
 
 ```python
 def split_train_test(
@@ -215,7 +215,7 @@ results = universal_screen(
 
 #### Implementation
 
-**Code Location**: `splitting/strategies.py:86-169`
+**Code Location**: `data/dataset/splitting/strategy_core.py`
 
 ```python
 def split_train_val_test(
@@ -309,7 +309,7 @@ Outer CV (5 folds) - for performance estimation
 
 #### Implementation
 
-**Code Location**: `splitting/strategies.py:215-284`
+**Code Location**: `data/dataset/splitting/strategy_core.py`
 
 ```python
 def get_nested_cv_splitter(
@@ -582,7 +582,7 @@ print(f"Scaffold overlap: {len(overlap)} scaffolds")  # Should be 0
 
 #### Implementation Details
 
-**Code Location**: `src/molblender/models/api/core/splitting/scaffold.py`
+**Code Location**: `src/molblender/data/dataset/splitting/strategies/scaffold.py`
 
 ```python
 def scaffold_split(
@@ -742,7 +742,7 @@ print(f"Smallest cluster: {cluster_info['smallest_cluster_size']} molecules")
 
 #### Implementation Details
 
-**Code Location**: `src/molblender/models/api/core/splitting/butina.py`
+**Code Location**: `src/molblender/data/dataset/splitting/strategies/butina.py`
 
 ```python
 def butina_split(
@@ -1146,7 +1146,7 @@ MolBlender automatically adjusts cross-validation based on dataset size and task
 
 #### Automatic Fold Adjustment
 
-**Code Location**: `evaluation/evaluator.py:288-299`
+**Code Location**: `models/api/screening_engine/evaluation/evaluator.py`
 
 ```python
 def _cross_validate(self, model, X, y):
@@ -1170,7 +1170,7 @@ def _cross_validate(self, model, X, y):
 
 #### Classification vs Regression
 
-**Code Location**: `evaluation/evaluator.py:302-315`
+**Code Location**: `models/api/screening_engine/evaluation/evaluator.py`
 
 ```python
 # Create CV splitter based on task type
@@ -1256,7 +1256,7 @@ How much data do you have?
 
 All splitting strategies use fixed random seeds by default to ensure reproducibility.
 
-**Code Location**: `models/api/core/base.py:215-217`
+**Code Location**: `models/api/screening_engine/base.py`
 
 ```python
 @dataclass

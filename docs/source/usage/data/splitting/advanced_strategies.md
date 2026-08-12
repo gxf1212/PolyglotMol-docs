@@ -168,7 +168,7 @@ results = universal_screen(
 
 ### Implementation Details
 
-**Code Location**: `src/molblender/data/dataset/splitting/advanced.py`
+**Code Location**: `src/molblender/data/dataset/splitting/advanced/core.py`
 
 ```python
 class PerimeterSplit:
@@ -305,7 +305,7 @@ train, test = dataset.train_test_split(
 
 ### Implementation Details
 
-**Code Location**: `src/molblender/data/dataset/splitting/advanced.py`
+**Code Location**: `src/molblender/data/dataset/splitting/advanced/core.py`
 
 ```python
 class MolecularWeightSplit:
@@ -452,7 +452,7 @@ train, test = dataset.train_test_split(
 
 ### Implementation Details
 
-**Code Location**: `src/molblender/data/dataset/splitting/advanced.py`
+**Code Location**: `src/molblender/data/dataset/splitting/advanced/selection.py`
 
 ```python
 class MOODSplitter:
@@ -660,7 +660,7 @@ This validates whether a model can successfully:
 
 ### Implementation Details
 
-**Code Location**: `src/molblender/data/dataset/splitting/advanced.py`
+**Code Location**: `src/molblender/data/dataset/splitting/advanced/selection.py`
 
 ```python
 class LoSplitter:

@@ -270,7 +270,8 @@ repeats are suppressed.
 : HPO granularity level
   - `"coarse"` - Fast grid search (3-5 values per parameter)
   - `"fine"` - Detailed grid search (5-10 values per parameter)
-  - `"custom"` - User-defined grid from parameter_grids.py
+  - `"customized"` - User-defined `custom_param_grids`; this stage is
+    selected automatically when custom grids are supplied
 
 `hpo_method`: `str`, default=`"grid"`
 : Search algorithm for hyperparameter optimization

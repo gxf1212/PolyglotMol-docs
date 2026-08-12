@@ -167,7 +167,8 @@ results_stage2 = universal_screen(
     - Use after identifying promising models with coarse search
 
   - **`"custom"`** - User-defined grids (advanced)
-    - Edit `src/molblender/models/api/core/hpo/parameter_grids.py`
+    - Edit the active parameter-grid implementation under
+      `src/molblender/models/api/screening_engine/hpo/`
     - Full control over parameter ranges
 
 ### Search Method
@@ -438,16 +439,14 @@ MolBlender provides pre-defined parameter grids for all supported models. Grids 
 
 ### Custom Parameter Grids
 
-To define custom grids, edit:
-```
-src/molblender/models/api/core/hpo/parameter_grids.py
-```
+Pass custom grids through ``ScreeningConfig.custom_param_grids`` (or the
+equivalent ``universal_screen`` argument). The library does not load a user-
+editable ``parameter_grids.py`` file.
 
-Example custom grid:
+Example:
 
 ```python
-# In parameter_grids.py
-CUSTOM_GRIDS = {
+custom_param_grids = {
     'random_forest': {
         'n_estimators': [100, 200, 500],
         'max_depth': [5, 10, 15, 20, None],
@@ -462,7 +461,8 @@ results = universal_screen(
     dataset=dataset,
     target_column="activity",
     enable_hpo=True,
-    hpo_stage="custom"  # Uses CUSTOM_GRIDS
+    hpo_stage="customized",
+    custom_param_grids=custom_param_grids,
 )
 ```
 

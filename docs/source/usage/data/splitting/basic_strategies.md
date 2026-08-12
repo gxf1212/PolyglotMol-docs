@@ -78,7 +78,7 @@ train_test_split(test_size=0.2, random_state=42)
 
 ### Implementation Details
 
-**Code Location**: `src/molblender/models/api/core/splitting/strategies.py:26-84`
+**Code Location**: `src/molblender/data/dataset/splitting/strategy_core.py`
 
 ```python
 def split_train_test(
@@ -206,7 +206,7 @@ First split: (train+val) vs test
 
 ### Implementation Details
 
-**Code Location**: `splitting/strategies.py:86-169`
+**Code Location**: `data/dataset/splitting/strategy_core.py`
 
 ```python
 def split_train_val_test(
@@ -348,7 +348,7 @@ Outer CV (5 folds) - for performance estimation
 
 ### Implementation Details
 
-**Code Location**: `splitting/strategies.py:215-284`
+**Code Location**: `data/dataset/splitting/strategy_core.py`
 
 ```python
 def get_nested_cv_splitter(
@@ -506,7 +506,7 @@ print(f"CV R² (std): {results['best_model']['cv_r2_std']:.3f}")
 
 MolBlender automatically adjusts cross-validation folds based on dataset size.
 
-**Code Location**: `evaluation/evaluator.py:288-299`
+**Code Location**: `models/api/screening_engine/evaluation/evaluator.py`
 
 ```python
 def _cross_validate(self, model, X, y):
@@ -529,7 +529,7 @@ def _cross_validate(self, model, X, y):
 
 ### Classification vs Regression
 
-**Code Location**: `evaluation/evaluator.py:302-315`
+**Code Location**: `models/api/screening_engine/evaluation/evaluator.py`
 
 ```python
 # Create CV splitter based on task type

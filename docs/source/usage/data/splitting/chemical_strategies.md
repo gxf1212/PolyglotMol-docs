@@ -182,7 +182,7 @@ print(f"Scaffold overlap: {len(overlap)} scaffolds")  # Should be 0
 
 ### Implementation Details
 
-**Code Location**: `src/molblender/models/api/core/splitting/scaffold.py`
+**Code Location**: `src/molblender/data/dataset/splitting/strategies/scaffold.py`
 
 ```python
 def scaffold_split(
@@ -334,7 +334,7 @@ print(f"Largest cluster: {cluster_info['largest_cluster_size']} molecules")
 
 ### Implementation Details
 
-**Code Location**: `src/molblender/models/api/core/splitting/butina.py`
+**Code Location**: `src/molblender/data/dataset/splitting/strategies/butina.py`
 
 ```python
 def butina_split(
@@ -531,7 +531,7 @@ print(f"Feature source: {info['feature_source']}")
 
 ### Implementation Details
 
-**Code Location**: `src/molblender/models/api/core/splitting/feature_clustering.py`
+**Code Location**: `src/molblender/data/dataset/splitting/strategies/feature_clustering.py`
 
 ```python
 def feature_clustering_split(

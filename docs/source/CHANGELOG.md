@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **ScreeningRun callback hooks architecture** (`screening_runtime/contracts.py`, `screening_runtime/stage1.py`, `screening_runtime/run.py`, `screening/standard.py`, `multimodal/screeners.py`, `test_contracts.py`) (2026-08-11)
+  - `ScreeningCallbacks(on_repr_complete, on_stage1_complete)`：生命周期钩子，支持 per-representation DB 持久化和 Stage-1 完成后的 HPO 增强或 DB 回退加载
+  - `ScreeningRunRequest.callbacks`：通过 `ScreeningCallbacks` 传递运行时扩展点，`ScreeningRun.run()` 内部转换为 `Stage1Hooks`
+  - `Stage1Hooks.on_stage1_complete`：接收 mutable `Stage1Result`，允许调用方 in-place 修改 `all_results`（注入 HPO 结果或 DB 回退数据）
+  - `execute_stage1(incomparable_split=False)`：支持调用方传入不可比较 split 种子，OR 语义合并内部失败标志
+  - `ScreeningOutcome.split_plan`：携带运行最终使用的 split plan（immutable run fact），Standard session 持久化从此字段读取
+  - StandardScreener 通过 `ScreeningCallbacks` 注入 per-representation DB 持久化和 HPO 逻辑，而非在 runtime 内部硬编码
+  - UniversalScreener route 编排保持不变，仍通过 `ScreeningDatabaseManager` 负责 SQLite 操作
+  - `screening_runtime/CLAUDE.md` 新建：明确共享执行原语定位、与 multimodal 的边界、职责清晰划分
+  - `screening_engine/hpo/CLAUDE.md` 更新：补充 `translate_optimization_result()` 结果翻译层职责说明
+
+- **Phase 1.1 HPO typed contract补全** (`screening_engine/hpo/`, `multimodal/processors/hpo/processor.py`, `test_hpo_contract_completeness.py`) (2026-08-11)
+  - `HPOBackend` 协议方法从 `optimize_model(request)` 改为 `optimize(request)` — 协议声明、Grid/Optuna 实现、processor 调用点三者签名一致
+  - `OptimizationRequest` 新增 7 个字段：`coarse_cv_results`（Optuna coarse prior/ Grid partial-resume）、`resume_completed_trials`（Optuna resume）、`resume_prior_trials`（Optuna fallback injection）、`resume_missing_params`（Grid partial-resume）、`representation_name`（legacy Phase 2 transformer）、`quality_metadata`（legacy per-component metadata）、`apply_phase2_transformer`（是否启用 Phase 2 质量Pipeline）
+  - `OptimizationResult.best_score` 类型从 `float` 改为 `Optional[float]` — 不再强制把失败转换为 `0.0`，允许 backend 明确返回 `None`；processor 在收到 `best_score=None` 时 skip 该候选并记录 warning，不保存伪装成功的 0.0 分数
+  - Grid/Optuna `optimize()` 适配器完整转发所有新字段到内部 `optimize_model()`，不再只转发部分字段
+  - Grid/Optuna `optimize()` 从 `cv_results["params"]` 计算 `n_trials_completed`，不再默认 0
+  - processor `OptimizationRequest` 构造从多次重建改为一次性收集所有字段后单次创建；resume 数据从 `result._resume_*` 私有属性读取并传入 request；legacy `quality_metadata` 从 debug-only 改为实际传入 request，确保非 representation_config 的旧表示仍能装配 Phase2QualityTransformer
+  - 11 个回归测试覆盖：协议签名验证、Grid/Optuna 字段转发捕获、`best_score=None` 允许性、legacy metadata 保留、`n_trials_completed` 正确推导
+  - `screening_engine/hpo/CLAUDE.md` 新增，说明 HPO 模块定位、typed contract 设计、与 evaluator/result_processor 的边界
+
 - **SplitPlan full-chain refactoring** (`contracts.py`, `splitting.py`, `split_plan.py`, `standard.py`, `screeners.py`) (2026-08-01)
   - `SplitPlan` dataclass with frozen, validated indices: `train_indices`, `test_indices`, `cv_folds`, `nested_cv_folds`, `hpo_cv_folds`, `hpo_split_fingerprint`, `groups`, `stratify_labels`, `n_samples` (mandatory). Pre-materialised indices eliminate per-`apply()` splitter `.split()` calls, guaranteeing identical fold indices across all representations and repeated `apply()` calls.
   - `SplitPlan.from_legacy_payload(data, *, X=None, y=None, groups=None)`: materialises CV/nested CV folds from live splitters at construction time; validates `len(X) == n_samples` and `len(y) == len(X)` even when `n_samples` is explicit; raises `ValueError` for negative/duplicate/out-of-range/2D fold indices and length-mismatched group/stratify arrays.

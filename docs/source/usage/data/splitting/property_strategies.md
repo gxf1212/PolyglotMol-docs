@@ -158,14 +158,15 @@ print(f"High-DNR molecules in test: {dnr_info['test_high_dnr_count']}")
 
 ### Implementation Details
 
-**Code Location**: `src/molblender/models/api/core/splitting/dnr.py`
+**Code Location**: `src/molblender/data/dataset/splitting/strategies/dnr.py`
 
 ```python
 def dnr_split(
     dataset: MolecularDataset,
-    mode: str = 'threshold',
-    dnr_threshold: float = 0.3,
-    dnr_quantile: float = 0.2,
+    label_col: str,
+    split_mode: str = 'threshold',
+    dnr_threshold: float = 0.5,
+    high_dnr_in_test: bool = True,
     similarity_threshold: float = 0.5,
     property_diff_threshold: float = 1.0,
     test_size: float = 0.2,
@@ -359,7 +360,7 @@ print(f"Train-test similarity: {stats['train_test_similarity']:.3f}")
 
 ### Implementation Details
 
-**Code Location**: `src/molblender/models/api/core/splitting/diversity.py`
+**Code Location**: `src/molblender/data/dataset/splitting/strategies/diversity.py`
 
 ```python
 def maxmin_split(
