@@ -22,8 +22,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Mypy compliance** (`config/`, `models/api/`, `data/dataset/`) (2026-08-12)
   - 类型标注：`_method_cache`、`suggested`、`all_results`；返回类型兼容性；SQLite set→list；`CalledProcessError` 修复
 
+- **HPO processor and Optuna module split** (`multimodal/processors/hpo/`, `screening_engine/hpo/`, `tests/models/api/`) (2026-08-13)
+  - HPO processor 拆分为 `candidate_preparation.py`、`result_recording.py`、`resume_state.py`、`session_context.py`，processor 主文件大幅缩减
+  - Optuna 拆分为 `optuna_search_space.py`、`optuna_study.py`、`optuna_trial_execution.py`，`optuna_optimizer.py` 重写 76%
+  - 新增 10 个测试文件覆盖各模块契约
+  - CI 层依赖检查更新
 
+- **HPO/persistence boundary restoration** (`multimodal/processors/hpo/processor.py`, `api/persistence/session_write.py`, `screening_engine/hpo/contracts.py`, `grid_search.py`, `database/operations.py`, `sessions.py`) (2026-08-12)
+  - HPO processor 通过 `_check_and_load_resume()` 调用 persistence 层
+  - Grid resume 明确 `GridResumable` 协议：`can_resume(params, cv_results)`；processor 不再读取 `param_generator` 私有属性
+  - session create/summary 收口到 `persistence/session_write.py`，统一走 `db._get_connection()`
+  - `nested_cv_evaluator.py` 强制 HPO typed contract，预物化 folds
+  - `test_legacy_schema_fail_closed.py`、`test_grid_resumable.py`、`test_session_write.py` 扩展覆盖
 
+- **Persistence: tighten screening boundaries** (`api/persistence/model_results_write.py`, `database/operations.py`, `nested_cv_evaluator.py`) (2026-08-12)
+  - 新增 `model_results_write.py`：bulk 模型结果写入端口，从 `database/operations.py` 收口
+  - `database/operations.py` 缩减 259 行；职责收敛到 schema/admin
+  - `nested_cv_evaluator.py` HPO typed contract 强化
+  - `test_model_results_write.py`（610 行）、`test_nested_cv_hpo_typed_contract.py`（621 行）、`test_catalog_registry_boundary.py`、`test_screening_finalization_contract.py` 新增
 
 - **ScreeningRun callback hooks architecture** (`screening_runtime/contracts.py`, `screening_runtime/stage1.py`, `screening_runtime/run.py`, `screening/standard.py`, `multimodal/screeners.py`, `test_contracts.py`) (2026-08-11)
   - `ScreeningCallbacks(on_repr_complete, on_stage1_complete)`：生命周期钩子，支持 per-representation DB 持久化和 Stage-1 完成后的 HPO 增强或 DB 回退加载
