@@ -41,7 +41,7 @@ results = run_lead_sensitivity_analysis(
     logo_results_dir="./results_logo_improved",
     dataset=dataset,
     target_column="activity",
-    fold_names=["fold_A"],  # Or None for all folds
+    fold_names=["A"],  # Or None for all folds; code constructs "fold_A" internally
     max_leads=3,
     strategy="exhaustive",  # Test all combinations
     n_jobs=8
@@ -67,7 +67,7 @@ import pandas as pd
 import sqlite3
 
 conn = sqlite3.connect("lead_sensitivity_results/lead_sensitivity.db")
-df = pd.read_sql("SELECT * FROM lead_sensitivity_results WHERE fold_name='fold_A'", conn)
+df = pd.read_sql("SELECT * FROM lead_sensitivity_results WHERE fold_name='A'", conn)
 
 # Generate plots
 plot_performance_vs_lead_count(
@@ -235,12 +235,13 @@ def run_lead_sensitivity_analysis(
     dataset: Union[MolecularDataset, str, Path],
     target_column: str,
     fold_names: Optional[List[str]] = None,
-    strategy: str = "exhaustive",
-    min_leads: int = 1,
     max_leads: int = 3,
+    min_leads: int = 1,
+    strategy: str = "exhaustive",
     sample_size: Optional[int] = None,
     output_dir: Union[str, Path] = "./lead_sensitivity_results",
-    n_jobs: int = -1,
+    max_cpu_cores: Optional[int] = None,
+    n_jobs: Optional[int] = None,
     random_state: int = 42,
     force_recompute: bool = False,
     verbose: int = 1
@@ -268,8 +269,10 @@ def run_lead_sensitivity_analysis(
         For 'random' and 'diverse' strategies, number of combinations to sample per lead_count
     output_dir : str or Path, default='./lead_sensitivity_results'
         Output directory for database and visualizations
-    n_jobs : int, default=-1
-        Number of parallel workers (-1 uses all cores)
+    max_cpu_cores : int, optional
+        Maximum number of CPU cores to use
+    n_jobs : int, optional
+        Number of parallel workers (None uses max_cpu_cores or default)
     random_state : int, default=42
         Random seed for reproducibility
     force_recompute : bool, default=False
@@ -329,17 +332,17 @@ Box plot showing performance distribution across lead counts.
 from molblender.models.api.lead.lead_sensitivity_viz import plot_performance_vs_lead_count
 
 plot_performance_vs_lead_count(
-    df: pd.DataFrame,
+    results_df: pd.DataFrame,
     metric: str = 'pearson_r',
     fold_name: Optional[str] = None,
     output_path: Optional[str] = None,
-    figsize: tuple = (8, 6),
-    show_scatter: bool = True,
-    show_mean: bool = True
+    figsize: tuple = (10, 6),
+    show_points: bool = True,
+    show_stats: bool = True
 )
 ```
 
-**Output:** Box plot with overlaid scatter points and annotated means
+**Output:** Box plot with overlaid scatter points and annotated statistics
 
 #### plot_top_bottom_combinations()
 
@@ -349,16 +352,18 @@ Horizontal bar chart comparing best and worst lead combinations.
 from molblender.models.api.lead.lead_sensitivity_viz import plot_top_bottom_combinations
 
 plot_top_bottom_combinations(
-    df: pd.DataFrame,
+    results_df: pd.DataFrame,
     metric: str = 'pearson_r',
-    top_n: int = 10,
+    lead_count: int = 2,
+    top_n: int = 5,
+    bottom_n: int = 5,
     fold_name: Optional[str] = None,
     output_path: Optional[str] = None,
-    figsize: tuple = (10, 8)
+    figsize: tuple = (12, 8)
 )
 ```
 
-**Output:** Two-panel bar chart (top 10 best, top 10 worst)
+**Output:** Two-panel bar chart (top 5 best, top 5 worst) for a given lead_count
 
 #### plot_lead_heatmap()
 
@@ -368,12 +373,14 @@ plot_top_bottom_combinations(
 from molblender.models.api.lead.lead_sensitivity_viz import plot_lead_heatmap
 
 plot_lead_heatmap(
-    df: pd.DataFrame,
+    results_df: pd.DataFrame,
     metric: str = 'pearson_r',
+    dataset: Optional[MolecularDataset] = None,
     fold_name: Optional[str] = None,
     output_path: Optional[str] = None,
     figsize: tuple = (10, 9),
-    cmap: str = 'RdYlGn'
+    cmap: str = 'RdYlGn',
+    annotate: bool = True
 )
 ```
 
@@ -390,7 +397,7 @@ plot_cross_fold_summary(
     results_dict: Dict[str, pd.DataFrame],
     metric: str = 'pearson_r',
     output_path: Optional[str] = None,
-    figsize: tuple = (12, 6)
+    figsize: tuple = (14, 6)
 )
 ```
 

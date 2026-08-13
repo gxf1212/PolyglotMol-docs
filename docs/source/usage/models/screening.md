@@ -21,36 +21,46 @@ MolBlender provides multiple screening functions optimized for different use cas
 ### Basic Usage
 
 ```python
-from molblender.models import universal_screen
+from molblender.models.api import universal_screen
+
+results = universal_screen(
+    dataset=dataset,
+    target_column="activity"
+)
+```
+
+### Recommended Usage with Config Objects
+
+```python
+from molblender.models.api import universal_screen
+from molblender.models.api.screening_engine.configs import (
+    CoreScreeningConfig, SplitConfig, ResourceConfig
+)
 
 results = universal_screen(
     dataset=dataset,
     target_column="activity",
-    task_type="regression"
+    screening_config=CoreScreeningConfig(task_type="regression", verbose=1),
+    split_config=SplitConfig(strategy="scaffold", cv_folds=5),
+    resource_config=ResourceConfig(max_cpu_cores=-1, max_workers_per_model=1),
 )
 ```
 
-### Complete API Reference
+### Compatibility: Legacy kwargs Passthrough
+
+For backward compatibility, `universal_screen` accepts a flat set of legacy keyword arguments via `**legacy_kwargs`. These are validated and forwarded to the underlying screener.
 
 ```python
-def universal_screen(
-    dataset,                              # Required
-    target_column: str,                   # Required
-    task_type: str = "regression",        # "regression" or "classification"
-    modality_categories: List[str] = None,  # Auto-detect if None
-    combinations: str = "auto",           # "auto", "comprehensive", or custom list
-    primary_metric: str = None,           # Auto-select based on task_type
-    cv_folds: int = 5,                    # Cross-validation folds
-    test_size: float = 0.2,               # Test set proportion
-    random_state: int = 42,               # Random seed
-    verbose: int = 1,                     # 0=quiet, 1=normal, 2=detailed
-    enable_feature_selection: bool = True,  # Zero-variance filtering
-    enable_db_storage: bool = False,      # SQLite database storage
-    db_path: str = None,                  # Database file path
-    max_cpu_cores: int = -1,              # -1 = use all
-    max_workers_per_model: int = 1,       # Parallelism per model
-    execution_preference: str = "balanced"  # "speed", "memory", "balanced"
-) -> Dict[str, Any]
+results = universal_screen(
+    dataset=dataset,
+    target_column="activity",
+    task_type="regression",
+    cv_folds=5,
+    test_size=0.2,
+    primary_metric=None,
+    combinations="auto",
+    max_cpu_cores=-1,
+)
 ```
 
 ### Parameters Explained
@@ -63,19 +73,45 @@ def universal_screen(
 `target_column`: `str`
 : Name of the target variable column
 
-**Task Configuration**
+**Configuration Objects (Recommended)**
 
-`task_type`: `str`, default=`"regression"`
-: Type of ML task. Options:
-  - `"regression"` - Continuous predictions (logP, solubility, binding affinity)
-  - `"classification"` - Categorical predictions (active/inactive, ADMET classes)
+The preferred API uses typed config objects for clarity:
 
-`primary_metric`: `str`, optional
-: Evaluation metric for model comparison. Auto-selected based on task_type if not specified.
-  - Regression: `"r2"`, `"rmse"`, `"mae"`, `"pearson_r"`, `"spearman_rho"`, `"kendall_tau"`
-  - Classification: `"f1"`, `"accuracy"`, `"roc_auc"`, `"precision"`, `"recall"`
+`config_file`: `str` or `Path`, optional
+: Path to a YAML/JSON config file that can specify all screening parameters at once.
 
-**Modality Selection**
+`screening_config`: `CoreScreeningConfig`, optional
+: Core task settings. Key fields:
+  - `task_type`: `"regression"` or `"classification"`
+  - `primary_metric`: evaluation metric (e.g., `"pearson_r"`, `"r2"`, `"rmse"` for regression; `"f1"`, `"accuracy"`, `"roc_auc"` for classification)
+  - `verbose`: logging level (0/1/2)
+
+`split_config`: `SplitConfig`, optional
+: Data splitting strategy. Key fields:
+  - `strategy`: `"scaffold"`, `"random"`, `"max_dissimilarity"`, or `"time"`
+  - `cv_folds`: number of CV folds (default 5)
+  - `test_size`: test set proportion (default 0.2)
+  - `random_state`: seed for reproducibility (default 42)
+
+`resource_config`: `ResourceConfig`, optional
+: Compute resource settings. Key fields:
+  - `max_cpu_cores`: total CPU cores (-1 = all available)
+  - `max_workers_per_model`: per-estimator parallelism cap (default 1)
+  - `execution_preference`: `"speed"`, `"memory"`, or `"balanced"` (default `"balanced"`)
+
+`hpo_config`: `HPOConfig`, optional
+: Hyperparameter optimization settings (see {doc}`hpo` for details).
+
+`database_config`: `DatabaseConfig`, optional
+: SQLite storage settings (path, enable/disable).
+
+`weight_config`: `WeightConfig`, optional
+: Sample weighting configuration for imbalanced datasets.
+
+`fusion_config`: `FusionConfig`, optional
+: Vector representation fusion configuration (dense 2D concatenation).
+
+**Direct Parameters**
 
 `modality_categories`: `List[str]`, optional
 : Hierarchical category paths for representation selection. Auto-detected if `None`.
@@ -100,47 +136,27 @@ Notes:
   - `List[str]` - Specific model names: `["random_forest", "xgboost", "svm_rbf"]`
   - `List[Combination]` - Custom model-representation pairs
 
-**Cross-Validation Settings**
+**Legacy kwargs (`**legacy_kwargs`)**
 
-`cv_folds`: `int`, default=`5`
-: Number of cross-validation folds (3-10 recommended). See {doc}`methodology` for detailed explanation of the cross-validation protocol.
+For backward compatibility, the following flat keyword arguments are still accepted and forwarded to the underlying screener. New code should prefer config objects.
 
-`test_size`: `float`, default=`0.2`
-: Proportion of data for test set (0.1-0.3 recommended). This defines the train/test split ratio.
-
-`random_state`: `int`, default=`42`
-: Random seed for reproducibility. Ensures consistent train/test splits across runs.
-
-```{seealso}
-For a complete explanation of data splitting, cross-validation, and evaluation metrics, see {doc}`methodology`.
-```
-
-**Performance Options**
-
-`max_cpu_cores`: `int`, default=`-1`
-: Maximum CPU cores to use
-  - `-1` = Use all available cores
-  - `n` = Use n cores (e.g., `-2` leaves 2 cores free)
-  - Saved results expose this resolved value as `resolved_workers`
-
-`max_workers_per_model`: `int`, default=`1`
-: Parallelism within individual models (for sklearn models)
-  - This is a per-estimator cap, not the total screening CPU budget
-
-`n_jobs`: deprecated compatibility alias
-: Kept only for older scripts. New code should use `max_cpu_cores` and
-  `max_workers_per_model` explicitly.
-
-`execution_preference`: `str`, default=`"balanced"`
-: Resource allocation strategy
-  - `"speed"` - Maximize parallel execution
-  - `"memory"` - Minimize memory usage
-  - `"balanced"` - Balance speed and memory
-
-Runtime terminology:
-- `resolved_workers`: Combination-level worker count derived from `max_cpu_cores`
-- `max_workers_per_model`: Internal parallelism limit for a single estimator
-- These values are stored separately in result/session metadata on purpose
+| kwarg | Default | Description |
+|-------|---------|-------------|
+| `task_type` | `"regression"` | `"regression"` or `"classification"` |
+| `primary_metric` | `None` | Auto-selected if not specified |
+| `cv_folds` | `5` | Cross-validation folds |
+| `test_size` | `0.2` | Test set proportion |
+| `random_state` | `42` | Random seed |
+| `verbose` | `1` | Logging verbosity (0/1/2) |
+| `max_cpu_cores` | `-1` | CPU cores (-1 = all) |
+| `max_workers_per_model` | `1` | Per-estimator parallelism cap |
+| `execution_preference` | `"balanced"` | `"speed"`, `"memory"`, `"balanced"` |
+| `enable_db_storage` | `False` | SQLite storage toggle |
+| `db_path` | `None` | Database file path |
+| `enable_hpo` | `False` | Two-stage HPO toggle |
+| `hpo_stage` | `"coarse"` | `"coarse"` \| `"fine"` \| `"customized"` |
+| `hpo_method` | `"grid"` | `"grid"` \| `"random"` |
+| `top_n_for_hpo` | `5` | Models to optimize in Stage 2 |
 
 **GPU Heavy-Task Scheduler** ⭐ **NEW**
 
@@ -434,12 +450,11 @@ Fast screening with essential models for initial exploration.
 ### Basic Usage
 
 ```python
-from molblender.models import quick_screen
+from molblender.models.api import quick_screen
 
 results = quick_screen(
     dataset=dataset,
-    target_column="activity",
-    representations=["morgan_fp_r2_1024", "rdkit_descriptors_2d"]
+    target_column="activity"
 )
 ```
 
@@ -449,19 +464,17 @@ results = quick_screen(
 def quick_screen(
     dataset,
     target_column: str,
-    representations: List[str] = None,  # Auto-select if None
-    task_type: str = "regression",
-    primary_metric: str = None,
-    cv_folds: int = 3,                  # Fewer folds for speed
-    test_size: float = 0.2,
-    max_cpu_cores: int = -1
+    task_type: str = "regression",       # "regression" or "classification"
+    max_cpu_cores: int = -1,             # -1 = all cores
+    max_workers_per_model: int = 1,      # per-estimator parallelism
 ) -> Dict[str, Any]
 ```
 
 **Key Differences from `universal_screen()`:**
-- Tests only 5-10 essential models (RF, XGBoost, Ridge, Bayesian Ridge, KNN)
+- Tests only 5-10 fast models from the `"fast"` model corpus (RF, XGBoost, Ridge, Bayesian Ridge, KNN)
 - Uses 3 CV folds instead of 5 for speed
 - No deep learning models (CNN, Transformers)
+- No custom representation or test-size configuration — designed for quick exploration
 - Optimized for datasets < 10K molecules
 
 ### When to Use
@@ -483,13 +496,14 @@ Test a single model quickly without comprehensive screening.
 ### Basic Usage
 
 ```python
-from molblender.models import simple_evaluate
+from molblender.models.api import simple_evaluate
 
 result = simple_evaluate(
     dataset=dataset,
     target_column="activity",
-    model_name="random_forest",
-    representation_name="morgan_fp_r2_1024"
+    task_type="regression",
+    models=["random_forest"],
+    representations=["morgan_fp_r2_1024"]
 )
 ```
 
@@ -499,12 +513,13 @@ result = simple_evaluate(
 def simple_evaluate(
     dataset,
     target_column: str,
-    model_name: str = "random_forest",
-    representation_name: str = None,    # Auto-select if None
+    representations: List[str] = None,   # Auto-select if None
+    models: List[str] = None,             # Auto-select if None
     task_type: str = "regression",
-    cv_folds: int = 5,
     test_size: float = 0.2,
-    random_state: int = 42
+    random_state: int = 42,
+    max_cpu_cores: int = None,
+    n_jobs: int = None,
 ) -> Dict[str, Any]
 ```
 
@@ -522,13 +537,14 @@ Compare multiple models on the same representation.
 ### Basic Usage
 
 ```python
-from molblender.models import compare_models
+from molblender.models.api import compare_models
 
 results = compare_models(
     dataset=dataset,
     target_column="activity",
     representation_name="morgan_fp_r2_1024",
-    models=["random_forest", "xgboost", "svm_rbf", "ridge"]
+    task_type="regression",
+    model_names=["random_forest", "xgboost", "svm_rbf", "ridge"]
 )
 ```
 
@@ -539,11 +555,14 @@ def compare_models(
     dataset,
     target_column: str,
     representation_name: str,
-    models: List[str] = None,           # All compatible if None
     task_type: str = "regression",
-    primary_metric: str = None,
+    model_corpus: str = "all",
+    model_names: List[str] = None,      # All compatible if None
+    statistical_tests: bool = True,     # Significance testing
     cv_folds: int = 5,
-    statistical_tests: bool = True      # Significance testing
+    random_state: int = 42,
+    max_cpu_cores: int = None,
+    n_jobs: int = None,
 ) -> Dict[str, Any]
 ```
 
@@ -568,13 +587,14 @@ Compare multiple representations on the same model.
 ### Basic Usage
 
 ```python
-from molblender.models import compare_representations
+from molblender.models.api import compare_representations
 
 results = compare_representations(
     dataset=dataset,
     target_column="activity",
     model_name="random_forest",
-    representations=[
+    task_type="regression",
+    representation_names=[
         "morgan_fp_r2_1024",
         "morgan_fp_r3_2048",
         "rdkit_descriptors_2d",
@@ -590,11 +610,13 @@ def compare_representations(
     dataset,
     target_column: str,
     model_name: str,
-    representations: List[str],
+    representation_names: List[str],
     task_type: str = "regression",
-    primary_metric: str = None,
+    statistical_tests: bool = True,
     cv_folds: int = 5,
-    statistical_tests: bool = True
+    random_state: int = 42,
+    max_cpu_cores: int = None,
+    n_jobs: int = None,
 ) -> Dict[str, Any]
 ```
 
@@ -603,7 +625,7 @@ def compare_representations(
 For fine-grained control, use `Combination` objects:
 
 ```python
-from molblender.models import Combination, universal_screen
+from molblender.models.api import Combination, universal_screen
 
 custom_combinations = [
     Combination(
