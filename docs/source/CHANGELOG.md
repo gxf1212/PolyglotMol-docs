@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `molblender.models.api.screening.standard_execution` 已转为弃用适配器：模块内所有执行辅助函数改为通过 `__getattr__` 从 `molblender.models.api.screening_runtime` 转发，每次访问触发 `DeprecationWarning`。新代码必须直接从 `screening_runtime` 导入执行函数。
 
 ### Fixed
+- **HPO legacy-schema 测试拆分与 resume bug 修复** (`tests/models/api/multimodal/processors/hpo/`) (2026-08-13)
+  - 原 3,458 行单文件 `test_legacy_schema_fail_closed.py` 拆分为 6 个专题测试文件 + `_hpo_test_helpers.py`（共享 DB stub、`_GridResumableStub`、行插入 helper），修复 `compute_missing_resume_params` 在拆分时截断导致 Grid partial-resume 无法加载缺失参数的回归
+
 - `create_screener()` docstring 修正：返回值从模糊的"Screener instance"改为"StandardScreener instance"，并移除未使用的 `BaseScreener` 导入。
 - **Phase 3 persistence layer extraction** (`api/persistence/`, `multimodal/processors/hpo/processor.py`, `screening/standard.py`) (2026-08-12)
   - HPO/session/resume SQL 收口到 `hpo_ops.py`、`result_queries.py`、`stage1_ops.py`、`dataset_info_reads.py`；processor 通过 `_check_and_load_resume()` 调用，不再读取 `param_generator`
