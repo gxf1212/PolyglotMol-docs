@@ -6,7 +6,7 @@ Learn how to access, analyze, and export screening results from MolBlender's SQL
 
 MolBlender uses **SQLite databases** as the primary storage format for screening results, replacing older JSON-only approaches.
 
-###Benefits of SQLite Storage
+### Benefits of SQLite Storage
 
 ✅ **Incremental Saving** - Results saved after each model completes
 ✅ **Crash Recovery** - Resume interrupted screenings automatically
@@ -17,7 +17,7 @@ MolBlender uses **SQLite databases** as the primary storage format for screening
 ### Enabling Database Storage
 
 ```python
-from molblender.models import universal_screen
+from molblender.models.api import universal_screen
 
 results = universal_screen(
     dataset=dataset,
@@ -59,32 +59,38 @@ Individual model evaluation results:
 
 ```sql
 CREATE TABLE model_results (
-    id INTEGER PRIMARY KEY,
-    session_id TEXT,  -- Links to screening_sessions
-    model_name TEXT,
-    representation_name TEXT,
-    representation_config TEXT,  -- JSON representation config
-    model_config TEXT,  -- JSON full model config
-    score REAL,  -- Primary metric value
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id TEXT NOT NULL,  -- Links to screening_sessions
+    model_name TEXT NOT NULL,
+    representation_name TEXT NOT NULL,
+    representation_config TEXT NOT NULL,  -- JSON representation config
+    model_config TEXT NOT NULL,  -- JSON full model config
+    primary_metric REAL,  -- Test-set metric value (for display, not for selection)
+    primary_metric_name TEXT,
     rank INTEGER,
-    cv_scores TEXT,  -- JSON array of fold scores
-    training_time REAL,
-    n_features INTEGER,
+    hpo_score REAL,  -- HPO CV score when available
+    cv_fold_scores TEXT,  -- JSON array of CV fold scores
+    training_time REAL DEFAULT 0.0,
+    n_features INTEGER DEFAULT 0,
     model_params TEXT,  -- JSON model configuration
     predictions TEXT,  -- JSON predictions
     feature_importance TEXT,  -- JSON feature importance
-    stage INTEGER,  -- 1 = screening, 2 = HPO
-    hpo_stage TEXT,  -- 'coarse' or 'fine'
-    best_params TEXT,  -- JSON best params (Stage 2)
-    hpo_cv_score REAL,  -- Stage 2 CV score
-    train_indices TEXT,  -- JSON indices
-    test_indices TEXT,  -- JSON indices
-    created_at TIMESTAMP
+    model_artifact BLOB,  -- Serialized model (if configured)
+    stage INTEGER DEFAULT 1,  -- 1=defaults, 2=coarse/customized, 3=fine, 4=ultrafine
+    hpo_stage TEXT,  -- NULL, 'coarse', 'customized', 'fine', or 'ultrafine'
+    hpo_method TEXT,  -- 'grid' or 'optuna'
+    best_params TEXT,  -- JSON best params from HPO
+    all_metrics TEXT,  -- JSON dict of all computed metrics
+    grid_search_results TEXT,  -- JSON grid search detail (HPO)
+    train_indices TEXT,  -- JSON training indices
+    test_indices TEXT,  -- JSON test indices
+    val_indices TEXT,  -- JSON validation indices (holdout mode)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (session_id) REFERENCES screening_sessions (session_id)
 )
 ```
 
-Additional columns may be present for dashboard compatibility (e.g., `primary_metric`,
-`primary_metric_name`, `all_metrics`).
+The `stage` and `hpo_stage` columns follow a four-stage HPO pipeline: **stage 1** stores default-parameter results, **stage 2** stores coarse and customized HPO results, **stage 3** stores fine-tuned results, and **stage 4** stores ultrafine results. The `primary_metric` column holds the test-set score for display purposes only; **model selection uses CV or HPO scores**, not this value (see {doc}`methodology`).
 
 ### 3. dataset_info
 
@@ -114,35 +120,34 @@ results = universal_screen(dataset, target_column="activity")
 best = results['best_model']
 print(f"Model: {best['model_name']}")
 print(f"Representation: {best['representation_name']}")
-print(f"R²: {best['metrics']['r2']:.3f}")
+print(f"Primary metric: {best['primary_metric']:.3f}")
 
-# Access trained model
-trained_model = best['estimator']
-predictions = trained_model.predict(new_data)
+# Access all metrics (r2, rmse, mae, pearson_r, etc.)
+print(f"R²: {best['all_metrics']['r2']:.3f}")
 
 # All results sorted by performance
-for result in results['results'][:5]:  # Top 5
-    print(f"{result['model_name']} + {result['representation_name']}: {result['score']:.3f}")
+for result in results['top_models'][:5]:  # Top 5
+    print(f"{result['model_name']} + {result['representation_name']}: {result['primary_metric']:.3f}")
 ```
 
 ### Loading from Database
 
 ```python
-from molblender.models.api.utils import load_results_from_database
+from molblender.models.api.utils import ScreeningResultsDB
 
-# Load all sessions from database
-results = load_results_from_database("./my_screening.db")
+# Connect to the database
+db = ScreeningResultsDB("./my_screening.db")
 
-# Load specific session
-results = load_results_from_database(
-    "./my_screening.db",
-    session_id="screening_20250115_103045"
-)
+# Load the latest session's results
+results = db.load_comprehensive_results()
+
+# Load combined results from all sessions
+results = db.load_comprehensive_results(use_all_sessions=True)
 
 # Access results
 print(f"Best score: {results['summary']['best_score']}")
-for model in results['results']:
-    print(f"{model['model_name']}: {model['score']}")
+for model in results['model_results']:
+    print(f"{model['model_name']}: {model['primary_metric']}")
 ```
 
 ### Direct SQL Queries
@@ -155,17 +160,17 @@ import pandas as pd
 
 conn = sqlite3.connect("./my_screening.db")
 
-# Get all results sorted by score
+# Get all results sorted by primary metric
 df = pd.read_sql_query("""
     SELECT
         model_name,
         representation_name,
-        score,
+        primary_metric,
         training_time,
         n_features
     FROM model_results
     WHERE session_id = ?
-    ORDER BY score DESC
+    ORDER BY primary_metric DESC
 """, conn, params=("screening_20250115_103045",))
 
 # Get summary statistics by model type
@@ -173,8 +178,8 @@ summary = pd.read_sql_query("""
     SELECT
         model_name,
         COUNT(*) as n_representations,
-        AVG(score) as mean_score,
-        MAX(score) as best_score,
+        AVG(primary_metric) as mean_score,
+        MAX(primary_metric) as best_score,
         AVG(training_time) as avg_time
     FROM model_results
     WHERE session_id = ?
@@ -190,13 +195,14 @@ conn.close()
 ### Export to JSON
 
 ```python
-from molblender.models.api.utils import export_to_json
+from molblender.models.api.utils import ScreeningResultsDB
 
-# Export database results to JSON format
-export_to_json(
-    db_path="./my_screening.db",
+db = ScreeningResultsDB("./my_screening.db")
+
+# Export a session's results to JSON
+db.export_to_json(
+    session_id="screening_20250115_103045",
     output_path="./results.json",
-    session_id="screening_20250115_103045"  # Optional
 )
 ```
 
@@ -224,17 +230,21 @@ conn.close()
 ### Save Best Model
 
 ```python
+# The best_model entry in the results dict contains metadata, not the trained
+# estimator object. To save and reuse a trained model, retrain it using the
+# stored configuration and parameters.
+best = results['best_model']
+model_params = best.get('model_params', {})
+
+# Reconstruct and train the model for deployment
+from molblender.models.api.screening_engine.registry import get_model_config
+
+config = get_model_config(best['model_name'])
+estimator = config.create_estimator(**model_params)
+estimator.fit(X_train, y_train)
+
 import joblib
-
-# Get best model from results
-best_estimator = results['best_estimator']
-
-# Save using joblib (recommended for sklearn models)
-joblib.dump(best_estimator, './best_model.pkl')
-
-# Load later
-loaded_model = joblib.load('./best_model.pkl')
-predictions = loaded_model.predict(new_data)
+joblib.dump(estimator, './best_model.pkl')
 ```
 
 ## Result Structure
@@ -245,15 +255,22 @@ predictions = loaded_model.predict(new_data)
 {
     'success': True,
     'timestamp': '2025-01-15T10:30:45',
-    'session_id': 'screening_20250115_103045',
 
-    # Best model
+    # Selection metadata
+    'selection': {
+        'source': 'cv_score',  # 'cv_score' or 'hpo_score'
+        'test_primary_metric_used_for_selection': False,
+        'excluded_incomparable_count': 0
+    },
+
+    # Best model (selected by CV/HPO score, not test score)
     'best_model': {
         'model_name': 'xgboost',
         'representation_name': 'morgan_fp_r2_1024',
-        'score': 0.852,
-        'rank': 1,
-        'metrics': {
+        'task_type': 'regression',
+        'primary_metric': 0.852,  # Test-set score for display
+        'primary_metric_name': 'pearson_r',
+        'all_metrics': {
             'r2': 0.852,
             'rmse': 0.543,
             'mae': 0.421,
@@ -262,54 +279,53 @@ predictions = loaded_model.predict(new_data)
             'kendall_tau': 0.765
         },
         'cv_scores': [0.831, 0.867, 0.849, 0.856, 0.857],
+        'cv_fold_scores': [0.831, 0.867, 0.849, 0.856, 0.857],
         'cv_mean': 0.852,
         'cv_std': 0.012,
         'training_time': 12.34,
-        'n_features': 1024,
-        'estimator': <XGBRegressor object>,
-        'model_params': {'n_estimators': 200, 'learning_rate': 0.1, ...},
-        'predictions': {
-            'test_predictions': [2.1, 3.4, ...],
-            'test_true': [2.3, 3.2, ...]
-        }
+        'prediction_time': 0.45,
+        'model_params': {'n_estimators': 200, 'learning_rate': 0.1},
+        'hpo_stage': 'fine',
+        'stage': 3,
     },
 
-    # Best estimator (trained model)
-    'best_estimator': <XGBRegressor object>,
-    'best_score': 0.852,
-
-    # All results sorted by performance
-    'results': [
-        {'model_name': 'xgboost', 'score': 0.852, ...},
-        {'model_name': 'random_forest', 'score': 0.841, ...},
+    # Top models sorted by CV/HPO score
+    'top_models': [
+        {'model_name': 'xgboost', 'primary_metric': 0.852, ...},
+        {'model_name': 'random_forest', 'primary_metric': 0.841, ...},
         ...
     ],
+    'ranked_top_models': [...],  # Alias of top_models
+
+    # All results (sorted by selection score)
+    'all_results': [
+        {'model_name': 'xgboost', 'primary_metric': 0.852, ...},
+        ...
+    ],
+    'detailed_results': [...],  # Alias of all_results
 
     # Statistical summary
     'summary': {
         'n_models_evaluated': 18,
         'n_representations': 6,
         'n_unique_models': 3,
+        'best_score': 0.852,
+        'worst_score': 0.512,
         'mean_score': 0.764,
         'std_score': 0.089,
-        'best_modality': 'VECTOR',
-        'worst_modality': None,
-        'task_type': 'regression',
-        'primary_metric': 'pearson_r'
+        'median_score': 0.771,
+        'mean_cv_score': 0.758,
+        'std_cv_score': 0.092
     },
 
-    # Configuration
-    'config': {
+    # Configuration snapshot
+    'screening_config': {
         'task_type': 'regression',
         'primary_metric': 'pearson_r',
         'cv_folds': 5,
         'test_size': 0.2,
         'random_state': 42
     },
-
-    # Storage
-    'database_path': './my_screening.db',
-    'output_dir': './screening_results_20250115_103045'
 }
 ```
 
@@ -349,16 +365,13 @@ results = universal_screen(
 ```python
 from molblender.models.api.utils import get_cache_info, clear_cache
 
-# Check cache contents
-cache_info = get_cache_info("./cache.db")
-print(f"Cached sessions: {cache_info['n_sessions']}")
-print(f"Cached results: {cache_info['n_results']}")
+# Inspect the file-based result cache (separate from SQLite DB storage)
+cache_info = get_cache_info()
+print(f"Cache hits: {cache_info.get('hits')}")
+print(f"Cache misses: {cache_info.get('misses')}")
 
-# Clear specific session
-clear_cache("./cache.db", session_id="screening_20250115_103045")
-
-# Clear entire database
-clear_cache("./cache.db", clear_all=True)
+# Clear expired cache entries
+clear_cache()
 ```
 
 ## Launching the Dashboard
@@ -403,7 +416,7 @@ for db_path in dbs:
         SELECT
             model_name,
             representation_name,
-            score,
+            primary_metric,
             training_time
         FROM model_results
     """, conn)
@@ -412,31 +425,33 @@ for db_path in dbs:
     conn.close()
 
 combined = pd.concat(all_results)
-print(combined.groupby('model_name')['score'].agg(['mean', 'std', 'max']))
+print(combined.groupby('model_name')['primary_metric'].agg(['mean', 'std', 'max']))
 ```
 
 ### Extract Predictions
 
 ```python
-import json
-
-# Get predictions from best model
+# Get predictions from best model (only present for best_model, not all_results)
 best_model = results['best_model']
-predictions_json = best_model['predictions']
+predictions = best_model.get('predictions')
 
-# Parse JSON if stored as string
-if isinstance(predictions_json, str):
-    predictions = json.loads(predictions_json)
-else:
-    predictions = predictions_json
+if predictions:
+    test_pred = predictions['test_predictions']
 
-test_pred = predictions['test_predictions']
-test_true = predictions['test_true']
+    # True values are stored in the dataset_info DB table, not in the result dict
+    import sqlite3
+    conn = sqlite3.connect("./my_screening.db")
+    row = conn.execute(
+        "SELECT test_true_values FROM dataset_info LIMIT 1"
+    ).fetchone()
+    import json
+    test_true = json.loads(row[0]) if row else None
+    conn.close()
 
-# Calculate custom metrics
-from sklearn.metrics import r2_score, mean_absolute_error
-print(f"R²: {r2_score(test_true, test_pred):.3f}")
-print(f"MAE: {mean_absolute_error(test_true, test_pred):.3f}")
+    if test_true:
+        from sklearn.metrics import r2_score, mean_absolute_error
+        print(f"R²: {r2_score(test_true, test_pred):.3f}")
+        print(f"MAE: {mean_absolute_error(test_true, test_pred):.3f}")
 ```
 
 ### Feature Importance Analysis
@@ -445,17 +460,19 @@ print(f"MAE: {mean_absolute_error(test_true, test_pred):.3f}")
 # Extract feature importance from tree-based models
 best_model = results['best_model']
 
-if 'feature_importance' in best_model:
-    importance = best_model['feature_importance']
+# Statistics about feature importance distribution
+if best_model.get('has_feature_importance'):
+    stats = best_model['feature_importance_stats']
+    print(f"Mean importance: {stats['mean']:.6f}")
+    print(f"Max importance: {stats['max']:.6f}")
+    print(f"Feature count: {stats['n_features']}")
 
-    # Create DataFrame for analysis
-    import pandas as pd
-    importance_df = pd.DataFrame({
-        'feature': range(len(importance)),
-        'importance': importance
-    }).sort_values('importance', ascending=False)
-
-    print(importance_df.head(10))  # Top 10 features
+    # Top-N named features (when feature names are available)
+    top_named = best_model.get('feature_importance_top_named', [])
+    if top_named:
+        import pandas as pd
+        df = pd.DataFrame(top_named)
+        print(df.head(10))
 ```
 
 ## Best Practices
@@ -466,7 +483,7 @@ if 'feature_importance' in best_model:
 1. **Always enable `enable_db_storage=True`** for runs > 5 minutes
 2. **Use descriptive `db_path` names** with timestamps or experiment IDs
 3. **Export to JSON** for archiving and sharing
-4. **Save best models** with joblib for production deployment
+4. **Retrain best models** from stored `model_params` for production deployment — the result dict does not contain the trained estimator
 5. **Use the dashboard** for initial exploration before programmatic analysis
 6. **Query database directly** for custom statistics and aggregations
 ```
@@ -509,7 +526,7 @@ if not results.get('success', False):
     exit(1)
 
 # Use .get() with defaults for optional keys
-best_score = results.get('best_score', float('-inf'))
+best_score = results.get('summary', {}).get('best_score', float('-inf'))
 ```
 
 ## Next Steps

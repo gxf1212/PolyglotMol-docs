@@ -101,8 +101,10 @@ The `random_state=42` parameter ensures that:
 - Results are reproducible across different runs
 - Different users get identical train/test splits
 
-```{warning}
-**Current Limitation**: Each representation is split independently (`standard.py:87`). While `random_state=42` is fixed, if representations have different sample counts (e.g., due to missing values), they may have slightly different test sets. This is a known issue and will be addressed in a future release.
+```{admonition} Shared Split Plan
+:class: tip
+
+All representations share the same train/test and CV fold indices via a `SplitPlan`. Indices are computed once (from a reference representation) and applied to every representation, ensuring consistent splits. If a representation has fewer samples than the index set, only the overlapping molecules are used.
 ```
 
 ## Cross-Validation Protocol
@@ -244,21 +246,29 @@ MolBlender reports **two types of metrics**:
 
 #### What Dashboard Shows
 
-```{admonition} Dashboard Metrics Source
+```{admonition} Metrics in Results and Selection
 :class: important
 
-The **primary metrics** displayed in the Dashboard (Best Metric, Mean Metric, etc.) are **test set scores**, not CV scores. CV scores are shown as auxiliary information to assess model stability.
+Each result stores a `primary_metric` field (the **test set score**) and CV scores. The Dashboard displays the test score as the main metric for each model-representation combination.
+
+However, **model selection** (choosing the "best" model) is based on **CV or HPO scores**, not test scores. The screening engine uses `rank_final_results()` which ranks by CV/HPO scores and never falls back to test scores for winner selection (unless `allow_test_fallback=True` is explicitly set). This prevents test set contamination from influencing model choice.
+
+In other words:
+- **What you see**: test scores are the headline numbers for each model
+- **How the winner is chosen**: CV/HPO scores determine the best model
 ```
 
-**Example Dashboard Display**:
+**Example Result**:
 
 ```
-Best Model: Random Forest + Morgan FP
-├─ Test R² = 0.87 ← Main metric (from test set)
-├─ CV R² = 0.86 ± 0.015 ← Auxiliary (from cross-validation)
+Random Forest + Morgan FP:
+├─ Test R² = 0.87     ← Displayed as primary_metric (test set evaluation)
+├─ CV R² = 0.86 ± 0.015 ← Used for model ranking and selection
 ├─ Test RMSE = 0.52
 └─ Training Time = 12.3s
 ```
+
+The CV score (0.86) is what determines the model's rank relative to other candidates. The test score (0.87) provides an independent estimate of real-world performance.
 
 ## Complete Evaluation Workflow
 
@@ -287,11 +297,15 @@ Original Dataset: 1000 molecules
     │
     └─→ X_test, y_test: 200 samples (20%)
             ↓
-        [model.predict(X_test) - evaluator.py:193]
+        [model.predict(X_test)]
         test_pred = [pred1, pred2, ..., pred200]
             ↓
         [compute_metrics(y_test, test_pred)]
-        test_score = 0.87 ← **Dashboard displays this**
+        test_score = 0.87 ← stored as `primary_metric` in results
+            ↓
+        [rank_final_results() — ranks by CV/HPO scores]
+        selection_source = "cv_score" or "hpo_score"
+        best_model ← chosen by CV/HPO ranking, NOT test score
 ```
 
 ### Step-by-Step Execution
@@ -303,7 +317,8 @@ Original Dataset: 1000 molecules
 5. **Final Training**: Train model on entire training set (800 samples)
 6. **Test Evaluation**: Predict on test set (200 samples) and compute test scores
 7. **Result Storage**: Save all metrics to SQLite database
-8. **Dashboard Display**: Show test scores as primary metrics
+8. **Model Selection**: Rank by CV/HPO scores via `rank_final_results()`; test scores are stored but not used for winner selection
+9. **Dashboard Display**: Show test scores (`primary_metric`) as headline numbers; CV/HPO scores drive the ranking
 
 ## Best Practices
 
@@ -395,73 +410,44 @@ results2 = compare_models(dataset, "activity", "morgan_fp", **config_params)
 results3 = compare_representations(dataset, "activity", "random_forest", **config_params)
 ```
 
-```{warning}
-**Current Limitation**: Each representation may use slightly different train/test splits (see Known Limitations section). For critical comparisons, verify that all representations have the same sample count before splitting.
+```{admonition} Ensuring Consistent Splits
+:class: tip
+
+All representations share the same split indices via `SplitPlan`. For critical comparisons, verify that all representations are computed for the same molecule set to ensure identical sample coverage.
 ```
 
-## Known Limitations
+## Splitting Architecture
 
-### Limitation 1: Per-Representation Splitting
+### Shared Split Plan
 
-**Issue**: Each representation triggers a separate `split_data()` call.
-
-**Code Location**: `standard.py:84-90`
+MolBlender computes the train/test (and CV fold) indices **once** via a `SplitPlan`, then applies the same indices to all representations. This guarantees that every representation trains and evaluates on the same sample indices.
 
 ```python
-for repr_name, X in prepared_data['representations'].items():
-    y = prepared_data['targets']
-    split_data = self.data_handler.split_data(X, y)  # ⚠️ Called per representation
-
-    X_train, X_test = split_data['X_train'], split_data['X_test']
-    y_train, y_test = split_data['y_train'], split_data['y_test']
+# Internal flow (simplified)
+split_plan = _extract_split_plan(config, X=reference_X, y=y)  # indices computed once
+for repr_name, X in representations.items():
+    X_train, X_test, y_train, y_test = _apply_shared_split(split_plan, X, y)
+    # All representations share the same train/test indices
 ```
 
-**Impact**:
-- **Minor** if all representations have the same sample count
-- **Moderate** if representations have missing values (different sample counts)
+When representations have different sample counts (e.g., due to missing values), the shared indices still apply — only molecules present in both the representation and the index set are used. The `SplitPlan` records a cohort fingerprint to detect when sample sets differ.
 
-**Workaround**:
-- Use `random_state=42` (already default) to maximize consistency
-- Ensure all representations are computed for the same molecules
+### CV Random State ✅
 
-**Future Fix**: Planned refactor to split train/test indices once globally, then apply to all representations.
-
-### ~~Limitation 2: CV Random State~~ ✅ FIXED
-
-**Previous Issue**: sklearn's `cross_val_score` didn't fix `random_state` for KFold splitting.
-
-**Status**: ✅ **FIXED** - MolBlender now creates `KFold`/`StratifiedKFold` objects with `random_state=42` before passing to `cross_val_score`.
-
-**Implementation**: `evaluator.py:301-323`
-
-```python
-# Create KFold with fixed random_state
-if task_type == CLASSIFICATION:
-    cv_splitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-else:
-    cv_splitter = KFold(n_splits=5, shuffle=True, random_state=42)
-
-# Use splitter object instead of integer
-cv_scores = cross_val_score(model, X, y, cv=cv_splitter, scoring=scoring)
-```
-
-**Result**: Both CV scores and test scores are now fully reproducible across different runs.
+MolBlender creates `KFold`/`StratifiedKFold` objects with `random_state=42` before passing to `cross_val_score`, ensuring both CV scores and test scores are fully reproducible.
 
 ## Code Reference Index
 
-Quick reference to implementation details:
+Quick reference to implementation modules (line numbers change frequently):
 
-| Functionality | File | Lines | Description |
-|--------------|------|-------|-------------|
-| **Configuration** | `base.py` | 215-217 | `cv_folds=5, test_size=0.2, random_state=42` |
-| **Train/Test Split** | `data_handler.py` | 120-125 | `train_test_split(test_size, random_state, shuffle=True)` |
-| **Stratified Split** | `data_handler.py` | 108-117 | `StratifiedShuffleSplit` for classification |
-| **CV Call** | `evaluator.py` | 139 | `cv_scores = self._cross_validate(model, X_train, y_train)` |
-| **CV Implementation** | `evaluator.py` | 285-327 | `cross_val_score(model, X, y, cv=cv_splitter, scoring=...)` |
-| **Final Training** | `evaluator.py` | 167-183 | `model.fit(X_train, y_train)` on full training set |
-| **Test Prediction** | `evaluator.py` | 192-210 | `test_pred = model.predict(X_test)` |
-| **Metric Computation** | `evaluator.py` | 313-400 | Compute R², RMSE, MAE, etc. |
-| **Per-Repr Splitting** | `standard.py` | 84-90 | Each representation split independently |
+| Functionality | Module | Description |
+|--------------|--------|-------------|
+| **Configuration** | `screening_engine/base.py` | `ScreeningConfig` with `cv_folds`, `test_size`, `random_state` |
+| **Split Plan** | `screening_runtime/split_plan.py` | `_extract_split_plan` / `_apply_shared_split` — compute indices once, apply to all representations |
+| **CV Splitter** | `screening_engine/evaluation/cross_validation.py` | `create_cv_splitter` — KFold / StratifiedKFold with `random_state=42` |
+| **CV Execution** | `screening_engine/evaluation/cross_validation.py` | `perform_cross_validation` — `cross_val_score` with scoring |
+| **Model Ranking** | `screening_engine/evaluation/ranking.py` | `rank_final_results` / `selection_score` — rank by CV/HPO scores |
+| **Final Selection** | `screening_runtime/run.py` | `_select_best_result` — calls `rank_final_results`, never falls back to test score |
 
 ## Large Dataset Prediction
 
@@ -472,7 +458,7 @@ MolBlender supports efficient prediction on large datasets with automatic batch 
 Deep learning models (VAE, CNN, Transformer) use batch processing for inference to prevent GPU memory overflow:
 
 ```python
-from molblender.models import universal_screen
+from molblender.models.api import universal_screen
 
 # Large dataset prediction
 results = universal_screen(
@@ -541,13 +527,13 @@ results = universal_screen(
 ```{admonition} Key Takeaways
 :class: tip
 
-1. **Train/Test Split**: 80/20 by default, fixed with `random_state=42`
+1. **Train/Test Split**: 80/20 by default, fixed with `random_state=42`; indices computed once via SplitPlan and shared across representations
 2. **Cross-Validation**: 5-fold CV performed **only on training set** with fixed `random_state=42`
 3. **Final Model**: Trained on **full training set** (not just one fold)
-4. **Test Evaluation**: Metrics computed on **held-out test set**
-5. **Dashboard Shows**: **Test scores** as primary metrics, CV scores as auxiliary
-6. **Reproducibility**: ✅ Both CV scores and test scores are **fully reproducible**
-7. **Known Issues**: Per-representation splitting (planned fix in future release)
+4. **Test Evaluation**: Metrics computed on **held-out test set** and stored as `primary_metric`
+5. **Model Selection**: Winner chosen by **CV/HPO scores** via `rank_final_results()` — test scores are never used for selection (unless `allow_test_fallback=True`)
+6. **Dashboard Display**: Test scores shown as headline numbers; CV/HPO scores drive ranking
+7. **Reproducibility**: ✅ Both CV scores and test scores are **fully reproducible**
 ```
 
 For questions or issues about the evaluation methodology, please [open an issue on GitHub](https://github.com/gxf1212/MolBlender/issues).

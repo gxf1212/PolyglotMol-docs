@@ -16,7 +16,7 @@ This approach is **far more efficient** than optimizing every model upfront, esp
 ### Basic HPO Usage
 
 ```python
-from molblender.models import universal_screen
+from molblender.models.api import universal_screen
 
 # Enable HPO for top 5 models
 results = universal_screen(
@@ -32,16 +32,28 @@ results = universal_screen(
 ### View HPO Results
 
 ```python
-# All results include both Stage 1 and Stage 2
-print(f"Total models evaluated: {len(results['results'])}")
-print(f"Stage 1 (default params): {sum(1 for r in results['results'] if r.get('stage') == 1)}")
-print(f"Stage 2 (optimized): {sum(1 for r in results['results'] if r.get('stage') == 2)}")
+# Each result carries a `stage` field reflecting the HPO granularity level.
+# stage 1 = Stage 1 default params (no HPO)
+# stage 2 = coarse or customized HPO
+# stage 3 = fine HPO
+# stage 4 = ultrafine HPO
 
-# Best model (automatically from Stage 2 if HPO ran)
+stage1 = [r for r in results['results'] if r.get('stage') == 1]
+stage2 = [r for r in results['results'] if r.get('stage') == 2]
+stage3 = [r for r in results['results'] if r.get('stage') == 3]
+stage4 = [r for r in results['results'] if r.get('stage') == 4]
+print(f"Total: {len(results['results'])}")
+print(f"  Stage 1 (default params): {len(stage1)}")
+print(f"  Coarse/customized HPO:    {len(stage2)}")
+print(f"  Fine HPO:                 {len(stage3)}")
+print(f"  Ultrafine HPO:            {len(stage4)}")
+
+# The best model is always selected from the highest-granularity HPO result
 best = results['best_model']
 print(f"Best: {best['model_name']} + {best['representation_name']}")
-print(f"Optimized params: {best.get('best_params', {})}")
-print(f"HPO CV score: {best.get('hpo_cv_score', 'N/A')}")
+print(f"  stage: {best.get('stage')}, hpo_stage: {best.get('hpo_stage')}")
+print(f"  Optimized params: {best.get('best_params', {})}")
+print(f"  HPO CV score:     {best.get('hpo_cv_score', 'N/A')}")
 ```
 
 ## Two-Stage Workflow
@@ -166,10 +178,11 @@ results_stage2 = universal_screen(
     - Duration: ~30-60 minutes for 5 models
     - Use after identifying promising models with coarse search
 
-  - **`"custom"`** - User-defined grids (advanced)
-    - Edit the active parameter-grid implementation under
-      `src/molblender/models/api/screening_engine/hpo/`
-    - Full control over parameter ranges
+  - **`"ultrafine"`** - Highest-resolution grid search (10+ values per parameter)
+    - Use for publication-quality tuning of a single best model
+    - Best paired with `hpo_method="optuna"` for efficient search
+
+  - **`"customized"`** - User-defined grids (advanced). Set `custom_param_grids` on the internal `ScreeningConfig` (not exposed as a direct `universal_screen` keyword argument). See [Custom Parameter Grids](#custom-parameter-grids) for details.
 
 ### Search Method
 
@@ -439,11 +452,11 @@ MolBlender provides pre-defined parameter grids for all supported models. Grids 
 
 ### Custom Parameter Grids
 
-Pass custom grids through ``ScreeningConfig.custom_param_grids`` (or the
-equivalent ``universal_screen`` argument). The library does not load a user-
-editable ``parameter_grids.py`` file.
+`ScreeningConfig.custom_param_grids` allows overriding the built-in parameter grids with user-defined ones. When provided, the library automatically sets `hpo_stage="customized"` (which maps to DB `stage=2`).
 
-Example:
+**Important**: `custom_param_grids` is a field of `ScreeningConfig` in `screening_engine/base.py`, but it is **not** exposed as a keyword argument of `universal_screen` or any of its config dataclasses. Passing it directly to `universal_screen` raises `TypeError`. To use custom grids, you must construct or patch a `ScreeningConfig` at the screening runtime level, not through the `universal_screen` API.
+
+Example structure for `custom_param_grids`:
 
 ```python
 custom_param_grids = {
@@ -455,16 +468,9 @@ custom_param_grids = {
         'max_features': ['sqrt', 'log2', None]
     }
 }
-
-# Then use in screening
-results = universal_screen(
-    dataset=dataset,
-    target_column="activity",
-    enable_hpo=True,
-    hpo_stage="customized",
-    custom_param_grids=custom_param_grids,
-)
 ```
+
+The library does not load a user-editable `parameter_grids.py` file. Custom grids must be provided programmatically via `ScreeningConfig`.
 
 ## Database Integration
 
@@ -472,45 +478,76 @@ When `enable_db_storage=True`, HPO progress is tracked in SQLite:
 
 ### Schema Structure
 
+The `stage` field in `model_results` encodes the **HPO granularity level**, not a workflow phase:
+
+| DB `stage` | `hpo_stage` value | Description |
+|-----------|-------------------|-------------|
+| 1 | *(none)* | Stage 1 default params, no HPO |
+| 2 | `"coarse"` or `"customized"` | Fast or user-defined grid search |
+| 3 | `"fine"` | Detailed grid search |
+| 4 | `"ultrafine"` | Highest-resolution grid search |
+
 ```sql
--- Stage 1 results
+-- Stage 1 results (default params, no HPO)
 SELECT model_name, representation_name, primary_metric, stage
 FROM model_results
 WHERE session_id = 'session_xyz' AND stage = 1
 ORDER BY primary_metric DESC;
 
--- Stage 2 results (optimized)
+-- Coarse HPO results
 SELECT model_name, representation_name, primary_metric, stage, best_params
 FROM model_results
-WHERE session_id = 'session_xyz' AND stage = 2
+WHERE session_id = 'session_xyz' AND stage = 2 AND hpo_stage = 'coarse'
 ORDER BY primary_metric DESC;
+
+-- Fine HPO results
+SELECT model_name, representation_name, primary_metric, stage, best_params
+FROM model_results
+WHERE session_id = 'session_xyz' AND stage = 3
+ORDER BY primary_metric DESC;
+
+-- Ultrafine HPO results
+SELECT model_name, representation_name, primary_metric, stage, best_params
+FROM model_results
+WHERE session_id = 'session_xyz' AND stage = 4
+ORDER BY primary_metric DESC;
+
+-- All HPO results regardless of granularity
+SELECT model_name, representation_name, primary_metric, stage, hpo_stage, best_params
+FROM model_results
+WHERE session_id = 'session_xyz' AND stage >= 2
+ORDER BY stage, primary_metric DESC;
 ```
 
 ### Resume Interrupted HPO
 
 When using an existing database, MolBlender automatically **skips combinations that already
-have Stage 2 results** and **saves Stage 2 output after each model**. To resume, simply
+have results at the same HPO stage** and **saves output after each model**. To resume,
 re-run with the same `db_path` and `enable_db_storage=True`.
 
 ```python
 from molblender.models.api.utils.results_db import ScreeningResultsDB
 
-# Load previous results
 db = ScreeningResultsDB("screening_results.db")
 previous_results = db.load_comprehensive_results(session_id="session_xyz")
 
-# Check what was already optimized
-stage2_models = [r for r in previous_results if r.get('stage') == 2]
-print(f"Already optimized: {len(stage2_models)} models")
+# Check what was already optimized — match on the same hpo_stage
+# stage >= 2 means any HPO was performed
+hpo_results = [r for r in previous_results if r.get('stage', 1) >= 2]
+coarse_done = [r for r in previous_results if r.get('stage') == 2 and r.get('hpo_stage') == 'coarse']
+print(f"Total HPO results: {len(hpo_results)}")
+print(f"Coarse grid done:  {len(coarse_done)}")
 
-# Continue optimization with different strategy
+# Resume: reuse the same database. MolBlender will skip combinations
+# that already have results matching the requested hpo_stage.
 results = universal_screen(
     dataset=dataset,
     target_column="activity",
     enable_hpo=True,
-    hpo_selection_scope="per_subtype",  # Try different strategy
-    db_path="screening_results.db",  # Reuse same database
-    session_id="session_xyz_extended"  # New session ID
+    hpo_stage="fine",  # Fine will look for stage=3 results to skip
+    hpo_selection_scope="per_subtype",
+    db_path="screening_results.db",
+    session_id="session_xyz_extended"
 )
 ```
 
