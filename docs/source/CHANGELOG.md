@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **SessionPort protocol and LeadAnalysisRunner** (`api/persistence/session_port.py`, `lead/lead_sensitivity_runner.py`, `lead/runner.py`, `utils/caching/__init__.py`) (2026-08-13)
+  - 新增 `ScreeningSessionPort` Protocol，定义 Standard/Universal 共享的 4 个 session 持久化操作；Universal-only 生命周期方法保持 `ScreeningDatabaseManager` 独有
+  - 新增 `LeadAnalysisRunner`，将 lead sensitivity 参数绑定和 CPU 预算解析抽离为独立 adapter，`lead_sensitivity.py` 和 `lead/runner.py` 均委托至该 adapter
+  - `utils/caching/__init__.py` 文档更新：明确实验状态、public contract 保证、与 `data/cache` 的边界
+  - 新增 `test_session_port.py`（345 行）、`test_stratify_boundary.py`（380 行）、扩展 `test_utils_caching.py` 和 `test_runner.py`
 - **Phase 3 persistence layer extraction** (`api/persistence/`, `multimodal/processors/hpo/processor.py`, `screening/standard.py`) (2026-08-12)
   - HPO/session/resume SQL 收口到 `hpo_ops.py`、`result_queries.py`、`stage1_ops.py`、`dataset_info_reads.py`；processor 通过 `_check_and_load_resume()` 调用，不再读取 `param_generator`
   - Grid resume 明确 `GridResumable` 协议，非 Grid/旧 mock 不伪造 `n_trials_completed`
@@ -124,6 +129,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **HPO parameter rename** (2026-07-21)
   - Renamed `HPOConfig.selection_strategy` → `selection_scope`, `ScreeningConfig.hpo_selection_strategy` → `hpo_selection_scope`, and all legacy kwarg keys accordingly. The parameter controls which group top-N candidates are selected from ("global", "per_type", "per_subtype"). The old name `selection_strategy` was ambiguous with HPO search algorithm selection.
+
+- **Corpus string parsing centralized as `parse_model_corpus()`** (`screening_engine/models/corpus_filter.py`, `standard_helpers.py`, `comparative_helpers.py`, `model_registry.py`) (2026-08-13)
+  - Single fail-closed parser: unknown, blank, and non-string inputs raise `ValueError` instead of silently falling back to `ModelCorpus.ALL`. `"transformers"` consistently resolves to `TRANSFORMERS_ONLY` (narrow predicate), matching across all entry points.
+
+- **Screening cache classic and robust entry points share one canonical payload** (`api/utils/caching/core.py`) (2026-08-13)
+  - `cache_screening_results` and `robust_cache_screening_results` write the same `{data: <results>, metadata: {identity + cached_at}}` format; `load_cached_screening_results` and `robust_load_cached_screening_results` apply the same identity verification covering dataset id, target column, config, and representation names. Legacy wrapper files (pre-unification format) remain readable.
+
+- **Cache singletons use isolated default subdirectories under `MOLBLENDER_CACHE_DIR`** (`cache/manager.py`, `data/cache/analysis.py`, `data/cache/multimodal/core.py`) (2026-08-13)
+  - SQLite cache, AnalysisCache, MultiModalCache, and RepresentationCache each write to dedicated subdirectories (`sqlite_cache`, `analysis_cache`, `multimodal_cache`) to prevent metadata/payload collisions. SQLite cache TTL comparisons now use UTC-aware timestamps.
 
 ### Removed
 - **Dead-code facades removed** (2026-07-30)
