@@ -10,6 +10,9 @@ MolBlender provides multiple screening functions optimized for different use cas
 |-------------|------------|-----------|---------|-------------|
 | `simple_evaluate()` | Single model test | 1 model | <1 min | Quick baseline |
 | `quick_screen()` | Fast essential screening | 5-10 | 2-5 min | Initial exploration |
+| `thorough_screen()` | Accurate-model screening | 10-20 | 10-30 min | Balanced coverage |
+| `interpretable_screen()` | Transparent models only | 5-10 | 2-5 min | Feature importance / regulatory |
+| `screen_models()` | Full control via `model_corpus` | Custom | Varies | All of the above use this |
 | `universal_screen()` | Multimodal comprehensive | 15-30 | 10-60 min | **Recommended default** |
 | `compare_models()` | Model comparison | Custom | 5-15 min | Model selection |
 | `compare_representations()` | Representation comparison | Custom | 5-15 min | Feature selection |
@@ -492,6 +495,70 @@ def quick_screen(
 ❌ Final model selection
 ❌ Large datasets
 ❌ Publication-quality results
+
+## Model Corpus
+
+`screen_models()`, `quick_screen()`, `thorough_screen()`, and `interpretable_screen()` all delegate to `screen_models()` with a preset `model_corpus` value. `ModelCorpus` controls which models are tested:
+
+| **Corpus** | **Contents** | **When to Use** |
+|-----------|-------------|----------------|
+| `"fast"` | ~5-10 models: RF, XGBoost, Ridge, Bayesian Ridge, KNN | Quick exploration |
+| `"essential"` | Fast + a few more standard models | Default quick screen |
+| `"accurate"` | Broadest set of traditional ML models | Thorough screening |
+| `"interpretable"` | Linear regression, decision tree, sparse linear models | Regulatory submissions, feature importance |
+
+```python
+from molblender.models.api import screen_models
+
+results = screen_models(
+    dataset=dataset,
+    target_column="activity",
+    model_corpus="accurate"  # Choose the model set
+)
+```
+
+## thorough_screen()
+
+Runs `screen_models` with `model_corpus="accurate"`, 5-fold CV, and verbose logging — the most comprehensive standard screening preset without HPO.
+
+```python
+from molblender.models.api import thorough_screen
+
+results = thorough_screen(
+    dataset=dataset,
+    target_column="activity"
+)
+```
+
+## interpretable_screen()
+
+Runs `screen_models` with `model_corpus="interpretable"`, restricting to linear and tree-based models that expose feature importance.
+
+```python
+from molblender.models.api import interpretable_screen
+
+results = interpretable_screen(
+    dataset=dataset,
+    target_column="activity"
+)
+```
+
+## screen_models()
+
+The underlying function all preset screeners call. Use it directly when you need a custom `model_corpus` value:
+
+```python
+from molblender.models.api import screen_models
+
+results = screen_models(
+    dataset=dataset,
+    target_column="activity",
+    model_corpus="accurate",
+    cv_folds=5,
+    max_cpu_cores=8,
+    max_workers_per_model=2,
+)
+```
 
 ## simple_evaluate()
 

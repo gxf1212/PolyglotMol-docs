@@ -670,26 +670,24 @@ Butina split is ideal when you want to:
 #### Configuration
 
 ```python
-from molblender.models import universal_screen
+from molblender.data.dataset.splitting.strategies.butina import butina_split
 
-results = universal_screen(
-    dataset=dataset,
-    target_column="dG",
-    split_strategy="butina",           # Butina clustering
+splits = butina_split(
+    dataset,
     test_size=0.2,
-    butina_similarity_threshold=0.6,   # Tanimoto threshold
-    fingerprint_type='morgan',         # Morgan/RDKit/MACCS
-    fp_radius=2,
-    fp_nbits=2048,
+    similarity_threshold=0.6,
+    fingerprint_type="morgan",
+    radius=2,
+    nbits=2048,
     random_state=42
 )
 
 # Check cluster statistics
-print(f"Number of clusters: {results['split_info']['n_clusters']}")
-print(f"Actual test size: {results['split_info']['test_size_actual']:.1%}")
-print(f"Train intra-similarity: {results['split_info']['train_avg_intra_similarity']:.3f}")
-print(f"Test intra-similarity: {results['split_info']['test_avg_intra_similarity']:.3f}")
-print(f"Train-test similarity: {results['split_info']['train_test_similarity']:.3f}")
+print(f"Number of clusters: {splits['split_info']['n_clusters']}")
+print(f"Actual test size: {splits['split_info']['test_size_actual']:.1%}")
+print(f"Train intra-similarity: {splits['split_info']['train_avg_intra_similarity']:.3f}")
+print(f"Test intra-similarity: {splits['split_info']['test_avg_intra_similarity']:.3f}")
+print(f"Train-test similarity: {splits['split_info']['train_test_similarity']:.3f}")
 ```
 
 #### How It Works
@@ -1055,31 +1053,27 @@ UMAP clustering combines UMAP dimensionality reduction with K-means clustering t
 #### Configuration
 
 ```python
-from molblender.models import universal_screen
+from molblender.data.dataset.splitting.strategies.umap_clustering import umap_clustering_split
 
-results = universal_screen(
-    dataset=dataset,
-    target_column="activity",
-    split_strategy="umap_clustering",
+splits = umap_clustering_split(
+    dataset,
     test_size=0.2,
-    # UMAP parameters (auto-adjusted for small datasets)
-    umap_n_components=50,        # Requested components (auto-clamped if needed)
-    umap_n_neighbors=15,         # UMAP neighbors parameter
-    umap_min_dist=0.1,           # UMAP minimum distance
-    # Clustering parameters
-    n_clusters=None,             # None for auto-selection
-    auto_select_k=True,          # Auto-select optimal k via Silhouette
-    k_range=(5, 20),             # K selection range
-    fingerprint_type='morgan',
-    fp_radius=2,
-    fp_nbits=2048,
+    n_components=50,
+    n_neighbors=15,
+    min_dist=0.1,
+    n_clusters=None,
+    auto_select_k=True,
+    k_range=(5, 20),
+    fingerprint_type="morgan",
+    radius=2,
+    nbits=2048,
     random_state=42
 )
 
 # Check results
 print(f"Requested n_components: 50")
-print(f"Actual n_components: {results['split_info']['umap_n_components_actual']}")
-print(f"Optimal k: {results['split_info']['n_clusters']}")
+print(f"Actual n_components: {splits['split_info']['umap_n_components_actual']}")
+print(f"Optimal k: {splits['split_info']['n_clusters']}")
 ```
 
 #### Small Dataset Protection

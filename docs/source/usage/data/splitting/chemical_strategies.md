@@ -266,21 +266,21 @@ Leave-cluster-out validation based on Tanimoto similarity clustering.
 ### Configuration
 
 ```python
-results = universal_screen(
-    dataset=dataset,
-    target_column="dG",
-    split_strategy="butina",
+from molblender.data.dataset.splitting.strategies.butina import butina_split
+
+splits = butina_split(
+    dataset,
     test_size=0.2,
-    butina_similarity_threshold=0.6,   # Tanimoto threshold
-    fingerprint_type='morgan',
-    fp_radius=2,
-    fp_nbits=2048,
+    similarity_threshold=0.6,
+    fingerprint_type="morgan",
+    radius=2,
+    nbits=2048,
     random_state=42
 )
 
 # Check cluster statistics
-print(f"Number of clusters: {results['split_info']['n_clusters']}")
-print(f"Train intra-similarity: {results['split_info']['train_avg_intra_similarity']:.3f}")
+print(f"Number of clusters: {splits['split_info']['n_clusters']}")
+print(f"Train intra-similarity: {splits['split_info']['train_avg_intra_similarity']:.3f}")
 ```
 
 ### How It Works

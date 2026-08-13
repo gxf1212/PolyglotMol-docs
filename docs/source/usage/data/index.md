@@ -40,6 +40,12 @@ Efficient collection handling with batch operations
 Comprehensive protein data management and database retrieval
 :::
 
+:::{grid-item-card} 🔬 **Dataset Diagnostics**
+:link: diagnostics
+:link-type: doc
+DNR analysis, activity cliff detection, and quality reports
+:::
+
 :::{grid-item-card} 💾 **I/O Operations**
 Multi-format loading and saving capabilities
 :::
@@ -643,4 +649,5 @@ splitting/property_strategies
 splitting/advanced_strategies
 splitting/custom_splits
 splitting/best_practices
+diagnostics
 ```

@@ -248,6 +248,65 @@ import joblib
 joblib.dump(estimator, './best_model.pkl')
 ```
 
+### Programmatic Model Recreation
+
+For full automation, `recreate_model_from_config` runs the entire retrain pipeline in one call. First retrieve the split indices from the database, then pass them to the recreation function:
+
+```python
+import json
+import sqlite3
+from molblender.models.api.export import recreate_model_from_config
+
+# Load split indices from database
+conn = sqlite3.connect("./my_screening.db")
+row = conn.execute(
+    "SELECT train_indices, test_indices FROM model_results ORDER BY primary_metric DESC LIMIT 1"
+).fetchone()
+conn.close()
+
+recreation = recreate_model_from_config(
+    representation=row["representation_name"],
+    model_name=row["model_name"],
+    hyperparameters=json.loads(row["model_params"]),
+    dataset_path="data.csv",
+    target_column="pIC50",
+    train_indices=json.loads(row["train_indices"]),
+    test_indices=json.loads(row["test_indices"]),
+    output_dir="./retrained/"
+)
+
+print(f"Test R²: {recreation['test_metrics']['r2']:.4f}")
+```
+
+The function returns:
+
+| Key | Description |
+|-----|-------------|
+| `model` | Trained estimator object |
+| `train_predictions`, `test_predictions` | Predictions for each set |
+| `train_metrics`, `test_metrics` | `pearson_r`, `r2`, `mae`, `rmse` |
+| `X_train`, `X_test`, `y_train`, `y_test` | Feature matrices and labels |
+| `configuration` | Representation, model name, hyperparameters |
+
+To generate standalone Python code (instead of calling the function directly):
+
+```python
+from molblender.models.api.export import generate_reproduction_code
+
+code = generate_reproduction_code(
+    representation="morgan_fp_r2_1024",
+    model_name="xgboost",
+    hyperparameters=best_model["model_params"],
+    dataset_path="data.csv",
+    target_column="pIC50",
+    train_indices=train_idx,
+    test_indices=test_idx
+)
+
+with open("reproduce.py", "w") as f:
+    f.write(code)
+```
+
 ## Result Structure
 
 ### Complete Result Dictionary
@@ -285,8 +344,10 @@ joblib.dump(estimator, './best_model.pkl')
         'cv_std': 0.012,
         'training_time': 12.34,
         'prediction_time': 0.45,
+        'cohort_fingerprint': 'abc123...',
+        'coverage': 1.0,
         'model_params': {'n_estimators': 200, 'learning_rate': 0.1},
-        'hpo_stage': 'fine',
+        'hpo_stage': 'fine',       # Only present when HPO ran
         'stage': 3,
     },
 
@@ -329,6 +390,15 @@ joblib.dump(estimator, './best_model.pkl')
     },
 }
 ```
+
+**Field Notes:**
+- `cv_scores` and `cv_fold_scores` hold the same data — both are aliases for the per-fold CV score list.
+- `coverage` indicates what fraction of the original cohort was retained after quality filtering (1.0 = all molecules kept).
+- `cohort_fingerprint` identifies the exact subset of molecules evaluated, enabling cross-session comparison.
+- `model_params` is the config used to create the estimator. If HPO ran, `best_params` is stored separately in the database.
+- `selection['source']` indicates which score the best model was chosen on: `'cv_score'` if only Stage 1 ran, `'hpo_score'` if HPO contributed.
+- `selection['test_primary_metric_used_for_selection']` is always `False` — the test set was never used to pick the winner, only to report final metrics.
+- `selection['excluded_incomparable_count']` counts models that had no valid selection score and were skipped from ranking.
 
 ## Caching and Resuming
 
