@@ -569,8 +569,13 @@ After identifying your production model:
 # From your Python environment after screening
 import joblib
 
-# Get best model from screening results
-best_model = results['best_estimator']
+# Retrain best model from stored metadata
+from molblender.models.api.screening_engine.model_registry import get_model_registry
+best = results['best_model']
+best_model = get_model_registry().get_model_config(best['model_name']).create_estimator(
+    **best.get('model_params', {})
+)
+best_model.fit(X_train, y_train)
 
 # Save to disk
 joblib.dump(best_model, 'my_production_model.pkl')

@@ -237,9 +237,10 @@ best = results['best_model']
 model_params = best.get('model_params', {})
 
 # Reconstruct and train the model for deployment
-from molblender.models.api.screening_engine.registry import get_model_config
+from molblender.models.api.screening_engine.model_registry import get_model_registry
 
-config = get_model_config(best['model_name'])
+registry = get_model_registry()
+config = registry.get_model_config(best['model_name'])
 estimator = config.create_estimator(**model_params)
 estimator.fit(X_train, y_train)
 

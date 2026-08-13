@@ -112,7 +112,7 @@ results = quick_screen(
     target_column="logP"
 )
 
-print(f"Screening completed! Best R²: {results['best_score']:.3f}")
+print(f"Screening completed! Best R²: {results['summary']['best_score']:.3f}")
 ```
 
 ### Example: Universal Screening (Recommended)
@@ -128,7 +128,7 @@ results = universal_screen(
     max_cpu_cores=-1       # Use all available cores
 )
 
-print(f"Results saved to: {results['database_path']}")
+print(f"Results saved to database (pass db_path to set custom location)")
 ```
 
 ## Launching Dashboard
@@ -321,7 +321,13 @@ Loading: ███████████████████████�
 
 ```python
 # From Python, after screening
-best_model = results['best_estimator']
+# Retrain best model from stored metadata for deployment:
+from molblender.models.api.screening_engine.model_registry import get_model_registry
+best = results['best_model']
+estimator = get_model_registry().get_model_config(best['model_name']).create_estimator(
+    **best.get('model_params', {})
+)
+estimator.fit(X_train, y_train)
 import joblib
 joblib.dump(best_model, 'my_best_model.pkl')
 ```
@@ -494,7 +500,13 @@ molblender view ./results --verbose             # Debug mode
 # Python essentials
 from molblender.models import quick_screen
 results = quick_screen(dataset, target_column="logP")
-best_model = results['best_estimator']
+# Retrain best model from stored metadata for deployment:
+from molblender.models.api.screening_engine.model_registry import get_model_registry
+best = results['best_model']
+estimator = get_model_registry().get_model_config(best['model_name']).create_estimator(
+    **best.get('model_params', {})
+)
+estimator.fit(X_train, y_train)
 ```
 
 ---

@@ -277,7 +277,7 @@ results = universal_screen(
 
 # Results are saved to database specified in config
 print(f"Best model: {results['best_model']}")
-print(f"Best score: {results['best_score']}")
+print(f"Best score: {results['summary']['best_score']}")
 ```
 
 ## API Reference

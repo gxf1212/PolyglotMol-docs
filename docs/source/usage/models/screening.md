@@ -320,27 +320,31 @@ repeats are suppressed.
     'best_model': {                     # Best performing model
         'model_name': 'random_forest',
         'representation_name': 'morgan_fp_r2_1024',
-        'metrics': {
+        'primary_metric': 0.852,     # Test-set metric value
+        'primary_metric_name': 'pearson_r',
+        'all_metrics': {
             'r2': 0.852,
             'rmse': 0.543,
             'mae': 0.421,
             'pearson_r': 0.924
         },
         'cv_scores': [0.831, 0.867, 0.849, 0.856, 0.857],
+        'cv_mean': 0.852,
+        'cv_std': 0.012,
         'training_time': 12.34,
-        'estimator': <trained_model>,   # Trained sklearn-compatible model
+        'model_params': {'n_estimators': 200, 'max_depth': 10},
     },
-    'results': [                        # All model results sorted by performance
-        {...}, {...}, ...
-    ],
-    'summary': {                        # Statistical summary
+    'top_models': [...],            # Top results sorted by CV/HPO score
+    'all_results': [...],           # All model results sorted by CV/HPO score
+    'summary': {                    # Statistical summary
         'n_models_evaluated': 18,
         'n_representations': 6,
+        'n_unique_models': 3,
+        'best_score': 0.852,
         'mean_score': 0.764,
-        'std_score': 0.089,
-        'best_modality': 'VECTOR'
+        'std_score': 0.089
     },
-    'database_path': './screening_results.db',  # If enable_db_storage=True
+    'screening_config': {...},      # Configuration snapshot
     'timestamp': '2025-01-15T10:30:45'
 }
 ```
@@ -657,7 +661,7 @@ results = universal_screen(dataset, target_column="activity")
 if not results.get('success', False):
     print(f"Screening failed: {results.get('error')}")
 else:
-    print(f"Screening succeeded: {results['n_models_evaluated']} models tested")
+    print(f"Screening succeeded: {results['summary']['n_models_evaluated']} models tested")
 ```
 
 **Common Errors:**

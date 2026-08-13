@@ -1,15 +1,17 @@
 # Hyperparameter Optimization (HPO)
 
-Complete guide to MolBlender's two-stage hyperparameter optimization system for automated model tuning.
+Complete guide to MolBlender's multi-stage hyperparameter optimization system for automated model tuning.
 
 ## Overview
 
-MolBlender implements an **intelligent two-stage HPO workflow** that balances exploration speed with optimization quality:
+MolBlender implements a **four-stage HPO pipeline** that balances exploration speed with optimization quality:
 
-- **Stage 1**: Screen all model-representation combinations with default parameters (~10-30 minutes)
-- **Stage 2**: Optimize top performers with GridSearchCV or RandomizedSearchCV (~10-60 minutes)
+- **Stage 1**: Screen all model-representation combinations with default parameters
+- **Stage 2**: Coarse or customized HPO via GridSearchCV or Optuna
+- **Stage 3**: Fine-tuned HPO with denser search grids
+- **Stage 4**: Ultrafine HPO with the most exhaustive search
 
-This approach is **far more efficient** than optimizing every model upfront, especially when screening 20+ model-representation combinations.
+This staged approach avoids optimizing every model upfront, which is wasteful when screening 20+ combinations.
 
 ## Quick Start
 
@@ -38,11 +40,11 @@ results = universal_screen(
 # stage 3 = fine HPO
 # stage 4 = ultrafine HPO
 
-stage1 = [r for r in results['results'] if r.get('stage') == 1]
-stage2 = [r for r in results['results'] if r.get('stage') == 2]
-stage3 = [r for r in results['results'] if r.get('stage') == 3]
-stage4 = [r for r in results['results'] if r.get('stage') == 4]
-print(f"Total: {len(results['results'])}")
+stage1 = [r for r in results['all_results'] if r.get('stage') == 1]
+stage2 = [r for r in results['all_results'] if r.get('stage') == 2]
+stage3 = [r for r in results['all_results'] if r.get('stage') == 3]
+stage4 = [r for r in results['all_results'] if r.get('stage') == 4]
+print(f"Total: {len(results['all_results'])}")
 print(f"  Stage 1 (default params): {len(stage1)}")
 print(f"  Coarse/customized HPO:    {len(stage2)}")
 print(f"  Fine HPO:                 {len(stage3)}")

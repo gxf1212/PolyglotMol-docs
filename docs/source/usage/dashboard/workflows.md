@@ -487,7 +487,14 @@ import joblib
 from molblender.representations import get_featurizer
 import time
 
-model = results['best_estimator']  # RandomForest
+# Retrain best model from stored metadata
+from molblender.models.api.screening_engine.model_registry import get_model_registry
+best = results['best_model']
+estimator = get_model_registry().get_model_config(best['model_name']).create_estimator(
+    **best.get('model_params', {})
+)
+estimator.fit(X_train, y_train)
+model = estimator
 
 # Prepare test molecules
 featurizer = get_featurizer('morgan_fp_r2_1024')
@@ -504,7 +511,7 @@ print(f"Prediction time: {per_molecule:.2f}ms per molecule")
 
 # Verify meets requirement
 assert per_molecule < 1.0, "Too slow!"
-assert results['best_score'] > 0.8, "Not accurate enough!"
+assert results['summary']['best_score'] > 0.8, "Not accurate enough!"
 
 # Save for production
 joblib.dump(model, 'production_model.pkl')

@@ -45,10 +45,7 @@ results = universal_screen(
 best_model = results['best_model']
 print(f"Model: {best_model['model_name']}")
 print(f"Representation: {best_model['representation_name']}")
-print(f"R²: {best_model['metrics']['r2']:.3f}")
-
-# Make predictions
-predictions = best_model['estimator'].predict(new_data)
+print(f"R²: {best_model['all_metrics']['r2']:.3f}")
 ```
 
 ## Key Features
@@ -205,17 +202,21 @@ results = universal_screen(
 )
 
 # 3. Quick performance check
-print(f"Best R²: {results['best_score']:.3f}")
-print(f"Models tested: {results['n_models_evaluated']}")
-print(f"Results saved to: {results['database_path']}")
+print(f"Best score: {results['summary']['best_score']:.3f}")
+print(f"Models tested: {results['summary']['n_models_evaluated']}")
 
 # 4. Launch interactive dashboard
 # $ molblender view ./screening_results.db
 
-# 5. Export best model
-best_estimator = results['best_estimator']
+# 5. Retrain and export best model for deployment
+from molblender.models.api.screening_engine.model_registry import get_model_registry
+best = results['best_model']
+registry = get_model_registry()
+config = registry.get_model_config(best['model_name'])
+estimator = config.create_estimator(**best.get('model_params', {}))
+estimator.fit(X_train, y_train)
 import joblib
-joblib.dump(best_estimator, 'production_model.pkl')
+joblib.dump(estimator, 'production_model.pkl')
 ```
 
 ## Next Steps
