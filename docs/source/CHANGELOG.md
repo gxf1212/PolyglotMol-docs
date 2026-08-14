@@ -21,6 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `molblender.models.api.screening.standard_execution` 已转为弃用适配器：模块内所有执行辅助函数改为通过 `__getattr__` 从 `molblender.models.api.screening_runtime` 转发，每次访问触发 `DeprecationWarning`。新代码必须直接从 `screening_runtime` 导入执行函数。
 
 ### Fixed
+- **依赖系统加载器重构与死代码清理** (`config/dependencies/`, `data/dataset/splitting/`, `dashboard/`, `drawings/`) (2026-08-13)
+  - 删除死文件 `loaders_bio_misc.py`（187 行，从未被任何导入路径引用）
+  - UniMolRepr 加载器修复：UniMolRepr 缺失时现在报 `RuntimeError`，整体判为不可用，不再假报 `available=True`
+  - Pybel 加载器从手动 `_dependency_cache` 迁移到共享 `import_dependency()` 辅助函数
+  - RDKit 加载器新增 `Butina` 和 `MaxMinPicker` 入口，SciPy 加载器新增 `stats` 和 `hierarchy`
+  - `data/dataset/splitting/` 5 个模块迁移到惰性 RDKit 导入，`dashboard/` + `drawings/` 7 个文件迁移到惰性 SciPy 导入
+
 - **HPO legacy-schema 测试拆分与 resume bug 修复** (`tests/models/api/multimodal/processors/hpo/`) (2026-08-13)
   - 原 3,458 行单文件 `test_legacy_schema_fail_closed.py` 拆分为 6 个专题测试文件 + `_hpo_test_helpers.py`（共享 DB stub、`_GridResumableStub`、行插入 helper），修复 `compute_missing_resume_params` 在拆分时截断导致 Grid partial-resume 无法加载缺失参数的回归
 
