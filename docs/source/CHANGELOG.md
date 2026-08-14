@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Standard adapter consolidation and comparative legacy packages** (`screening/adapters/`, `screening/legacy/`) (2026-08-14)
+  - `screening/adapters/standard.py` 成为 Standard adapter 单一实现（855 行），旧 `screening/standard.py` 转为 `__getattr__` 弃用 shim
+  - `screening/legacy/` 收口 comparative 相关模块（comparative/comparative_helpers/comparative_repr_helpers/comparative_simple_helpers），顶层文件转为弃用 shim
+  - 公共 `molblender.models.api.screening` 导入直接从 `adapters.standard` 直出，不触发警告；历史 `screening.standard` 路径保持告警兼容
+  - 6 个 multimodal modality handler 更新 import path；新增 94 个契约测试
 - **Standard/Universal service-construction seam** (`multimodal/services.py`, `screening/standard.py`, `multimodal/screeners.py`) (2026-08-13)
   - 新增 `multimodal/services.py`，提供 `create_screening_database_manager()` 和 `create_hpo_processor()` 两个工厂函数，Standard 与 Universal 统一经此模块构造 DB manager 与 HPO processor，不再直连私有处理器实现
   - Universal screener 向 HPO processor 传递真实 `data_handler`（此前为 `None`），确保 HPO 阶段可正确处理 representation 对齐
