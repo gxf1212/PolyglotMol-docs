@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Legacy compatibility entry points marked for v2.0 removal** (`routing/compat.py`, `screening/standard.py`, `cache/adapters/`, `screening/standard_execution.py`) (2026-08-14)
+  - 旧兼容入口统一声明 2.0 移除，触发显式弃用警告；`UniversalScreener.run_screening()` 旧 `list[str]` 输入单次警告后规范化，canonical `Combination` 路径零警告
+  - cache 模块 4 个 adapter 文件瘦身（545 行删除），所有权边界测试新增 `test_cache_ownership.py`、`test_cache_domain_boundary.py`
+  - 新增 `test_standard_execution_parallel_policy.py`（127 行）、`test_session_lifecycle_fail_closed.py`（33 个测试）
 - **Standard adapter consolidation and comparative legacy packages** (`screening/adapters/`, `screening/legacy/`) (2026-08-14)
   - `screening/adapters/standard.py` 成为 Standard adapter 单一实现（855 行），旧 `screening/standard.py` 转为 `__getattr__` 弃用 shim
   - `screening/legacy/` 收口 comparative 相关模块（comparative/comparative_helpers/comparative_repr_helpers/comparative_simple_helpers），顶层文件转为弃用 shim
