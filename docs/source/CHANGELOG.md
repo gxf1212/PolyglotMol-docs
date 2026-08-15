@@ -15,105 +15,105 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 5 new test modules: `test_adapter_contracts.py`, `test_split_context_propagation.py`, `test_config_contracts_import_boundary.py`, `test_universal_screen_contract.py`, `test_results_db_backend_owner.py`
   - 18 new tests passing
 - **Static GPU-heavy index and resource_intensity declarations** (`screening_engine/`, `representations/registry/`) (2026-08-15)
-  - 静态 GPU-heavy 索引覆盖小分子 LM、UniMol、蛋白 PLM；策略在查注册表前命中，避免加载模型依赖
-  - 模型注册表声明 `resource_intensity` 与真实 CPU/device/process-isolation 能力
-  - 静态索引完全不可变（内外两层），in-place 篡改抛 `TypeError`
-  - 7 个新契约模块：`configuration.py`、`config_normalization.py`、`errors.py`、`ports.py`、`result_contracts.py`、`routing_contracts.py`、`types.py`
-  - 干净子进程验证：chemberta/UniMol/ESM2 静态分类不导入 torch/DeepChem/TensorFlow
-  - 81 契约测试通过；25 passed + 3 skipped（live-registry 审计缺可选模块）
+  - Static GPU-heavy index covers small-molecule LM, UniMol, and protein PLM; policy hits before registry lookup, avoiding model dependency load
+  - Model registry declares `resource_intensity` with real CPU/device/process-isolation capabilities
+  - Static index is fully immutable (inner and outer layers); in-place mutation raises `TypeError`
+  - 7 new contract modules: `configuration.py`, `config_normalization.py`, `errors.py`, `ports.py`, `result_contracts.py`, `routing_contracts.py`, `types.py`
+  - Clean subprocess verification: chemberta/UniMol/ESM2 static classification does not import torch/DeepChem/TensorFlow
+  - 81 contract tests passing; 25 passed + 3 skipped (live-registry audit missing optional modules)
 - **Standard/Comparative owner flip with v2.0 shim layer** (`screening/standard.py`, `screening/comparative*.py`) (2026-08-15)
-  - `screening/standard.py` 成为唯一 Standard 实现（897 行）；`screening/adapters/standard.py` 降为 v2.0 警告 shim
-  - `screening/comparative*.py` 成为唯一 Comparative 实现；`screening/legacy/comparative*.py` 降为 v2.0 警告 shim
-  - 路由 `compat.py` 新增 `specific_pairs_mode=True` 严格一模型一表征校验，否则 fail-closed
-  - AST 扫描生产源码，禁止重新导入上述 v2.0 shim
-  - 6 个 modality handler 更新 import path；审计文档记录实际 owner 和 2.0 迁移边界
-  - 98 测试通过（1 跳过）：11 旧执行入口 + 67 Standard/Comparative/Routing + 新增 `test_combination_contract.py`
+  - `screening/standard.py` becomes the sole Standard implementation (897 lines); `screening/adapters/standard.py` downgraded to v2.0 warning shim
+  - `screening/comparative*.py` becomes the sole Comparative implementation; `screening/legacy/comparative*.py` downgraded to v2.0 warning shim
+  - Routing `compat.py` adds `specific_pairs_mode=True` for strict one-model-one-representation validation; otherwise fail-closed
+  - AST scan of production source code prohibits re-importing the v2.0 shim
+  - 6 modality handlers updated import paths; audit docs record actual owners and 2.0 migration boundary
+  - 98 tests passing (1 skipped): 11 legacy execution entry points + 67 Standard/Comparative/Routing + new `test_combination_contract.py`
 - **Legacy compatibility entry points marked for v2.0 removal** (`routing/compat.py`, `screening/standard.py`, `cache/adapters/`, `screening/standard_execution.py`) (2026-08-14)
-  - 旧兼容入口统一声明 2.0 移除，触发显式弃用警告；`UniversalScreener.run_screening()` 旧 `list[str]` 输入单次警告后规范化，canonical `Combination` 路径零警告
-  - cache 模块 4 个 adapter 文件瘦身（545 行删除），所有权边界测试新增 `test_cache_ownership.py`、`test_cache_domain_boundary.py`
-  - 新增 `test_standard_execution_parallel_policy.py`（127 行）、`test_session_lifecycle_fail_closed.py`（33 个测试）
+  - Legacy compatibility entry points uniformly declare 2.0 removal, triggering explicit deprecation warnings; `UniversalScreener.run_screening()` legacy `list[str]` input is normalized after a single warning, canonical `Combination` path is zero-warning
+  - cache module 4 adapter files slimmed (545 lines removed); ownership boundary tests added `test_cache_ownership.py`, `test_cache_domain_boundary.py`
+  - New `test_standard_execution_parallel_policy.py` (127 lines), `test_session_lifecycle_fail_closed.py` (33 tests)
 - **Standard adapter consolidation and comparative legacy packages** (`screening/adapters/`, `screening/legacy/`) (2026-08-14)
-  - `screening/adapters/standard.py` 成为 Standard adapter 单一实现（855 行），旧 `screening/standard.py` 转为 `__getattr__` 弃用 shim
-  - `screening/legacy/` 收口 comparative 相关模块（comparative/comparative_helpers/comparative_repr_helpers/comparative_simple_helpers），顶层文件转为弃用 shim
-  - 公共 `molblender.models.api.screening` 导入直接从 `adapters.standard` 直出，不触发警告；历史 `screening.standard` 路径保持告警兼容
-  - 6 个 multimodal modality handler 更新 import path；新增 94 个契约测试
+  - `screening/adapters/standard.py` becomes the single Standard adapter implementation (855 lines); old `screening/standard.py` converted to `__getattr__` deprecation shim
+  - `screening/legacy/` consolidates comparative-related modules (comparative/comparative_helpers/comparative_repr_helpers/comparative_simple_helpers); top-level files converted to deprecation shims
+  - Public `molblender.models.api.screening` imports directly from `adapters.standard` without warnings; legacy `screening.standard` path maintains warning compatibility
+  - 6 multimodal modality handlers updated import paths; 94 new contract tests added
 - **Standard/Universal service-construction seam** (`multimodal/services.py`, `screening/standard.py`, `multimodal/screeners.py`) (2026-08-13)
-  - 新增 `multimodal/services.py`，提供 `create_screening_database_manager()` 和 `create_hpo_processor()` 两个工厂函数，Standard 与 Universal 统一经此模块构造 DB manager 与 HPO processor，不再直连私有处理器实现
-  - Universal screener 向 HPO processor 传递真实 `data_handler`（此前为 `None`），确保 HPO 阶段可正确处理 representation 对齐
+  - New `multimodal/services.py` provides `create_screening_database_manager()` and `create_hpo_processor()` factory functions; Standard and Universal both construct DB manager and HPO processor through this module, no longer directly connecting to private processor implementations
+  - Universal screener passes real `data_handler` to HPO processor (previously `None`), ensuring HPO stage correctly handles representation alignment
 - **SessionPort protocol and LeadAnalysisRunner** (`api/persistence/session_port.py`, `lead/lead_sensitivity_runner.py`, `lead/runner.py`, `utils/caching/__init__.py`) (2026-08-13)
-  - 新增 `ScreeningSessionPort` Protocol，定义 Standard/Universal 共享的 4 个 session 持久化操作；Universal-only 生命周期方法保持 `ScreeningDatabaseManager` 独有
-  - 新增 `LeadAnalysisRunner`，将 lead sensitivity 参数绑定和 CPU 预算解析抽离为独立 adapter，`lead_sensitivity.py` 和 `lead/runner.py` 均委托至该 adapter
-  - `utils/caching/__init__.py` 文档更新：明确实验状态、public contract 保证、与 `data/cache` 的边界
-  - 新增 `test_session_port.py`（345 行）、`test_stratify_boundary.py`（380 行）、扩展 `test_utils_caching.py` 和 `test_runner.py`
+  - New `ScreeningSessionPort` Protocol defines 4 session persistence operations shared by Standard/Universal; Universal-only lifecycle methods remain `ScreeningDatabaseManager`-exclusive
+  - New `LeadAnalysisRunner` extracts lead sensitivity parameter binding and CPU budget parsing into an independent adapter; `lead_sensitivity.py` and `lead/runner.py` both delegate to this adapter
+  - `utils/caching/__init__.py` documentation updated: clarifies experimental status, public contract guarantees, and boundary with `data/cache`
+  - New `test_session_port.py` (345 lines), `test_stratify_boundary.py` (380 lines); extended `test_utils_caching.py` and `test_runner.py`
 
 ### Deprecated
-- `molblender.models.api.screening.standard_execution` 已转为弃用适配器：模块内所有执行辅助函数改为通过 `__getattr__` 从 `molblender.models.api.screening_runtime` 转发，每次访问触发 `DeprecationWarning`。新代码必须直接从 `screening_runtime` 导入执行函数。
+- `molblender.models.api.screening.standard_execution` converted to deprecation adapter: all execution helper functions in the module now forward from `molblender.models.api.screening_runtime` via `__getattr__`, triggering `DeprecationWarning` on each access. New code must import execution functions directly from `screening_runtime`.
 
 ### Fixed
-- **依赖系统加载器重构与死代码清理** (`config/dependencies/`, `data/dataset/splitting/`, `dashboard/`, `drawings/`) (2026-08-13)
-  - 删除死文件 `loaders_bio_misc.py`（187 行，从未被任何导入路径引用）
-  - UniMolRepr 加载器修复：UniMolRepr 缺失时现在报 `RuntimeError`，整体判为不可用，不再假报 `available=True`
-  - Pybel 加载器从手动 `_dependency_cache` 迁移到共享 `import_dependency()` 辅助函数
-  - RDKit 加载器新增 `Butina` 和 `MaxMinPicker` 入口，SciPy 加载器新增 `stats` 和 `hierarchy`
-  - `data/dataset/splitting/` 5 个模块迁移到惰性 RDKit 导入，`dashboard/` + `drawings/` 7 个文件迁移到惰性 SciPy 导入
+- **Dependency loader refactor and dead-code cleanup** (`config/dependencies/`, `data/dataset/splitting/`, `dashboard/`, `drawings/`) (2026-08-13)
+  - Removed dead file `loaders_bio_misc.py` (187 lines, never referenced by any import path)
+  - UniMolRepr loader fix: when UniMolRepr is missing, now raises `RuntimeError` and marks overall unavailable, no longer falsely reporting `available=True`
+  - Pybel loader migrated from manual `_dependency_cache` to shared `import_dependency()` helper
+  - RDKit loader adds `Butina` and `MaxMinPicker` entry points; SciPy loader adds `stats` and `hierarchy`
+  - `data/dataset/splitting/` 5 modules migrated to lazy RDKit import; `dashboard/` + `drawings/` 7 files migrated to lazy SciPy import
 
-- **HPO legacy-schema 测试拆分与 resume bug 修复** (`tests/models/api/multimodal/processors/hpo/`) (2026-08-13)
-  - 原 3,458 行单文件 `test_legacy_schema_fail_closed.py` 拆分为 6 个专题测试文件 + `_hpo_test_helpers.py`（共享 DB stub、`_GridResumableStub`、行插入 helper），修复 `compute_missing_resume_params` 在拆分时截断导致 Grid partial-resume 无法加载缺失参数的回归
+- **HPO legacy-schema test split and resume bug fix** (`tests/models/api/multimodal/processors/hpo/`) (2026-08-13)
+  - Original 3,458-line single file `test_legacy_schema_fail_closed.py` split into 6 focused test files + `_hpo_test_helpers.py` (shared DB stub, `_GridResumableStub`, row-insertion helper); fixes regression in `compute_missing_resume_params` truncation during split that prevented Grid partial-resume from loading missing parameters
 
-- `create_screener()` docstring 修正：返回值从模糊的"Screener instance"改为"StandardScreener instance"，并移除未使用的 `BaseScreener` 导入。
+- `create_screener()` docstring fix: return value changed from ambiguous "Screener instance" to "StandardScreener instance"; removed unused `BaseScreener` import.
 - **Phase 3 persistence layer extraction** (`api/persistence/`, `multimodal/processors/hpo/processor.py`, `screening/standard.py`) (2026-08-12)
-  - HPO/session/resume SQL 收口到 `hpo_ops.py`、`result_queries.py`、`stage1_ops.py`、`dataset_info_reads.py`；processor 通过 `_check_and_load_resume()` 调用，不再读取 `param_generator`
-  - Grid resume 明确 `GridResumable` 协议，非 Grid/旧 mock 不伪造 `n_trials_completed`
-  - Standard `_DBManagerShim` 迁移到调用 persistence 层，66 文件重构
+  - HPO/session/resume SQL consolidated into `hpo_ops.py`, `result_queries.py`, `stage1_ops.py`, `dataset_info_reads.py`; processor calls through `_check_and_load_resume()`, no longer reads `param_generator`
+  - Grid resume formalizes `GridResumable` protocol; non-Grid/legacy mocks no longer fabricate `n_trials_completed`
+  - Standard `_DBManagerShim` migrated to call persistence layer; 66-file refactor
 
-- **P0: Universal SelectionOutcome 直传 ResultProcessor** (`multimodal/screening_postprocess.py`, `screeners.py`) (2026-08-12)
-  - 禁止 postprocess 二次选优；`format_multimodal_results()` 接收 `SelectionOutcome` 确保 CV/HPO-only selection 执行
+- **P0: Universal SelectionOutcome direct-pass to ResultProcessor** (`multimodal/screening_postprocess.py`, `screeners.py`) (2026-08-12)
+  - Disallows post-process secondary optimization; `format_multimodal_results()` receives `SelectionOutcome` to ensure CV/HPO-only selection execution
 
-- **P1: Session SQL 统一走 persistence** (`api/persistence/session_write.py`) (2026-08-12)
-  - `create_session()`/`get_session_summary()` 统一走 `db._get_connection()`，兼容 facade 保留
+- **P1: Session SQL unified through persistence** (`api/persistence/session_write.py`) (2026-08-12)
+  - `create_session()`/`get_session_summary()` unified through `db._get_connection()`; compatibility facade preserved
 
 - **Mypy compliance** (`config/`, `models/api/`, `data/dataset/`) (2026-08-12)
-  - 类型标注：`_method_cache`、`suggested`、`all_results`；返回类型兼容性；SQLite set→list；`CalledProcessError` 修复
+  - Type annotations for `_method_cache`, `suggested`, `all_results`; return-type compatibility; SQLite set→list; `CalledProcessError` fix
 
 - **HPO processor and Optuna module split** (`multimodal/processors/hpo/`, `screening_engine/hpo/`, `tests/models/api/`) (2026-08-13)
-  - HPO processor 拆分为 `candidate_preparation.py`、`result_recording.py`、`resume_state.py`、`session_context.py`，processor 主文件大幅缩减
-  - Optuna 拆分为 `optuna_search_space.py`、`optuna_study.py`、`optuna_trial_execution.py`，`optuna_optimizer.py` 重写 76%
-  - 新增 10 个测试文件覆盖各模块契约
-  - CI 层依赖检查更新
+  - HPO processor split into `candidate_preparation.py`, `result_recording.py`, `resume_state.py`, `session_context.py`, greatly reducing the processor main file
+  - Optuna split into `optuna_search_space.py`, `optuna_study.py`, `optuna_trial_execution.py`; `optuna_optimizer.py` rewritten by 76%
+  - 10 new test files covering the module contracts
+  - CI layer dependency checks updated
 
 - **HPO/persistence boundary restoration** (`multimodal/processors/hpo/processor.py`, `api/persistence/session_write.py`, `screening_engine/hpo/contracts.py`, `grid_search.py`, `database/operations.py`, `sessions.py`) (2026-08-12)
-  - HPO processor 通过 `_check_and_load_resume()` 调用 persistence 层
-  - Grid resume 明确 `GridResumable` 协议：`can_resume(params, cv_results)`；processor 不再读取 `param_generator` 私有属性
-  - session create/summary 收口到 `persistence/session_write.py`，统一走 `db._get_connection()`
-  - `nested_cv_evaluator.py` 强制 HPO typed contract，预物化 folds
-  - `test_legacy_schema_fail_closed.py`、`test_grid_resumable.py`、`test_session_write.py` 扩展覆盖
+  - HPO processor calls persistence layer through `_check_and_load_resume()`
+  - Grid resume formalizes `GridResumable` protocol: `can_resume(params, cv_results)`; processor no longer reads `param_generator` private attribute
+  - session create/summary consolidated into `persistence/session_write.py`, unified through `db._get_connection()`
+  - `nested_cv_evaluator.py` enforces HPO typed contract, pre-materializes folds
+  - `test_legacy_schema_fail_closed.py`, `test_grid_resumable.py`, `test_session_write.py` extended coverage
 
 - **Persistence: tighten screening boundaries** (`api/persistence/model_results_write.py`, `database/operations.py`, `nested_cv_evaluator.py`) (2026-08-12)
-  - 新增 `model_results_write.py`：bulk 模型结果写入端口，从 `database/operations.py` 收口
-  - `database/operations.py` 缩减 259 行；职责收敛到 schema/admin
-  - `nested_cv_evaluator.py` HPO typed contract 强化
-  - `test_model_results_write.py`（610 行）、`test_nested_cv_hpo_typed_contract.py`（621 行）、`test_catalog_registry_boundary.py`、`test_screening_finalization_contract.py` 新增
+  - New `model_results_write.py`: bulk model-result write port, consolidated from `database/operations.py`
+  - `database/operations.py` reduced by 259 lines; responsibilities narrowed to schema/admin
+  - `nested_cv_evaluator.py` HPO typed contract strengthened
+  - New `test_model_results_write.py` (610 lines), `test_nested_cv_hpo_typed_contract.py` (621 lines), `test_catalog_registry_boundary.py`, `test_screening_finalization_contract.py`
 
 - **ScreeningRun callback hooks architecture** (`screening_runtime/contracts.py`, `screening_runtime/stage1.py`, `screening_runtime/run.py`, `screening/standard.py`, `multimodal/screeners.py`, `test_contracts.py`) (2026-08-11)
-  - `ScreeningCallbacks(on_repr_complete, on_stage1_complete)`：生命周期钩子，支持 per-representation DB 持久化和 Stage-1 完成后的 HPO 增强或 DB 回退加载
-  - `ScreeningRunRequest.callbacks`：通过 `ScreeningCallbacks` 传递运行时扩展点，`ScreeningRun.run()` 内部转换为 `Stage1Hooks`
-  - `Stage1Hooks.on_stage1_complete`：接收 mutable `Stage1Result`，允许调用方 in-place 修改 `all_results`（注入 HPO 结果或 DB 回退数据）
-  - `execute_stage1(incomparable_split=False)`：支持调用方传入不可比较 split 种子，OR 语义合并内部失败标志
-  - `ScreeningOutcome.split_plan`：携带运行最终使用的 split plan（immutable run fact），Standard session 持久化从此字段读取
-  - StandardScreener 通过 `ScreeningCallbacks` 注入 per-representation DB 持久化和 HPO 逻辑，而非在 runtime 内部硬编码
-  - UniversalScreener route 编排保持不变，仍通过 `ScreeningDatabaseManager` 负责 SQLite 操作
-  - `screening_runtime/CLAUDE.md` 新建：明确共享执行原语定位、与 multimodal 的边界、职责清晰划分
-  - `screening_engine/hpo/CLAUDE.md` 更新：补充 `translate_optimization_result()` 结果翻译层职责说明
+  - `ScreeningCallbacks(on_repr_complete, on_stage1_complete)`: lifecycle hooks supporting per-representation DB persistence and HPO enhancement or DB fallback loading after Stage-1 completion
+  - `ScreeningRunRequest.callbacks`: passes runtime extension points via `ScreeningCallbacks`; `ScreeningRun.run()` internally converts to `Stage1Hooks`
+  - `Stage1Hooks.on_stage1_complete`: receives mutable `Stage1Result`, allowing callers to modify `all_results` in-place (inject HPO results or DB fallback data)
+  - `execute_stage1(incomparable_split=False)`: supports caller-provided incomparable split seeds; OR-semantics merge of internal failure flags
+  - `ScreeningOutcome.split_plan`: carries the split plan actually used by the run (immutable run fact); Standard session persistence reads from this field
+  - StandardScreener injects per-representation DB persistence and HPO logic through `ScreeningCallbacks` rather than hardcoding in runtime
+  - UniversalScreener route orchestration unchanged, still delegates SQLite operations to `ScreeningDatabaseManager`
+  - New `screening_runtime/CLAUDE.md`: clarifies shared execution primitive positioning, multimodal boundary, and clear responsibility division
+  - Updated `screening_engine/hpo/CLAUDE.md`: adds `translate_optimization_result()` result-translation-layer responsibility notes
 
-- **Phase 1.1 HPO typed contract补全** (`screening_engine/hpo/`, `multimodal/processors/hpo/processor.py`, `test_hpo_contract_completeness.py`) (2026-08-11)
-  - `HPOBackend` 协议方法从 `optimize_model(request)` 改为 `optimize(request)` — 协议声明、Grid/Optuna 实现、processor 调用点三者签名一致
-  - `OptimizationRequest` 新增 7 个字段：`coarse_cv_results`（Optuna coarse prior/ Grid partial-resume）、`resume_completed_trials`（Optuna resume）、`resume_prior_trials`（Optuna fallback injection）、`resume_missing_params`（Grid partial-resume）、`representation_name`（legacy Phase 2 transformer）、`quality_metadata`（legacy per-component metadata）、`apply_phase2_transformer`（是否启用 Phase 2 质量Pipeline）
-  - `OptimizationResult.best_score` 类型从 `float` 改为 `Optional[float]` — 不再强制把失败转换为 `0.0`，允许 backend 明确返回 `None`；processor 在收到 `best_score=None` 时 skip 该候选并记录 warning，不保存伪装成功的 0.0 分数
-  - Grid/Optuna `optimize()` 适配器完整转发所有新字段到内部 `optimize_model()`，不再只转发部分字段
-  - Grid/Optuna `optimize()` 从 `cv_results["params"]` 计算 `n_trials_completed`，不再默认 0
-  - processor `OptimizationRequest` 构造从多次重建改为一次性收集所有字段后单次创建；resume 数据从 `result._resume_*` 私有属性读取并传入 request；legacy `quality_metadata` 从 debug-only 改为实际传入 request，确保非 representation_config 的旧表示仍能装配 Phase2QualityTransformer
-  - 11 个回归测试覆盖：协议签名验证、Grid/Optuna 字段转发捕获、`best_score=None` 允许性、legacy metadata 保留、`n_trials_completed` 正确推导
-  - `screening_engine/hpo/CLAUDE.md` 新增，说明 HPO 模块定位、typed contract 设计、与 evaluator/result_processor 的边界
+- **Phase 1.1 HPO typed contract completion** (`screening_engine/hpo/`, `multimodal/processors/hpo/processor.py`, `test_hpo_contract_completeness.py`) (2026-08-11)
+  - `HPOBackend` protocol method changed from `optimize_model(request)` to `optimize(request)` — protocol declaration, Grid/Optuna implementations, and processor call site all share consistent signatures
+  - `OptimizationRequest` adds 7 fields: `coarse_cv_results` (Optuna coarse prior / Grid partial-resume), `resume_completed_trials` (Optuna resume), `resume_prior_trials` (Optuna fallback injection), `resume_missing_params` (Grid partial-resume), `representation_name` (legacy Phase 2 transformer), `quality_metadata` (legacy per-component metadata), `apply_phase2_transformer` (whether to enable Phase 2 quality pipeline)
+  - `OptimizationResult.best_score` type changed from `float` to `Optional[float]` — failures no longer forced to `0.0`, backends may return `None`; processor skips candidates with `best_score=None` and logs a warning, never saving a fake 0.0 score
+  - Grid/Optuna `optimize()` adapters fully forward all new fields to internal `optimize_model()`, not just partial fields
+  - Grid/Optuna `optimize()` computes `n_trials_completed` from `cv_results["params"]`, no longer defaults to 0
+  - processor `OptimizationRequest` construction changed from multiple rebuilds to a single creation after collecting all fields; resume data read from `result._resume_*` private attributes and passed into request; legacy `quality_metadata` changed from debug-only to actual request passthrough, ensuring legacy representations without `representation_config` can still assemble Phase2QualityTransformer
+  - 11 regression tests cover: protocol signature validation, Grid/Optuna field-forwarding capture, `best_score=None` allowance, legacy metadata preservation, correct `n_trials_completed` derivation
+  - New `screening_engine/hpo/CLAUDE.md` documenting HPO module positioning, typed contract design, and boundaries with evaluator/result_processor
 
 - **SplitPlan full-chain refactoring** (`contracts.py`, `splitting.py`, `split_plan.py`, `standard.py`, `screeners.py`) (2026-08-01)
   - `SplitPlan` dataclass with frozen, validated indices: `train_indices`, `test_indices`, `cv_folds`, `nested_cv_folds`, `hpo_cv_folds`, `hpo_split_fingerprint`, `groups`, `stratify_labels`, `n_samples` (mandatory). Pre-materialised indices eliminate per-`apply()` splitter `.split()` calls, guaranteeing identical fold indices across all representations and repeated `apply()` calls.
