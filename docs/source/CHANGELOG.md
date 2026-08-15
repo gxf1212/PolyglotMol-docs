@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Standard/Comparative owner flip with v2.0 shim layer** (`screening/standard.py`, `screening/comparative*.py`) (2026-08-15)
+  - `screening/standard.py` 成为唯一 Standard 实现（897 行）；`screening/adapters/standard.py` 降为 v2.0 警告 shim
+  - `screening/comparative*.py` 成为唯一 Comparative 实现；`screening/legacy/comparative*.py` 降为 v2.0 警告 shim
+  - 路由 `compat.py` 新增 `specific_pairs_mode=True` 严格一模型一表征校验，否则 fail-closed
+  - AST 扫描生产源码，禁止重新导入上述 v2.0 shim
+  - 6 个 modality handler 更新 import path；审计文档记录实际 owner 和 2.0 迁移边界
+  - 98 测试通过（1 跳过）：11 旧执行入口 + 67 Standard/Comparative/Routing + 新增 `test_combination_contract.py`
 - **Legacy compatibility entry points marked for v2.0 removal** (`routing/compat.py`, `screening/standard.py`, `cache/adapters/`, `screening/standard_execution.py`) (2026-08-14)
   - 旧兼容入口统一声明 2.0 移除，触发显式弃用警告；`UniversalScreener.run_screening()` 旧 `list[str]` 输入单次警告后规范化，canonical `Combination` 路径零警告
   - cache 模块 4 个 adapter 文件瘦身（545 行删除），所有权边界测试新增 `test_cache_ownership.py`、`test_cache_domain_boundary.py`
