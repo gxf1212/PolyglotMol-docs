@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **HPO split metadata projection, persistence backend migration, config contracts** (`multimodal/processors/hpo/`, `persistence/backend.py`, `multimodal/config_contracts.py`) (2026-08-15)
+  - `SplitPlan.groups`/`stratify_labels` 按真实 `train_idx` 投影进 `OptimizationRequest`；缺失、二维、负值、非整数、越界 metadata 全部 fail-closed 为 `None`
+  - `persistence/backend.py` 成为 canonical SQLite backend（`ScreeningSession`/`ResultRecord`/`ScreeningResultsDB`）；`utils/results_db.py` 瘦身为 identity adapter
+  - 新增 `multimodal/config_contracts.py`，定义配置边界契约
+  - 5 个新测试模块：`test_adapter_contracts.py`、`test_split_context_propagation.py`、`test_config_contracts_import_boundary.py`、`test_universal_screen_contract.py`、`test_results_db_backend_owner.py`
+  - 18 新增测试通过
 - **Static GPU-heavy index and resource_intensity declarations** (`screening_engine/`, `representations/registry/`) (2026-08-15)
   - 静态 GPU-heavy 索引覆盖小分子 LM、UniMol、蛋白 PLM；策略在查注册表前命中，避免加载模型依赖
   - 模型注册表声明 `resource_intensity` 与真实 CPU/device/process-isolation 能力
