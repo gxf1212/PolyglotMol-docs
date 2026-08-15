@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Static GPU-heavy index and resource_intensity declarations** (`screening_engine/`, `representations/registry/`) (2026-08-15)
+  - 静态 GPU-heavy 索引覆盖小分子 LM、UniMol、蛋白 PLM；策略在查注册表前命中，避免加载模型依赖
+  - 模型注册表声明 `resource_intensity` 与真实 CPU/device/process-isolation 能力
+  - 静态索引完全不可变（内外两层），in-place 篡改抛 `TypeError`
+  - 7 个新契约模块：`configuration.py`、`config_normalization.py`、`errors.py`、`ports.py`、`result_contracts.py`、`routing_contracts.py`、`types.py`
+  - 干净子进程验证：chemberta/UniMol/ESM2 静态分类不导入 torch/DeepChem/TensorFlow
+  - 81 契约测试通过；25 passed + 3 skipped（live-registry 审计缺可选模块）
 - **Standard/Comparative owner flip with v2.0 shim layer** (`screening/standard.py`, `screening/comparative*.py`) (2026-08-15)
   - `screening/standard.py` 成为唯一 Standard 实现（897 行）；`screening/adapters/standard.py` 降为 v2.0 警告 shim
   - `screening/comparative*.py` 成为唯一 Comparative 实现；`screening/legacy/comparative*.py` 降为 v2.0 警告 shim
