@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Cross-session Stage-1 compatibility import** (`persistence/stage1_results.py`, `multimodal/services.py`, `screening/standard.py`, `multimodal/screeners.py`, `multimodal/modality_handlers/base.py`) (2026-08-15)
+  - New `stage1_results.py` owns Stage-1 row reads, per-representation coverage, the compatibility identity (configuration + cohort + split + target + metric + task bind), schema bootstrap for `stage1_compatibility_key` / `source_session_id` / `source_compatibility_key` columns, and the cross-session copy of strictly-compatible historical Stage-1 rows into a fresh session
+  - `ScreeningDatabaseManager.add_screening_result` and `ResultRecord` now carry the compatibility key and provenance columns; `ScreeningResultsDB.add_model_result_from_screening` forwards them through to SQLite
+  - `multimodal/services.py` exposes `import_compatible_stage1_results()`, `plan_and_import_compatible_stage1_results()`, and `resolve_screening_session()` as the canonical composition seam — the SQL planning/copy and identity logic stay in `persistence/`
+  - `StandardScreener._import_compatible_stage1_results()` builds a `(repr, model, repr_config, model_config)`-keyed candidate registry and stamps `result.stage1_compatibility_key` before any callback sees it; child screeners own cross-session reuse and the parent `UniversalScreener` route-level identity is now an explicit no-op
+  - `ModalityHandlerMixin` honours the child-stamped key without re-stamping and never lets the parent's route-level identity overwrite it
+  - 6 new test modules: `test_stage1_result_compatibility.py`, `test_stage1_results_queries.py`, `test_standard_stage1_compatibility.py`, `test_compatibility_migration.py`, `test_multimodal_helper_route.py`, and HPO candidate selection fairness test adjustments
 - **HPO split metadata projection, persistence backend migration, config contracts** (`multimodal/processors/hpo/`, `persistence/backend.py`, `multimodal/config_contracts.py`) (2026-08-15)
   - `SplitPlan.groups`/`stratify_labels` projected into `OptimizationRequest` by real `train_idx`; missing, 2D, negative, non-integer, and out-of-bounds metadata all fail-closed to `None`
   - `persistence/backend.py` becomes the canonical SQLite backend (`ScreeningSession`/`ResultRecord`/`ScreeningResultsDB`); `utils/results_db.py` shrinks to an identity adapter
@@ -157,6 +164,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`persistence/stage1_ops.py` → `persistence/stage1_results.py`** (`persistence/`): the Stage-1 row operations module was renamed and extended with the cross-session compatibility identity, schema bootstrap, planning helpers, and import path. The public API names (`count_*_stage1_representations`, `fetch_stage1_rows`, `fetch_complete_stage1_representation_names`, `sql_placeholders`) keep their names; new names (`Stage1ResultCandidate`, `Stage1ResultSignature`, `build_stage1_result_signature`, `ensure_stage1_compatibility_schema`, `find_compatible_stage1_results`, `import_compatible_stage1_results`, `import_compatible_stage1_results_via_signatures`, `plan_stage1_result_compatibility`) are exported from `molblender.models.api.persistence`.
+- **Optuna coarse-grid priors persist into RDB storage** (`screening_engine/hpo/optuna_study.py`): `_inject_coarse_priors` is now invoked on every resume path whenever `coarse_cv_results` is provided, not only when no persistent study exists. `inject_compatible_prior_trials` dedups internally so re-injection is safe and persisted priors survive across resumable sessions.
 - **`finalize_shared_split_plan` return type** (`splitting.py`): now returns `(finalized_plan, fingerprint)` tuple (was just `fingerprint`). All callers (`screeners.py`, `standard.py`, test suite) must unpack the tuple.
 - **`SplitPlan.n_samples` is mandatory** (`contracts.py`): `SplitPlan(n_samples=None)` raises `ValueError` in `__post_init__`; `from_legacy_payload` without `X` or explicit `n_samples` raises `ValueError`. Callers must provide dataset size at plan construction time.
 - **`GroupKFold` / `StratifiedGroupKFold` in group-aware CV now use `shuffle=True`** (`splitting.py`): `_compute_hpo_cv_folds` passes `shuffle=True, random_state=random_state` to both splitters, making group-aware HPO CV deterministic and seed-controlled (previously deterministic but unseeded).
