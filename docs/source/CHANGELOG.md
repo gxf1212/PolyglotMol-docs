@@ -46,6 +46,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `utils/caching/__init__.py` documentation updated: clarifies experimental status, public contract guarantees, and boundary with `data/cache`
   - New `test_session_port.py` (345 lines), `test_stratify_boundary.py` (380 lines); extended `test_utils_caching.py` and `test_runner.py`
 
+- **Cache v3 fingerprint-based representation cache identity** (`data/cache/fingerprint.py`, `data/cache/core.py`, `data/dataset/caching.py`, `data/dataset/partial_cache.py`, `representations/utils/parallel_cached.py`) (2026-08-17)
+  - New `compute_molecule_fingerprint` / `compute_dataset_fingerprint` hash canonical SMILES, 3D conformer coordinates, and protein context via SHA-256; the fingerprint is the cache key for v3 entries. Provenance-only fields (e.g. `source_path`) are excluded.
+  - `RepresentationCache` bumped to `rep_cache_v3` and now embeds `implementation_identity = {cache_key_version, package_version}` in both top-level payload and metadata; entries with absent or mismatched identity are rejected. Legacy v1/v2 entries fail closed.
+  - `DatasetCacheMixin._validate_cache_metadata` switched from `molecule_keys` (canonical SMILES) to `molecule_fingerprints`; coordinate- and protein-state-only differences no longer pass the identity check.
+  - `PartialCache` and `MultiModalCache` adopt the v3 key scheme; `find_all_compatible_caches` and direct `load_representation` both compare against the canonical implementation identity.
+  - `batch_featurize_with_cache` has two modes: **fail-closed compute mode** (no `featurizer_identity`, single `UserWarning`, no SQLite traffic) and **identity-aware cache mode** (`featurizer_identity` provided, SHA-256 hash of canonical payload). Mismatched `input_contexts` length raises `ValueError`; non-string mapping keys (including `bool`) and unsupported context element types raise `TypeError`; `featurizer_name` alone is never cache identity.
+  - 6 new test files: `test_cache_v3_identity_fingerprint.py`, `test_cache_v3_implementation_identity.py`, `test_cache_v3_protein_param_identity.py`, `test_cache_v3_followup.py`, `test_batch_featurize_v3.py`, `test_dataset_v3_cache_wiring.py`
+
+- **Documentation: CADD workflow + interaction guides, rules refresh** (`.claude/rules/`, `CLAUDE.md`) (2026-08-17)
+  - New `.claude/rules/cadd_workflow.md` and `.claude/rules/interaction.md` formalize CADD project conventions and response style/table format expectations.
+  - Trimmed duplicated encoding/code-style content from `coding_standards.md`; aligned `CLAUDE.md` and the 10 testing rule files (`assertions`, `ci`, `coverage`, `data_management`, `exceptions`, `fixtures`, `mock`, `parameterized`, `performance`, plus `changelog`/`database`/`dataset_config`) with the new guides. No semantic rule changes.
+
 ### Deprecated
 - `molblender.models.api.screening.standard_execution` converted to deprecation adapter: all execution helper functions in the module now forward from `molblender.models.api.screening_runtime` via `__getattr__`, triggering `DeprecationWarning` on each access. New code must import execution functions directly from `screening_runtime`.
 
