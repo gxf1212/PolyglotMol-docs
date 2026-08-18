@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Classification metrics unification** (`screening_engine/evaluation/metrics.py`, `screening_engine/types.py`, `screening_engine/evaluation/evaluator.py`) (2026-08-18)
+  - CV and final-Test ROC-AUC for multiclass now share the same scorer (`roc_auc_score(multi_class="ovr", average="weighted")`) via `make_scorer(response_method="predict_proba", ...)` instead of sklearn's default `macro`-OvR string
+  - `_classification_metric_score()` gains `y_score` parameter; roc_auc/pr_auc return an `UNAVAILABLE` marker when no probability matrix is available, preventing downstream NaN/zero injection
+  - multiclass PR-AUC computes `average_precision_score(y, score, average="weighted")` (sklearn ≥1.4 multiclass OvR); no longer emits `0.0` placeholder into DB/sorting/charts
+  - `compute_classification_metrics()` accepts `class_labels` for correct positive-class probability-column extraction in binary problems
+  - precision/recall now compute all three `average` modes (macro/micro/weighted); MetricType enum and catalog declarations aligned with what the engine actually computes
+  - `get_scoring_function()` returns `UNAVAILABLE` when roc_auc/pr_auc has no probability input, so HPO no longer thresholds and re-scores internally
+  - Test coverage in `test_corrections.py`, `test_stage1_hpo_db_fallback.py`, `test_standard_stage1_compatibility.py`
+- **Stage-1 key-based per-(repr, model) coverage matching** (`persistence/stage1_results.py`, `multimodal/modality_handlers/base.py`, `base_helpers.py`, `vector.py`, `string.py`, `language_model.py`) (2026-08-18)
+  - DB resume matching refined from model-name-only to `(representation_name, model_name, stage1_compatibility_key)` triple, so a resumed session only reuses Stage-1 rows whose compatibility identity matches the current config
+  - `ModalityHandlerMixin._build_stage1_expected_candidates()` builds the expected `(repr, model) → key` mapping via `registry.get_models()` / `get_params()` / `fusion_metadata` / `get_representation_config()`; called from vector, string, and language-model handlers before any resume check
+  - `parse_complete_repr_names()` in `base_helpers.py` groups parsed `(model, key)` pairs by representation and returns the set of representation names that are parse-complete, enabling per-representation gap detection
+  - `_fetch_complete_stage1_representations_for_candidates()` in `stage1_results.py` uses a SQL CTE to build expected `(repr, model, key)` VALUES and match within each representation; backward-compat fallback catches "no such table" for `stage1_result_links` and falls back to the native session-scoped query
+  - Fail-closed semantics: a candidate with `None` key is skipped, not matched
+  - Test stubs in `test_per_route_execution_coverage.py`, `test_language_model_handler.py`, `test_string_matrix_representation_selection.py` updated with `_build_stage1_expected_candidates` lambdas
 - **Cross-session Stage-1 compatibility import** (`persistence/stage1_results.py`, `multimodal/services.py`, `screening/standard.py`, `multimodal/screeners.py`, `multimodal/modality_handlers/base.py`) (2026-08-15)
   - New `stage1_results.py` owns Stage-1 row reads, per-representation coverage, the compatibility identity (configuration + cohort + split + target + metric + task bind), schema bootstrap for `stage1_compatibility_key` / `source_session_id` / `source_compatibility_key` columns, and the cross-session copy of strictly-compatible historical Stage-1 rows into a fresh session
   - `ScreeningDatabaseManager.add_screening_result` and `ResultRecord` now carry the compatibility key and provenance columns; `ScreeningResultsDB.add_model_result_from_screening` forwards them through to SQLite
