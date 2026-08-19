@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Classification metrics refactor: canonical score extraction, metric name normalization, single decision point for binary score selection** (`screening_engine/evaluation/metrics.py`, `evaluator.py`, `cross_validation.py`, `grid_search.py`, `dashboard/data/metrics.py`, `metrics/core.py`) (2026-08-19)
+  - `_normalize_classification_metric_name()` resolves MetricType enum values and string aliases to a canonical name; unknown names return unchanged so the caller rejects explicitly rather than falling through to accuracy
+  - `_extract_score()` rewritten: 2D Nx2 proba without explicit labels returns last column (sklearn convention); 2D with >2 columns requires `class_labels` matching the column count; 1D arrays pass through unchanged
+  - `_select_binary_score()` introduced as the single decision point for all binary ranking metrics, returning `(pos_score, pos_label)` tuple consumed by `_classification_metric_score`, `get_scoring_function`, and `compute_classification_metrics`
+  - `_normalize_label_predictions()` now handles 2D multiclass proba matrices (argmax) and 1D binary proba (threshold), with explicit integer label passthrough
+  - CV `_classification_metric_score()` delegates binary ROC/PR to `_select_binary_score` for consistent positive-class column selection
+  - `get_scoring_function()` accepts `class_labels` parameter and passes it through to the returned lambda; probe_metric logic updated to detect `class_labels` as a required kwarg
+  - `get_sklearn_scoring()` removed redundant `needs_proba` logic in favour of `response_method="predict_proba"` on `make_scorer`; streamlined multiclass ROC-AUC/PR-AUC makers
+  - `evaluator.py` updates `compute_classification_metrics` call to pass `class_labels` through; simplified `_compute_and_save_metrics` to use `compute_all_metrics` return value directly
+  - `grid_search.py` HPO `_compute_score` passes `class_labels` to `get_scoring_function`; `CoarseGridSearchOptimizer` extracts `hpo_metric_value` with enum-safe `.value` accessor
+  - `cross_validation.py` properly passes `class_labels` to `_extract_score` in `_score_func`; `_cv_metrics` now passes `class_labels` to `compute_classification_metrics`
+  - `metrics/core.py` `_select_binary_score` import added; `dashboard/data/metrics.py` `_normalize_classification_metric_name` import added
+  - 5 new test modules: `test_classification_metric_core_final.py` (22), `test_classification_metrics_integration.py` (43), `test_evaluator_classification_metric_validity.py` (12), `test_pearson_constant_nan.py` (11), `test_grid_search_metric_validity.py` (12) — 100 total new tests, all passing
+  - Test `test_regression_metric_parity.py` expanded with constant-target and empty-input fallback coverage
 - **Classification metrics unification** (`screening_engine/evaluation/metrics.py`, `screening_engine/types.py`, `screening_engine/evaluation/evaluator.py`) (2026-08-18)
   - CV and final-Test ROC-AUC for multiclass now share the same scorer (`roc_auc_score(multi_class="ovr", average="weighted")`) via `make_scorer(response_method="predict_proba", ...)` instead of sklearn's default `macro`-OvR string
   - `_classification_metric_score()` gains `y_score` parameter; roc_auc/pr_auc return an `UNAVAILABLE` marker when no probability matrix is available, preventing downstream NaN/zero injection
