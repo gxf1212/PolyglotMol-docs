@@ -89,6 +89,10 @@
 | 常量 target + 完美预测（`ss_res == 0`） | `1.0` | 等价 sklearn `r2_score(..., force_finite=True)` |
 | 常量 target + 任意误差（`ss_res > 0`） | `0.0` | 等价 sklearn `r2_score(..., force_finite=True)` |
 
+`explained_variance_score` 同样遵循 sklearn `force_finite=True` 语义：
+常量 target 下**残差方差为零**（`sum((y_true - y_pred)**2) == 0`，不要求逐点
+等于常量值）得 `1.0`；残差方差非零得 `0.0`。
+
 **单样本输入（`size < 2`）** — 返回 `0.0`。sklearn 返回 `NaN` 并发出 `UndefinedMetricWarning`；
 本实现选择返回确定的失败值（符合 §4 的失败值契约），而非让调用方处理异常。
 

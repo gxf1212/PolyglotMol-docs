@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Metrics NaN 合同统一与 EvaluationRequest 迁移** (`metrics/core.py`, `metrics/formatting.py`, `drawings/model/metrics.py`, `screening_engine/evaluation/`, `screening_runtime/`, `screening/`) (2026-08-21)
+  - `calculate_spearman_rho` / `calculate_kendall_tau` 全分支（scipy、ImportError fallback、Exception fallback、size<2、constant input）统一返回 `float("nan")`，不再返回 `0.0`；docstring Note 同步更新
+  - `is_better_metric(value_a, value_b, name)` 语义修正：有限值始终优于非有限值（NaN/inf）；两者皆非有限时返回 `False`；修复 HPO winner selection 当 baseline 为 NaN 时选不出 winner 的问题
+  - `drawings/model/metrics.py` 的重复 `is_better_metric`（自带 higher_better/lower_better 列表、无 NaN 处理）改为委托 `molblender.metrics.formatting.is_better_metric`，保证全包 NaN 语义一致
+  - `EvaluationRequest` / `CVOnlyEvaluationRequest` 成为内部评估的窄类型入口：`representation_config` 默认 `None`；`CVOnclyEvaluationRequest` typo 修正为 `CVOnlyEvaluationRequest` 并保留旧名 alias
+  - 迁移全部宽接口 `evaluate_model` / `evaluate_model_cv_only` 调用方至构造 request 后调用 `evaluate_from_request` / `evaluate_cv_only_from_request`：runtime (`screening_runtime/evaluation.py`) → engine (`batch_processing.py`, `parallel_strategies.py`) → `nested_cv_evaluator.py` → `screening/standard.py` + `comparative.py`；旧宽接口签名保留为 adapter 委托
+  - 测试：`test_spearman_constant_matches_canonical` 改用 `np.isnan` 断言；`test_formatting` 新增 3 个 `is_better_metric` NaN 语义用例；`test_batch_processing_timeout_context` dummy evaluator 改为 `evaluate_from_request`
+- **HPO 双线收敛：`optimize(request)` 成为唯一生产入口** (`screening_engine/hpo/`, `multimodal/processors/hpo/`) (2026-08-20)
+  - `OptimizationResult` 契约统一：`best_score` 与 `cv_results` 分数一律 scorer-space（越大越好），新增 `score_space="scorer"` 与 `validation_mode` 元数据；`__post_init__` fail-closed 校验非空 `cv_results` 必须声明 `score_space`、`validation_mode` 内外一致、分数 finite-or-None
+  - `translate_optimization_result()` 成为唯一 scorer→natural 转换点，输出字段改为 `best_hpo_score_natural` / `fold_scores`（natural）；`create_hpo_result()` 只消费 natural 字段，不再从 `cv_results` 重新扫描 fold（修复 Optuna prior-best 误取 live 首参数 fold 的问题）
+  - `optimize_model()` 与 `optimize_multiple_models()` 降级为 deprecated 兼容适配器（kwargs → `OptimizationRequest` → `optimize()` → 旧 tuple），不再承载实现、不再写 `hpo_cv_score`；Optuna 不可用时 fallback 改走 Grid typed `optimize()`
+  - Optuna final-fit fail-closed：best 参数全量重训失败 → `model=None` + `status="failed"`，不再返回未 fit 模型
+  - Storage-mode coarse prior 幂等注入：新 RDB study 注入 coarse priors，重跑经 canonical-params 去重不重复
+  - `score_space` 与 `score_provenance` 分离：数值空间只取 `scorer`/`natural`，来源记在 `score_provenance`
+  - 弃用：`optimize_model()` / `optimize_multiple_models()` 及只读别名 `hpo_cv_score` 计划在两个发布周期后移除；业务代码禁止写 `hpo_cv_score`，仅 persistence/read adapter 保留兼容读取
+
+### Fixed
+- **Side-fixes unblocking P0-P5 commit** (2026-08-22)
+  - `representations/utils/base_featurizer.py`: mypy-driven split of the `_prepare_input` RDKIT_MOL guard into a multi-line `if (...)` dropped the trailing colon, causing a `SyntaxError` that broke all fusion export tests; colon restored
+  - `tests/dashboard/test_merged_session_performance.py::test_metrics_not_recalculated_on_cache_hit`: used the `benchmark` fixture without a skip guard; added `pytest.importorskip("pytest_benchmark")` so the module skips cleanly when pytest-benchmark is absent
+  - `tests/metrics/test_formatting.py`: P0 NaN-semantics migration made `format_metric_value`/`safe_float_to_str` return `"NaN"`/`"Inf"`/`"-Inf"` for non-finite values; updated 6 assertions to match the new labels (replacing the generic `"unavailable"`), and refreshed the stale `safe_float_to_str` docstring examples
+- **Mypy type errors in image/utils.py and registry/core.py** (2026-08-19)
+  - `save_molecular_image()`: renamed parameter to match `PIL.Image.save(format=...)` keyword, fixing a builtin shadowing bug where bare `format` referred to the Python builtin rather than the function's intended `file_format` argument
+  - `batch_process_images()`, `_generic_get_featurizer()`: return type corrected from lowercase `callable` to `Callable[..., Any]`
+  - `augment_molecular_image()`: renamed `enhancer` to `brightness_enhancer` / `contrast_enhancer` to eliminate shadowed variable
+  - `extract_image_statistics()`: return type widened to `dict[str, Any]` (dict contains `shape` tuple and `dtype` string, not only floats)
+  - `calculate_image_similarity()`: `return float(1.0 / (1.0 + mse))` — explicit Python float cast to avoid returning a numpy scalar
+  - `register_featurizer()` / `get_featurizer()` and protein counterparts: `expected_base_class=BaseFeaturizer` / `BaseProteinFeaturizer` annotated with `# type: ignore[type-abstract]` (4 sites)
+  - `default_kwargs` in `_generic_get_featurizer()`: annotated `dict[str, Any] = {}` at declaration; reassignment branch uses unannotated `{}` to avoid `no-redef`
+
 ### Added
 - **Classification metrics refactor: canonical score extraction, metric name normalization, single decision point for binary score selection** (`screening_engine/evaluation/metrics.py`, `evaluator.py`, `cross_validation.py`, `grid_search.py`, `dashboard/data/metrics.py`, `metrics/core.py`) (2026-08-19)
   - `_normalize_classification_metric_name()` resolves MetricType enum values and string aliases to a canonical name; unknown names return unchanged so the caller rejects explicitly rather than falling through to accuracy
@@ -1407,6 +1438,20 @@ infrastructure/telemetry/
 
 ### Fixed
 
+- **Stage-1 effective-exists 全链 fail-closed（收回按名 skip）** (2026-08-20)
+  - `persistence.stage1_results.stage1_exists_effective_result()` 删除 `allow_name_only` 逃生口：缺 `stage1_compatibility_key` 一律返回 False，同名不同 config/split 的历史行不再被误判为可复用
+  - 旧 `utils/database/sessions.py::check_existing_result_record` facade 新增可选 `stage1_compatibility_key`：无 key 的 Stage-1 查询发 `DeprecationWarning` 并返回 False（recompute），带 key 时委托 canonical owner；`utils/database/__init__.py` 不再 re-export 该符号
+  - 反例测试 `TestLegacyFacadeFailClosed`：native/linked 同名不同 key 行在无 key 时不 skip，匹配 key 才 skip
+- **metrics 未定义值语义继续收口到 `molblender.metrics.core`** (2026-08-20)
+  - 新增 `calculate_explained_variance_score`（population variance；常数目标按 sklearn force_finite 语义：完美拟合 1.0、非完美 0.0）
+  - `dashboard/data/metrics.py::calculate_additional_metrics` 的 MAPE/MedAE/max_error/Pearson r/r²/explained-variance 全部改委托 core，删除手写 `np.corrcoef`/`np.median`/mask-MAPE
+  - `evaluation/metrics.py::get_scoring_function` 回归 scorer（rmse/mae/mse/medae/max_error/neg_*）从 sklearn 直算 + 手写 `np.sqrt`/`ravel` 改为 core 的 `calculate_*`；`r2_score` key 显式绑定系数决定 R²，与 `r2`/`pearson_r2`（squared Pearson）区分
+- **修复 baseline 失败** (2026-08-20)
+  - `test_classification.py`：`_supports_task` 方法已外提为 `models/eligibility.py::supports_task` 模块函数，测试改用显式导入；DataSplitter patch 目标改为 `data_handler` 模块命名空间（`from X import Y` 的 binding 拷贝问题）；split 返回 keys 对齐真实契约（`X_train/X_test/y_train/y_test/...`）
+  - `test_multimodal_service_boundary.py`：services `__all__` 契约纳入 `Stage-1` import helpers（`import_compatible_stage1_results` / `plan_and_import_compatible_stage1_results` 为真实 wrapper）
+  - `test_multimodal_screening_helpers.py::test_execute_modality_screening_loop_updates_splits_once`：patch `session_ops.update_session_indices` 计数并让 mock result 携带 train/test indices，holdout 只写一次 splits/indices
+  - `test_lead_sensitivity_runtime_config.py`：monkeypatch 目标从已不存在的 `run_lead_sensitivity_analysis_impl` 改为实际委托点 `_execute_lead_analysis`
+
 - **Stage 1 Partial Reuse to Avoid OOM** (2026-02-07)
   - When only some representations have Stage 1 results, existing ones are loaded instead of forcing a full re-run
 
@@ -2058,3 +2103,26 @@ infrastructure/telemetry/
     - `search_featurizers()` → `FeaturizerQuery.search()`
   - Updated all tests to use registry/ module instead
   - Impact: Single source of truth, cleaner architecture, less confusion
+- **Search-space consolidation** (`screening_engine/hpo/search_space.py`, `optuna_search_space.py`) (2026-08-19)
+  - `optuna_search_space.py` become the single canonical owner of search-space definitions
+  - `search_space.py` `get_search_space()/extract_distribution_specs()/get_search_space_fingerprint()` changed to thin wrappers delegating via lazy import
+  - `test_search_space_ownership.py` rewritten to assert delegation identity (wrapper == production) instead of behavioural differences
+  - Removed unused `hashlib` import; `Optional[...]` → `X | None` syntax
+- **MetricSpec registry** (`metrics/catalog.py`) (2026-08-19)
+  - New `MetricSpec` dataclass and `METRIC_REGISTRY` dict with `supported`/`historical`/`planned` status
+  - `normalize_metric_name()`, `get_metric_spec()`, `list_supported_metrics()` API for alias resolution and task-based filtering
+  - Engine, HPO, dashboard all consume the same registry for task applicability, direction, display name and score requirements
+- **HPO holdout contract** (`screening_engine/hpo/contracts.py`, `multimodal/processors/hpo/processor.py`, `screening_engine/hpo/grid_search.py`) (2026-08-19)
+  - `OptimizationRequest` gains `X_validation`/`y_validation`/`validation_source` fields with documentation that holdout is only valid for `train_val_test` splits
+  - `processor.py:801` comment fixed to state explicit rejection (no implicit cross-validation fallback)
+  - `grid_search.py` holdout guard checks `resume_missing_params` before raising — empty resume set skips silently
+- **Delete hand-written HPO metrics** (`multimodal/processors/hpo/results.py`) (2026-08-19)
+  - Three blocks of hand-written `pearsonr`/`f1_score`/`(>0.5).astype(int)` thresholding replaced with `compute_all_metrics` from engine
+  - `_compute_hpo_train_metrics()`, `_train_metrics_from_predictions()` and `create_hpo_result()` test-metrics block all delegate to engine's canonical primitives
+  - Removed `from scipy.stats import pearsonr` (no longer used)
+- **Classification rank metrics fix** (`screening_engine/evaluation/metrics.py`) (2026-08-19)
+  - Removed duplicate `train_accuracy` computation block (lines 821-829) — value already computed once before all early-return paths
+- **Test compression** (`tests/models/api/screening_engine/evaluation/`) (2026-08-19)
+  - `test_classification_metric_core_final.py` renamed to `test_classification_metrics_unit.py` (removed `_final` suffix)
+  - New `conftest.py` with shared fixtures (`binary_labels_01`, `binary_labels_25`, `binary_25_proba`, `string_labels`, `multiclass_labels`, `multiclass_proba_clean`, `binary_decision_scores`)
+  - Removed pre-existing unused variables (F841) from integration test file
