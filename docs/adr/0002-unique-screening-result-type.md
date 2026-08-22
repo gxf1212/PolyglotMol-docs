@@ -38,3 +38,11 @@ screening result type directly, breaking the layer boundary.
 - Model implementations stay layer-correct.
 - Backward-compat aliases (`ModelResult = ...`) allow gradual migration.
 - The check script `tests/ci/check_layer_dependencies.py` enforces the rule.
+
+## Current location
+
+`ResultRecord` / `ScreeningSession` / `ScreeningResultsDB` now live in
+`models/api/persistence/backend.py`. The historic `utils/results_db.py` and
+`utils/database.*` paths are compatibility adapters that re-export the same
+objects (identity preserved, no behavior owned there). See
+`models/api/persistence/__init__.py` and `models/api/utils/database/__init__.py`.
