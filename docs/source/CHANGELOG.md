@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **utils/database → persistence/store + session merge 迁移完成** (`persistence/`, `utils/`) (2026-08-22)
+  - `utils/database/` 的 schema bootstrap、admin ops、aggregation、results_query、exports 迁入 `persistence/store/`；`utils/database/` 改为 lazy `__getattr__` 兼容 facade，不触发循环导入
+  - `SessionMergeError` 统一到 `persistence/errors.py`，`utils.database.exceptions` 与 `persistence.store.exceptions` 均为 re-export，identity 一致
+  - session merge 实装迁入 `persistence/`：`session_merge.py`（六公开操作）、`_session_merge_data.py`（去重/dataset-info 合并）、`_session_merge_sqlite.py`（SQL 读/重写/适配）、`session_merge_core.py`（校验 + payload）；旧 `utils/session_merger.py` 等三模块为纯 re-export
+  - CLI `merge_session.py` 与 Dashboard `loaders.py` 直连 persistence；`utils/storage.py` 改为兼容 facade
+  - 修复 `build_merged_session` 的 `best_score` 方向 bug：mae/rmse 等 lower-is-better 指标现在取 min 有限值，排除 None/NaN/Inf
+  - 修复原地合并 FK 顺序：删除前显式清理 `hpo_trials`（无 cascade）与 `stage1_result_links`，避免 dangling link
+  - 新增 `test_session_merge_compat.py`：六公开函数 identity、新旧输出等价、原地合并备份/rollback/FK 清理、MAE/RMSE best_score 方向、`rg utils.session_merge` 为零
 - **Stage1* → Screening* 命名迁移完成** (`screening_runtime/`, `screening/standard.py`, `multimodal/`, `screening_engine/`) (2026-08-22)
   - 旧名全部改为 canonical 名：`Stage1Execution`→`ScreeningExecution`、`Stage1Result`→`ScreeningExecutionResult`、`Stage1Hooks`→`ScreeningHooks`、`StandardStage1Execution`→`StandardScreeningExecution`、`ProfessionalResultProcessor`→`ScreeningResultProcessor`、`ProfessionalDataHandler`→`ScreeningDataHandler`、`ProfessionalModelRegistry`→`ScreeningModelRegistry`、`HPOProcessor`→`HPOStageCoordinator`、`ScreeningDatabaseManager`→`ScreeningSessionCoordinator`
   - Standard 路径 `ScreeningRun.run(request)` 改为显式 `ScreeningRun.run(context=ScreeningRunContext(...), executor=StandardScreeningExecution(...))`
