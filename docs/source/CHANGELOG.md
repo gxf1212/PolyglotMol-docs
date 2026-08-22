@@ -8,10 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- **Stage1* → Screening* 命名迁移完成** (`screening_runtime/`, `screening/standard.py`, `multimodal/screeners.py`) (2026-08-22)
-  - 旧名 `Stage1Execution`/`Stage1Result`/`Stage1Hooks`/`StandardStage1Execution` 改为 `ScreeningExecution`/`ScreeningExecutionResult`/`ScreeningHooks`/`StandardScreeningExecution`
+- **Stage1* → Screening* 命名迁移完成** (`screening_runtime/`, `screening/standard.py`, `multimodal/`, `screening_engine/`) (2026-08-22)
+  - 旧名全部改为 canonical 名：`Stage1Execution`→`ScreeningExecution`、`Stage1Result`→`ScreeningExecutionResult`、`Stage1Hooks`→`ScreeningHooks`、`StandardStage1Execution`→`StandardScreeningExecution`、`ProfessionalResultProcessor`→`ScreeningResultProcessor`、`ProfessionalDataHandler`→`ScreeningDataHandler`、`ProfessionalModelRegistry`→`ScreeningModelRegistry`、`HPOProcessor`→`HPOStageCoordinator`、`ScreeningDatabaseManager`→`ScreeningSessionCoordinator`
   - Standard 路径 `ScreeningRun.run(request)` 改为显式 `ScreeningRun.run(context=ScreeningRunContext(...), executor=StandardScreeningExecution(...))`
   - Universal 路径已接入 `ScreeningRun.run(context, executor=UniversalExecution(...))`，HPO 恰好一次
+  - 修复 `run.py` 兼容入口回归：`ScreeningRunRequest` + 自定义 executor 不再错传给执行器，改为先转 `ScreeningRunContext`
+  - 新增真实 UniversalScreener.run_screening() 入口测试、API facade 取消测试、legacy request + 自定义 executor 回归测试
+  - 全部 `Deprecated alias` 注释改为 `Backward-compat alias`，不发 DeprecationWarning
+  - `screening_engine/__init__.py` 与 `screening_runtime/__init__.py` 导出统一用 canonical 名，旧名作为兼容 alias 保留
   - 旧名作为 backward-compat alias 保留，计划 v2.0 移除
 - **Metrics NaN 合同统一与 EvaluationRequest 迁移** (`metrics/core.py`, `metrics/formatting.py`, `drawings/model/metrics.py`, `screening_engine/evaluation/`, `screening_runtime/`, `screening/`) (2026-08-21)
   - `calculate_spearman_rho` / `calculate_kendall_tau` 全分支（scipy、ImportError fallback、Exception fallback、size<2、constant input）统一返回 `float("nan")`，不再返回 `0.0`；docstring Note 同步更新
