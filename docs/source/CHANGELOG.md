@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **Stage1* → Screening* 命名迁移完成** (`screening_runtime/`, `screening/standard.py`, `multimodal/screeners.py`) (2026-08-22)
+  - 旧名 `Stage1Execution`/`Stage1Result`/`Stage1Hooks`/`StandardStage1Execution` 改为 `ScreeningExecution`/`ScreeningExecutionResult`/`ScreeningHooks`/`StandardScreeningExecution`
+  - Standard 路径 `ScreeningRun.run(request)` 改为显式 `ScreeningRun.run(context=ScreeningRunContext(...), executor=StandardScreeningExecution(...))`
+  - Universal 路径已接入 `ScreeningRun.run(context, executor=UniversalExecution(...))`，HPO 恰好一次
+  - 旧名作为 backward-compat alias 保留，计划 v2.0 移除
 - **Metrics NaN 合同统一与 EvaluationRequest 迁移** (`metrics/core.py`, `metrics/formatting.py`, `drawings/model/metrics.py`, `screening_engine/evaluation/`, `screening_runtime/`, `screening/`) (2026-08-21)
   - `calculate_spearman_rho` / `calculate_kendall_tau` 全分支（scipy、ImportError fallback、Exception fallback、size<2、constant input）统一返回 `float("nan")`，不再返回 `0.0`；docstring Note 同步更新
   - `is_better_metric(value_a, value_b, name)` 语义修正：有限值始终优于非有限值（NaN/inf）；两者皆非有限时返回 `False`；修复 HPO winner selection 当 baseline 为 NaN 时选不出 winner 的问题
@@ -25,9 +30,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 弃用：`optimize_model()` / `optimize_multiple_models()` 及只读别名 `hpo_cv_score` 计划在两个发布周期后移除；业务代码禁止写 `hpo_cv_score`，仅 persistence/read adapter 保留兼容读取
 
 ### Fixed
+- **HF/TORCH cache 路径单一权威源 + hub cache 全链路闭合** (`config/settings.py`, `config/core.py`, `config/models/`, `representations/sequential/language_model/`, `representations/protein/sequence/plm/`) (2026-08-22)
+  - `settings.py` 成为 cache 路径唯一权威源：新增 `get_hf_hub_cache_dir()` 返回 hub 快照目录（默认 `$HF_HOME/hub`，可被 `HF_HUB_CACHE` 或 `set_cache_dir("hf_hub", path)` 覆盖）；`ConfigManager.set_cache_dir`/`get_cache_dir` 委托给 `settings`，不再维护独立 `_cache_config` 副本
+  - **P0 generic loader**：`load_huggingface_model()` 三处（model、tokenizer、clean_kwargs fallback）由 `setdefault` 改为 `get-or` 模式，显式 `cache_dir=None` 不再透传 None 给 `from_pretrained`，统一解析为 `get_hf_hub_cache_dir()`
+  - **P0 ESM-C**：`ESMCFeaturizer._load_model` 直连 HF 路径，`load_kwargs` 改为 `cache_dir=self.cache_dir or get_hf_hub_cache_dir()`，四个 `from_pretrained` 共享；新增 `local_model_path` 存在性校验与 model weights 缺失时的 download policy 重检查
+  - **P0 MolFormer 等分子 LM**：`BaseMolecularLM.__init__` 不再在构造时快照 hub cache（`self.cache_dir = cache_dir`，默认 None）；`MolFormerFeaturizer._load_model` 在加载时解析 `effective_cache_dir = self.cache_dir or get_hf_hub_cache_dir()`，四个 `from_pretrained` 复用——构造后调用 `set_cache_dir("hf_hub", ...)` 即时生效
+  - **P1 文档**：`CLAUDE.md` 删除 `TRANSFORMERS_CACHE`，路径示例改为 `~/data/...` 相对写法；补充 `HF_HOME`/`HF_HUB_CACHE`/`from_pretrained(cache_dir=...)` 三者语义关系说明
+  - 全部直接读取 `EFFECTIVE_HF_HOME`/`EFFECTIVE_TORCH_HOME` 的 PLM/LM 模块（`t5`/`carp`/`peptide`/`esm`/`model_doctor`/`torch_hub`）改为运行时 `get_cache_dir("hf"/"torch")` 调用，不再 import 时快照
+  - 新增 `tests/config/test_cache_dir_contracts.py`：29 条契约测试覆盖 `set_cache_dir` round-trip、`ConfigManager` 委托、env 传播、`get_hf_hub_cache_dir` 默认/覆盖、以及 ESM-C/MolFormer/generic tokenizer fallback 三个 mock 测试断言 `from_pretrained` 实收 `cache_dir == set_cache_dir("hf_hub", tmp)`
 - **Side-fixes unblocking P0-P5 commit** (2026-08-22)
   - `representations/utils/base_featurizer.py`: mypy-driven split of the `_prepare_input` RDKIT_MOL guard into a multi-line `if (...)` dropped the trailing colon, causing a `SyntaxError` that broke all fusion export tests; colon restored
   - `tests/dashboard/test_merged_session_performance.py::test_metrics_not_recalculated_on_cache_hit`: used the `benchmark` fixture without a skip guard; added `pytest.importorskip("pytest_benchmark")` so the module skips cleanly when pytest-benchmark is absent
+  - **P0**: 策略注册表双实现消除 — `contracts.py` 移除重复的 `StrategySpec`、`_build_registry`、`resolve_strategy`、`check_prerequisites` 等全部注册表代码，改为 `from .strategy_registry import *` 兼容 re-export；`strategy_registry.py` 成为唯一权威注册表；`SplitPlan`、`NestedCVFold` 及辅助函数保留在 `contracts.py`；新增对象身份与唯一 registry 测试
+  - **P0**: `r2_score` 引擎输出恢复 — 回退此前"不输出 r2_score"的改动，恢复 sklearn CoD 输出确保向后兼容；`pearson_r2` 保持为规范回归指标，`r2_score` 标记废弃但有实际输出；配置编译期不拒绝 `r2_score`，避免评估末尾崩溃
+  - **P1**: `test_plm.py` 三次 `pytestmark` 赋值合并为单次列表，`dependency`、`filterwarnings` 共存不再覆盖；`test_deepchem.py` 同理修复
   - `tests/metrics/test_formatting.py`: P0 NaN-semantics migration made `format_metric_value`/`safe_float_to_str` return `"NaN"`/`"Inf"`/`"-Inf"` for non-finite values; updated 6 assertions to match the new labels (replacing the generic `"unavailable"`), and refreshed the stale `safe_float_to_str` docstring examples
 - **Mypy type errors in image/utils.py and registry/core.py** (2026-08-19)
   - `save_molecular_image()`: renamed parameter to match `PIL.Image.save(format=...)` keyword, fixing a builtin shadowing bug where bare `format` referred to the Python builtin rather than the function's intended `file_format` argument

@@ -5,7 +5,7 @@
 :hidden:
 ```
 
-MolBlender automatically manages model caching for pre-trained models used by advanced featurizers (PLMs, UniMol, etc.). Models are downloaded once and reused from local cache.
+MolBlender automatically manages model caching for pre-trained models used by advanced featurizers (PLMs, UniMol, etc.). Models are loaded from local cache; downloads require `MOLBLENDER_ALLOW_MODEL_DOWNLOAD=1`.
 
 ## Cache Priority
 
@@ -54,13 +54,13 @@ print(f"HuggingFace cache: {get_cache_dir('hf')}")
 
 ## Verifying Settings
 
-MolBlender logs effective paths on import:
+Use {func}`~molblender.config.get_cache_dir` to check current paths:
 
 ```python
-import molblender
-# INFO: [MolBlender Settings] Effective TORCH_HOME: /home/user/.cache/molblender/torch_hub
-# INFO: [MolBlender Settings] Effective HF_HOME: /home/user/.cache/molblender/huggingface_hub
-# INFO: [MolBlender Settings] Using HF_ENDPOINT (mirror): https://hf-mirror.com (if set)
+from molblender.config import get_cache_dir
+
+print(f"PyTorch cache: {get_cache_dir('torch')}")
+print(f"HuggingFace cache: {get_cache_dir('hf')}")
 ```
 
 ## Model Loading Example
@@ -68,15 +68,15 @@ import molblender
 ```python
 from molblender.representations.protein.sequence.plm import ProteinLanguageModelFeaturizer
 
-# Models are automatically downloaded to configured cache
+# Models are loaded from configured cache; downloads require
+# MOLBLENDER_ALLOW_MODEL_DOWNLOAD=1
 featurizer = ProteinLanguageModelFeaturizer(
     model_name="Rostlab/prot_t5_xl_half_uniref50",
     model_type="t5",
     batch_size=8
 )
 
-# First run downloads model (~892MB for ProtT5-XL)
-# Subsequent runs load from cache instantly
+# Loads ProtT5-XL from local cache (~900MB model)
 embeddings = featurizer.featurize(["MKTAYIAKQRQISFVKSHFSRQ"])
 print(f"Embedding shape: {embeddings.shape}")
 # Output: Embedding shape: (1, 1024)
@@ -112,7 +112,6 @@ representations:
 ```bash
 export HF_ENDPOINT=https://hf-mirror.com
 export HF_HOME=$HOME/.cache/huggingface
-export TRANSFORMERS_CACHE=$HF_HOME/transformers
 ```
 
 Then run MolBlender normally:
@@ -132,10 +131,10 @@ This is especially useful for:
 
 ## API Reference
 
-- {func}`~molblender.config.set_cache_dir` - Set cache directory
-- {func}`~molblender.config.get_cache_dir` - Get current cache path
-- {attr}`~molblender.config.EFFECTIVE_TORCH_HOME` - Active PyTorch cache
-- {attr}`~molblender.config.EFFECTIVE_HF_HOME` - Active HuggingFace cache
+- {func}`~molblender.config.set_cache_dir` - Set cache directory programmatically
+- {func}`~molblender.config.get_cache_dir` - Get current cache path (recommended for all new code)
+
+> **Note:** New code should use `get_cache_dir("hf")` / `get_cache_dir("torch")` instead of importing `EFFECTIVE_HF_HOME` / `EFFECTIVE_TORCH_HOME` directly. The module-level constants are import-time snapshots; `get_cache_dir()` always returns the live value even after `set_cache_dir()` is called.
 
 ## Related Links
 

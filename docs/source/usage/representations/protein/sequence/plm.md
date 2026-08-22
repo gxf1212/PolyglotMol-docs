@@ -54,7 +54,6 @@ when running in mainland China:
 ```bash
 export HF_ENDPOINT=https://hf-mirror.com
 export HF_HOME=$HOME/.cache/huggingface
-export TRANSFORMERS_CACHE=$HF_HOME/transformers
 ```
 
 Then create the featurizer normally:
