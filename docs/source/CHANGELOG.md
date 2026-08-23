@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **Dashboard 分类归一化收口** (`dashboard/`, `tests/dashboard/`) (2026-08-23)
+  - `classification_contracts.py` 成为唯一归一化 seam：`normalize_classification_pair` 返回 `ClassificationNormalizedResult`（y_true/y_pred/valid_mask/probability/decision_score），score 有限性并入统一 mask
+  - `classification_plots._labelize` 删除旧 argmax/阈值回退路径，无条件委托 normalization；归一化失败返回 None 时跳过图表并显示 warning，不再猜测
+  - ROC/PR 通路使用 `result.probability`/`result.decision_score`（已过滤），不回读原始 payload 数组，解决 NaN/Inf 行混淆矩阵与 ROC 样本不一致的 P0 问题
+  - 1D float score 增加 NaN/Inf 守卫，过滤后再做阈值判断
+  - `session_loader.normalize_classification_pair` 标记为 deprecated 兼容 wrapper，新调用方统一从 `classification_contracts` 导入
+  - 新增 18 条合约测试：反序 [2,1]、字符串标签、重复标签、列数不符、未知真值、NaN/Inf 统一 mask、wrapper identity、proba+dscore 同时存在的一致性
+  - 新增 `test_optional_test_markers.py`：ODDT/PLM 真实集成测试 marker 矩阵契约，collect-only 锁定测试集合
+  - ODDT 测试补全 `@pytest.mark.integration`/`dependency`/`asset`/`slow` 标记
+  - `ConfigManager._load_cache_config()` 删除，`settings.py` 为唯一 cache live authority
 - **utils/database → persistence/store + session merge 迁移完成** (`persistence/`, `utils/`) (2026-08-22)
   - `utils/database/` 的 schema bootstrap、admin ops、aggregation、results_query、exports 迁入 `persistence/store/`；`utils/database/` 改为 lazy `__getattr__` 兼容 facade，不触发循环导入
   - `SessionMergeError` 统一到 `persistence/errors.py`，`utils.database.exceptions` 与 `persistence.store.exceptions` 均为 re-export，identity 一致
