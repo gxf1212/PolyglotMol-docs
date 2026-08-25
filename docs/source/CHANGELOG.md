@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Vector pathway routing + GNN canonical split/ScreeningResult** (`multimodal/routing/parser.py`, `multimodal/routing/validation.py`, `multimodal/modality_handlers/graph.py`, `multimodal/modality_handlers/base.py`, `multimodal/modality_handlers/language_model.py`, `multimodal/modality_handlers/vector.py`, `tests/models/api/multimodal/routing/test_parser.py`) (2026-08-25)
+  - `_parse_custom_combination()` now returns a `list[ResolvedRoute]`: vector modality with pathways `["all","vae"]` expands to two routes (VECTOR_STANDARD + VECTOR_VAE); other modalities return a single-element list
+  - Validation error message for unknown pathways clarifies that `traditional_ml` is a model corpus, not a pathway
+  - GNN graph handler canonicalized: train/test indices from shared `_canonical_split_plan` (not sklearn `train_test_split`), emits `ScreeningResult` (replaces `ModelResult`), persist via `_save_model_result_to_db(result, "graph")` for resume/session visibility
+  - `_build_child_screening_config()` builds kwargs conditionally (cv_folds_cap/max_workers_cap only when not None); two `except Exception: pass` replaced with `logger.debug()` (ruff B023 + bandit B110 compliance)
 - **Cache path-traversal hardening + generic cache contract** (`data/cache/core.py`, `cache/contracts.py`, `tests/cache/test_cache_v3_implementation_identity.py`) (2026-08-25)
   - `_get_metadata_cache_path()` now resolves metadata-provided `file_path` below the cache's trusted root, rejecting absolute paths or `..` traversal; malformed metadata becomes a normal cache miss instead of leaking to a reader or cleanup routine
   - `clear_cache()` and `shrink_cache()` now route every entry through `_get_metadata_cache_path()` instead of trusting `metadata["file_path"]` directly, closing the deletion-by-path-traversal vector
