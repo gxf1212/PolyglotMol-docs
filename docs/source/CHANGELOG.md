@@ -23,7 +23,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Markdown editor blank-page bug** (`writings/patent/scripts/md_editor.py`) (2026-08-25)
   - `INDEX_HTML` declared as raw triple-quoted string (`r"""`): inline JS backslashes (regex, `'\\'` string literals) no longer collapsed by Python, eliminating "Invalid or unexpected token" browser error
-
+- **HPO processor typed refactor + CV-only metrics + train-metric delegation** (`multimodal/processors/hpo/processor.py`, `results.py`, `screening_engine/evaluation/metrics.py`) (2026-08-25)
+  - `processor.py` refactored: internal orchestration state now bundled in typed dataclasses (`HPORecordSchedulingRequest`, `HPOMaterializeContext`), replacing positional attribute unpacking across three `record_hpo_result` call sites; coordinator delegates directly to `database_write_ops.save_hpo_result_record_outcome`
+  - `build_cv_only_all_metrics()` in `results.py`: produces schema-correct `all_metrics` for CV-only HPO (without running engine `compute_all_metrics`), including `evaluation_mode="hpo_cv_only"`, `cv_fold_count`, fold-score std deviation
+  - `_compute_hpo_train_metrics()` rewritten to delegate to engine canonical `compute_train_regression_metrics` / new `compute_train_classification_metrics` instead of self-pairing train predictions into `compute_all_metrics` and filtering for `train_*` keys; classification callers now pass real train proba/decision scores
+  - New `compute_train_classification_metrics()` in `evaluation/metrics.py`: single owner of `train_*` classification naming (`train_accuracy`, `train_roc_auc`, `train_pr_auc`, `train_roc_auc_ovr`, `train_roc_auc_ovo`)
+  - `PROVENANCE_KEYS` tuple added to `evaluation/metrics.py`: keys that must never be overwritten during metric recomputation (split_fingerprint, hpo_split_fingerprint, candidate_selection, used_sample_weight, evaluation_mode, hpo_score_source, hpo_stage, hpo_method, stage); `base_helpers.py` metric recomputation now skips these via `setdefault`
+  - `_normalize_stage1_primary_metrics()` in `candidate_preparation.py` handles `None` values explicitly before `float()` conversion
+  - Grid-search optimizer gains `_run_parent_grid_cv()` callback-enabled parent-process CV path to avoid writing trial state from joblib workers
+- **Evaluation fold-loop extraction + holdout materialized CV contracts** (`screening_engine/evaluation/cross_validation.py`, `data/dataset/splitting/contracts.py`) (2026-08-25)
+  - `_FoldEvaluationResult` dataclass in `cross_validation.py`: single source for per-fold fit/predict/mask bookkeeping; fold loop extracted from `StandardEvaluator` into `_run_fold_evaluation`
+  - `validate_precomputed_cv_folds()` validates explicit CV folds at the public evaluator boundary; evaluator deduplicates cv-only fold loop (delegated to shared function)
+  - `SplitPlan` contract updates in `splitting/contracts.py` and `splitting.py`: holdout materialized CV contract
+  - `parallel_strategies.py` gains `PROVENANCE_KEYS` awareness; `evaluator_helpers.py`, `evaluation_requests.py`, `quality_transformer.py` minor updates for fold/provenance contract
+- **Persistence OperationalError wrapping + SQLite query indexes** (`persistence/errors.py`, `_stage1_effective.py`, `_stage1_reuse.py`, `store/schema_bootstrap.py`) (2026-08-25)
+  - New `PersistenceOperationalError(RuntimeError)` exception wraps `sqlite3.OperationalError` with operation name and cause; bare `except Exception` handlers in `_stage1_effective.py` and `_stage1_reuse.py` narrowed to `except sqlite3.OperationalError` — callers cannot mistake DB failures for cache misses; `sqlite3.InterfaceError` logged as warning instead of error
+  - Two new SQLite indexes: `idx_model_results_stage1_effective` (composite on session_id, stage, representation_name, model_name, stage1_compatibility_key) and `idx_stage1_links_target_source`
+  - `database_write_ops.py` new `_result_primary_metric_value()` helper: safely extracts numeric primary metric from result objects, handles JSON-string metrics dicts, falls back to NaN
+  - `database_session_ops.py` now computes `data_fingerprint` via `compute_data_fingerprint()` at session creation (was deferred); `session_service.py` adds `"success"` boolean field to session summary stats
+  - `ScreeningSessionCoordinator` class role clarified in docstring, imports from `database_write_ops`
+- **Cache security: path-traversal hardening** (`data/cache/multimodal/loading_helpers.py`, `representations/utils/cache_validator.py`) (2026-08-25)
+  - New `CacheLoadError` exception class in `loading_helpers.py`; new `_resolve_artifact_path()` / `_resolve_artifact_paths()` functions validate metadata-provided artifact paths are confined to cache root, rejecting absolute paths or `..` sequences that escape
+  - `_path_under_root()` helper + `trusted_root` parameter in `cache_validator.validate_cache_file()`: rejects cache files outside trusted root
+- **Temporal representations: explicit placeholder classes** (`representations/temporal/`) (2026-08-25)
+  - `__init__.py` docstring rewritten: package explicitly marked experimental, dynamic `importlib` auto-import removed, `Ensemble`/`Trajectory` intentionally not exported so `from molblender.representations.temporal import *` does not claim usable API
+  - `Ensemble` and `Trajectory` placeholder classes now raise `NotImplementedError` on instantiation with actionable messages pointing to `CLAUDE.md`; guidance to use `DynamicsTrajectory` from `representations.image.video` for video-based dynamics
+  - New `CLAUDE.md` (93 lines) and `README.md` (46 lines) document the extension area
+- **New tests** (2026-08-25)
+  - `tests/data/test_multimodal_cache_security.py` (251 lines): path-traversal hardening for `_resolve_artifact_path`, `_resolve_artifact_paths`, and all `load_*` functions
+  - `tests/representations/temporal/test_temporal_placeholders.py` (169 lines): import contract — package imports cleanly, `Ensemble`/`Trajectory` raise `NotImplementedError`, no registered featurizer points at temporal
+  - `tests/models/api/screening_engine/evaluation/test_cv_only_fold_loop_equivalence.py` (284 lines): cv-only fold loop delegation regression coverage (primary metric, per-fold scores/predictions, classification proba, phase-2 metadata, non-finite rejection)
+  - `tests/models/api/screening_engine/evaluation/test_holdout_materialized_cv_contract.py` (207 lines): holdout Stage-1 CV materialized in `SplitPlan`
+  - `tests/models/api/test_batch4_real_data_smoke.py` (368 lines): end-to-end smoke tests on tiny synthetic data (vector/matrix path, holdout, cv-only, grid/optuna HPO, cross-session skip, optional deps)
+  - `tests/models/api/test_export_governance_freshness.py` (194 lines): isolated-subprocess lazy-import and fail-closed `__getattr__` contract
+  - `tests/models/api/test_hpo_result_evaluation_mode.py` (133 lines): `create_hpo_result` evaluation_mode and prior-source preservation
+  - `tests/models/api/persistence/test_stage1_query_indexes.py` (34 lines): schema contract for new SQLite indexes
 -
 - **Metrics 核心收口 + evaluator 组件拆分** (`metrics/core.py`, `evaluation/evaluator_components.py`, `evaluation/metrics.py`) (2026-08-25)
   - `metrics/core.py` 成为所有数学原语的唯一 owner（r²、pearson、spearman、RMSE、MAE、分类指标、效率比）；`drawings/`、`dashboard/`、`export.py` 均委托于此
