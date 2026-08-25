@@ -7,8 +7,92 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **HPO resume state immutable dataclasses + evaluator component consolidation** (`multimodal/processors/hpo/`, `screening_engine/evaluation/`) (2026-08-25)
+  - `HPOResumeState`/`HPOResumeCandidate` frozen dataclasses replace transient `_resume_*` attributes on Stage-1 results; resume state carried via `candidate_input.resume_state`, `_freeze()`/`_thaw()` provide immutable snapshots and mutable projections
+  - `prepare_resume_candidates()` replaces `attach_resume_state()`, `_prepare_optuna_resume_state()` replaces `_resume_optuna_candidate()`, `_prepare_random_resume_state()` replaces `_resume_random_candidate()`
+  - `build_hpo_study_context()` returns typed `HPOStudyContext` dataclass (replaces tuple return); `study_context.is_complete`/`is_persistent` replace tuple index checks
+  - `prepare_evaluation_estimator()` consolidates scaling-pipeline wrapping + Phase-2 quality transformer wrapping into one function; CV-only path passes `include_phase2=False` so fold metadata applies per-fold
+  - `_raise_mapped_evaluation_error()` replaces scattered `classify_exception` + `_emit_evaluation_failure_event` + `raise EvaluationError` pattern across evaluator; `_phase2_state_for_result` variable removed
+  - `evaluator_components.py` new module: `prepare_evaluation_estimator` + `ModelTrainer`/`PredictionGenerator`/`ResourceManager` extracted from evaluator
+  - Stage-1 reuse import wrapped in explicit `BEGIN`/`ROLLBACK` transaction for atomicity; partial link set never exposed as successful import
+  - `record_adapter.py` type-coercion helpers (`_coerce_mapping`/`_coerce_sequence`) accept both live Mapping/Sequence and JSON-string legacy fields
+- **Canonical GPU utility module** (`utils/gpu/`, `utils/gpu_manager.py`) (2026-08-25)
+  - New canonical `utils.gpu` module; `utils/gpu_manager.py` reduced to facade adapter pointing at canonical path
+
+### Fixed
+- **Markdown editor blank-page bug** (`writings/patent/scripts/md_editor.py`) (2026-08-25)
+  - `INDEX_HTML` declared as raw triple-quoted string (`r"""`): inline JS backslashes (regex, `'\\'` string literals) no longer collapsed by Python, eliminating "Invalid or unexpected token" browser error
+
+-
+- **Metrics 核心收口 + evaluator 组件拆分** (`metrics/core.py`, `evaluation/evaluator_components.py`, `evaluation/metrics.py`) (2026-08-25)
+  - `metrics/core.py` 成为所有数学原语的唯一 owner（r²、pearson、spearman、RMSE、MAE、分类指标、效率比）；`drawings/`、`dashboard/`、`export.py` 均委托于此
+  - 新增 `evaluator_components.py`：pipeline construction、fold execution、result extraction 从 evaluator 拆入独立模块
+  - `nested_cv_evaluator.py`、`quality_flow.py` 消费同一组件，不再自定义 fold 逻辑
+  - `efficiency_metrics.py` 统一效率指标计算；`prediction_metrics.py` 统一预测指标投影
+  - 10 条 metric parity + 6 条 evaluator component 契约覆盖回归/分类指标一致性
+  - `screening_runtime` 不再反向导入 multimodal；34 条 Standard/Universal 生命周期回归覆盖 HPO-once、中断、resume 与禁用 DB
+- **Stage-1 effective view 与身份拆分** (`persistence/_stage1_effective.py`, `_stage1_identity.py`, `_stage1_reuse.py`) (2026-08-25)
+  - `stage1_results.py` 的 effective view、兼容性身份、跨会话 link、schema fallback 与 summary 刷新拆入私有模块
+  - `_effective_stage1_query()` 已是唯一 SQL owner，禁止复制 query 或再建 facade
+- **Dashboard result enrichment 收口** (`dashboard/metrics/calculations/`, `dashboard/data/`) (2026-08-25)
+  - `dashboard.metrics.calculations` 是补充指标、效率和结果复制的唯一实现；data API、`DashboardMetrics` 与 processors helper 均直接委托
+  - 所有入口保持同一 core 指标、低指标方向和不可变输入语义；10 条 enrichment contract 回归覆盖
+- **Comparative 共享 split/指标方向** (`screening/comparative.py`) (2026-08-25)
+  - 比较入口预先从所有 representation 物化一个 `SplitPlan` 并按同一 plan 应用；winner 与差值使用 canonical metric direction，忽略非有限分数
+  - `r2_score` 不再误读 Pearson squared；比较/简单评估 contract 覆盖共享 fingerprint、RMSE 最小值优先和 NaN 排除
+- **HPO training-data 不可变收口** (`multimodal/processors/hpo/training_data.py`) (2026-08-25)
+  - 训练数据重建、SplitPlan 投影和预物化 folds 由不可变 `ReconstructedHPOTrainingData` 唯一承载；执行路径已直接消费它
+  - `results.py` 只保留 HPO 结果构建与分析，不再有第二条 tuple 路径
+- **Session service 收敛** (`persistence/session_service.py`) (2026-08-25)
+  - 新增 session 持久化应用服务：create/summary/indices/fingerprint 收口为 persistence 的 application service
+  - Standard _DBManagerShim 和 Universal manager 注入同一 adapter，manager 只管理 DB lifecycle
+  - `ProfessionalResultProcessor` → `ScreeningResultProcessor` 重命名，旧名保留 alias
+  - 适配器、persistence、screening_engine 各模块 import 路径统一
+- **Standard execution 收敛到 screening_runtime** (`api/screening/standard.py`) (2026-08-25)
+  - 删除废弃 `standard_execution.py`，Standard 路径经 `ScreeningRunContext` 直接委托 `screening_runtime`
+  - 并行策略测试迁至 `screening_runtime/test_preparation_parallel_policy.py`
+- **删除无生产调用的旧 import 路径** (2026-08-25)
+  - 删除 `screening.adapters` 及 engine 的 Butina、feature-clustering、splitting-utils re-export；canonical owner 分别为 `screening.standard` 和 `data.dataset.splitting`
+- **HPO training-data Module 收敛** (`multimodal/processors/hpo/training_data.py`, `results.py`) (2026-08-25)
+  - 新增 `reconstruct_hpo_training_data()`，返回不可变 `ReconstructedHPOTrainingData`
+  - 特征恢复、split-index 解析、预物化 HPO folds 唯一归属新模块；`results.py` 只保留结果构建与分析，-399 行
+
+### Added
+- **HPO 候选物化与 Phase-2 评估拆分** (`multimodal/processors/hpo/`, `screening_engine/evaluation/`) (2026-08-24)
+  - 新增 `candidate_materialization.py`：负责完成 HPO 候选的 holdout refit、`ModelResult` 构造与持久化，经注入的 `HPOResultPersistencePort`，不直接查写 SQLite
+  - 新增 `phase2_evaluation.py`：Phase-2 质量管线的 pipeline wrapping、fitted state 提取、元数据刷新与 fold-mask 对账，不依赖 `StandardEvaluator`
+  - `evaluator.py` 精简为编排边界，Phase-2 逻辑收敛到独立模块
+  - `processor.py` 大幅瘦身（-571 行），候选选择/会话生命周期/resume 策略归 coordinator，per-candidate 物化归新模块
+  - grid_search / optuna_optimizer 指标方向处理与 result_translation 保持契约
+- **会话身份收口（session identity contract）** (`data/identity.py`, `persistence/session_write.py`, `persistence/session_ops.py`) (2026-08-24)
+  - `data/identity.py` 新增 `ScreeningDataIdentity` 三指纹契约：`cohort_fingerprint`（有序样本身份）、`data_fingerprint`（版本化输入内容+目标列+目标值，不可归一化时返回 None）、`split_fingerprint`（分割结构）
+  - `compute_data_fingerprint()` 覆盖有序输入内容、目标列名、目标值；不同 SMILES、不同 y 值、不同行序均得到不同指纹，相同输入得到相同指纹
+  - `screening_sessions` 表新增 `data_fingerprint`、`identity_status`（pending/verified/unavailable）、`session_kind`（screening/aggregate）、`merge_provenance` 列，含自动迁移
+  - `Session` 对象新增 `identity_status` 三态生命期：pending（创建时写入 data_fingerprint）→ verified（outcome 后写入 cohort+split）或 unavailable（写入失败/不可归一化）
+  - `finalize_session_identity()` 原子写入 cohort+split 并设 verified，缺任一字段或 DB 错误自动设 unavailable
+  - Standard 和 Universal 入口统一收敛到此 finalizer，返回状态必须检查，失败日志警告
+  - `check_session_eligibility()` 在 persistence 层集中过滤 session_kind='screening' AND identity_status='verified'
+  - `find_compatible_stage1_results()` 和 `load_stage2_prior_results()` 增加 JOIN 过滤，旧 schema 无列时自动降级
+  - Resume 路径在 `services.py` 中检查 eligibility，不合格自动回退新建 session
+  - `merge_databases()` 拒绝非 screening+verified 的 session，比较 data_fingerprint+cohort+split+target 四字段，缺任一 fail-closed
+  - aggregate session 的 `session_kind='aggregate'`，`identity_status='unavailable'`，`merge_provenance` 存专用列
+  - `build_merged_session()` 接收显式 `SourceSessionRef(db_path, session_id)` 列表，不再按位置推断来源 DB
+  - 删除 `AGGREGATE:` 前缀约定和 `cache_dir` 滥用，`cache_dir` 保持原语义
+
 ### Changed
-- **Dashboard 分类归一化收口** (`dashboard/`, `tests/dashboard/`) (2026-08-23)
+- **HPO 持久化状态契约贯穿到 DB 层** (`persistence/model_results_write.py`, `multimodal/processors/hpo/`) (2026-08-23)
+  - `save_model_result_record` 返回结构化 `ModelResultWriteOutcome`（INSERTED/UPDATED/DUPLICATE/FAILED），`__bool__` 保持旧调用兼容
+  - 新增 `_payload_equivalent()` 按字段规范化比对，相同 payload 短路为 DUPLICATE 不写 DB
+  - `BEGIN IMMEDIATE` 事务隔离防止并发 SELECT+INSERT 竞态
+  - Stage-1 identity 含 `stage1_compatibility_key`（NULL-safe IS 精确匹配），不同 split/config 不再互相覆盖
+  - `save_hpo_result_record_outcome` 用 `create_db_model_result` 适配器保留预测/概率字段，JSON 主指标正确解析
+  - `HPOStageCoordinator.persist()` 代替 `_save_hpo_result_realtime`，fingerprint 校验 fail-closed，三路 DB 分发
+  - 写点 1/2/3 统一传 `param_key`/`combo`/`existing_param_keys` 内存去重，DB 确认 DUPLICATE 后缓存参数键
+  - `record_hpo_result` 接受 `HPOResultPersistencePort` 协议，返回结构化 `HPORecordOutcome`，session_id None 语义修正
+  - 新增 22 条合约测试（DB 层 10 + port 级 12），旧测试 `is True`/`is False` 适配为 `bool()` 包装
+  - 全部 501 测试通过，ruff 无错误
+  - **Dashboard 分类归一化收口** (`dashboard/`, `tests/dashboard/`) (2026-08-23)
   - `classification_contracts.py` 成为唯一归一化 seam：`normalize_classification_pair` 返回 `ClassificationNormalizedResult`（y_true/y_pred/valid_mask/probability/decision_score），score 有限性并入统一 mask
   - `classification_plots._labelize` 删除旧 argmax/阈值回退路径，无条件委托 normalization；归一化失败返回 None 时跳过图表并显示 warning，不再猜测
   - ROC/PR 通路使用 `result.probability`/`result.decision_score`（已过滤），不回读原始 payload 数组，解决 NaN/Inf 行混淆矩阵与 ROC 样本不一致的 P0 问题
