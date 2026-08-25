@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Cache path-traversal hardening + generic cache contract** (`data/cache/core.py`, `cache/contracts.py`, `tests/cache/test_cache_v3_implementation_identity.py`) (2026-08-25)
+  - `_get_metadata_cache_path()` now resolves metadata-provided `file_path` below the cache's trusted root, rejecting absolute paths or `..` traversal; malformed metadata becomes a normal cache miss instead of leaking to a reader or cleanup routine
+  - `clear_cache()` and `shrink_cache()` now route every entry through `_get_metadata_cache_path()` instead of trusting `metadata["file_path"]` directly, closing the deletion-by-path-traversal vector
+  - New `cache.contracts.CacheStore` runtime-checkable Protocol: `get`/`set`/`delete` seam for generic key/value cache adapters, keeping representation-feature cache and screening-result persistence as separate domains
+  - Cache V3 implementation-identity test coverage verifies the trusted-root contract
+- **Export manifest module** (`models/export_manifest.py`, `tests/models/api/test_export_manifest.py`) (2026-08-25)
+  - Dependency-free metadata layer for lazy public exports: `ExportSpec` frozen dataclass captures canonical owner (`module`/`attribute`), legacy flag, optional-dependency tag and removal-version policy
+  - `build_export_manifest()` converts a lazy tuple map to validated, introspectable specs; package `__getattr__` functions remain lazy, this module only validates declared public names have a resolvable owner
+- **Model-results database identity key** (`persistence/model_results_write.py`) (2026-08-25)
+  - `_result_identity_key()` builds a SHA-256 identity for a canonical result write from session/model/representation/stage + Stage-1 compatibility key or HPO stage/method/best-params; distinct `<missing>` sentinel prevents incomplete legacy identities from colliding with explicit empty keys
+- **HPO processor typed orchestration state** (`multimodal/processors/hpo/processor.py`) (2026-08-25)
+  - Internal orchestration state further bundled in typed dataclasses, replacing positional attribute unpacking; 131-line net change consolidating scheduling, materialization and write-out paths
+- **CI dependency workflow updates** (`.github/workflows/dependencies.yml`, `environment.yml`, `pyproject.toml`) (2026-08-25)
+  - `safety scan --full-report` replaces deprecated `safety check --full-report`; `pip-audit --strict` enables stricter vulnerability matching
+-
 - **HPO resume state immutable dataclasses + evaluator component consolidation** (`multimodal/processors/hpo/`, `screening_engine/evaluation/`) (2026-08-25)
   - `HPOResumeState`/`HPOResumeCandidate` frozen dataclasses replace transient `_resume_*` attributes on Stage-1 results; resume state carried via `candidate_input.resume_state`, `_freeze()`/`_thaw()` provide immutable snapshots and mutable projections
   - `prepare_resume_candidates()` replaces `attach_resume_state()`, `_prepare_optuna_resume_state()` replaces `_resume_optuna_candidate()`, `_prepare_random_resume_state()` replaces `_resume_random_candidate()`
