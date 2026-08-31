@@ -53,7 +53,7 @@ coulomb_features = coulomb.featurize(smiles)
 coord_features = coords.featurize(smiles)
 
 print(f"Coulomb matrix shape: {coulomb_features.shape}")    # (529,) = 23×23 flattened
-print(f"3D coordinates shape: {coord_features.shape}")      # (69,) = 23×3 flattened
+print(f"3D coordinates shape: {coord_features.shape}")      # (64, 3), zero-padded
 
 # Batch processing with automatic conformer generation
 molecules = ["CCO", "CCN", "CCC"]
@@ -147,7 +147,7 @@ coords = mbl.get_featurizer("coordinates_3d", max_atoms=30, center=True, normali
 
 # Get 3D coordinates
 positions = coords.featurize("CCO")
-coords_matrix = positions.reshape(30, 3)  # (max_atoms, 3)
+coords_matrix = positions  # already shaped (max_atoms, 3)
 
 print(f"Atom positions shape: {coords_matrix.shape}")
 print(f"First atom position: {coords_matrix[0]}")
@@ -155,7 +155,7 @@ print(f"Coordinates centered: {np.allclose(coords_matrix[:3].mean(axis=0), 0)}")
 
 # Compare normalized vs. non-normalized
 coords_raw = mbl.get_featurizer("coordinates_3d", normalize=False)
-raw_pos = coords_raw.featurize("CCO").reshape(30, 3)
+raw_pos = coords_raw.featurize("CCO")
 print(f"Coordinate scale difference: {np.max(np.linalg.norm(raw_pos[:3], axis=1)):.2f}")
 ```
 
@@ -244,9 +244,8 @@ print(f"Feature variability: {std_per_feature.mean():.3f}")
 
 ```python
 # Configure conformer generation parameters
-custom_coords = mbl.get_featurizer("coordinates_3d", 
-                                 conformer_method="ETKDG",    # Algorithm
-                                 optimize_conformer=True,      # Energy minimize
+custom_coords = mbl.get_featurizer("coordinates_3d",
+                                 embed3d=True,                 # Generate if absent
                                  random_seed=42)               # Reproducible
 
 features = custom_coords.featurize("C1CCCCC1")  # Cyclohexane

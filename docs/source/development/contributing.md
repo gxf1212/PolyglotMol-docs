@@ -79,7 +79,7 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install in editable mode with dev dependencies
-pip install -e ".[dev,test]"
+pip install -e ".[dev,tests]"
 
 # Install pre-commit hooks
 pre-commit install
