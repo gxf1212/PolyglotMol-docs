@@ -36,7 +36,7 @@ from molblender.drawings import plot_publication_regression  # Static plots
 Notes:
 - `import molblender` and `import molblender.api` are both lightweight lazy facades.
 - `molblender.data` is also a lazy facade over dataset, diagnostics, cache, and preprocessing subdomains.
-- The screening runtime layer lives under `molblender.models.api.infrastructure`; most users should not import it directly.
+- The screening runtime layer lives under `molblender.infrastructure`; most users should not import it directly.
 - `molblender.models.execution` is kept for compatibility with older code, not as the primary runtime layer.
 
 See [API Guide](api_guide.md) for detailed API layer documentation.

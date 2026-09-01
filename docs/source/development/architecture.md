@@ -39,7 +39,7 @@ MolBlender now exposes package-role metadata directly in code. The main roles ar
 | `molblender.dashboard` | Interactive dashboard UI | Supported |
 | `molblender.data.diagnostics.dashboard` | Interactive diagnostics dashboard | Specialized |
 | `molblender.models.api.screening_engine` | Screening engine core | Internal |
-| `molblender.models.api.infrastructure` | Screening runtime infrastructure | Internal |
+| `molblender.infrastructure` | Screening runtime infrastructure | Internal |
 | `molblender.representations.utils` | Generic batching/caching helpers | Supported |
 | `molblender.models.execution` | Legacy model execution | Compatibility |
 
@@ -71,7 +71,7 @@ lower-level Streamlit launcher that can optionally accept a results path.
 Likewise, `molblender.models.execution` remains available for compatibility,
 but package-level imports such as `from molblender.models.execution import
 ParallelExecutor` now emit deprecation warnings that point new screening runtime
-work toward `molblender.models.api.infrastructure`.
+work toward `molblender.infrastructure`.
 
 (metadata_routing)=
 ## Scikit-learn Metadata Routing
@@ -229,11 +229,11 @@ Execution-related code now has three distinct layers:
 
 | Layer | Status | Purpose |
 |-------|--------|---------|
-| `molblender.models.api.infrastructure` | Primary | Active runtime policy for screening workflows |
+| `molblender.infrastructure` | Primary | Active runtime policy for screening workflows |
 | `molblender.representations.utils` | Supported | Generic batching/caching helpers outside the screening engine |
 | `molblender.models.execution` | Compatibility | Legacy executor/checkpoint APIs retained for older imports |
 
-This distinction matters because the public workflow APIs should depend on `models.api.infrastructure`, not on the legacy executor packages.
+This distinction matters because the public workflow APIs should depend on `molblender.infrastructure`, not on the legacy executor packages.
 
 ## Extension Points
 
@@ -327,7 +327,7 @@ For user-facing code, prefer:
 - `molblender.drawings` for static figures
 - `molblender.dashboard` for interactive result exploration
 
-Avoid using internal packages such as `molblender.models.api.screening_engine` or `molblender.models.api.infrastructure` unless you are extending MolBlender itself.
+Avoid using internal packages such as `molblender.models.api.screening_engine` or `molblender.infrastructure` unless you are extending MolBlender itself.
 
 ## Design Patterns
 

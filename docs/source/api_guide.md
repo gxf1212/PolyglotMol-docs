@@ -289,7 +289,7 @@ Most users do not need to import execution layers directly. To avoid confusion, 
 
 | Layer | Current Position | Target Audience |
 |------|------------------|-----------------|
-| `molblender.models.api.infrastructure` | Primary screening runtime layer | Package internal, advanced developers |
+| `molblender.infrastructure` | Primary screening runtime layer | Package internal, advanced developers |
 | `molblender.representations.utils` | Generic batching/caching helpers | Developers needing direct control over representation batching |
 | `molblender.models.execution` | Compatibility layer (legacy) | Legacy code migration |
 

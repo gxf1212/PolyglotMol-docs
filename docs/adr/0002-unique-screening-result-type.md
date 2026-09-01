@@ -42,7 +42,7 @@ screening result type directly, breaking the layer boundary.
 ## Current location
 
 `ResultRecord` / `ScreeningSession` / `ScreeningResultsDB` now live in
-`models/api/persistence/contracts.py`. The historic `utils/results_db.py` and
+`molblender/persistence/contracts.py`. The historic `utils/results_db.py` and
 `utils/database.*` paths are compatibility adapters that re-export the same
 objects (identity preserved, no behavior owned there). See
-`models/api/persistence/__init__.py` and `models/api/utils/database/__init__.py`.
+`persistence/__init__.py` and `models/api/utils/database/__init__.py`.

@@ -14,7 +14,7 @@ The `models/` package had a layered dependency problem:
   hardware-detection and training-monitoring code that screening and modality
   models both needed, but the code lived in the `api` layer, forcing an
   upward dependency.
-- `api/infrastructure/` imported from `screening_engine.base` (full config
+- `api/infrastructure/` previously imported from `screening_engine.base` (full config
   types), when it only needed a small set of runtime parameters.
 
 The desired dependency direction is:
@@ -34,13 +34,13 @@ api/ → screening_engine/ → infrastructure/
    `models/training/`.
 4. Create deprecated-adapters at the old `api/utils/...` locations that
    re-export from the new `models/runtime.*` and `models.training.*`.
-5. `api/infrastructure/` must not import `screening_engine.base.ScreeningConfig`
+5. Top-level `molblender.infrastructure` must not import `screening_engine.base.ScreeningConfig`
    or `screening_engine.base.ExecutionMode`.  Instead, infrastructure accepts
    only the small `ExecutionContext` contract.
 6. `tests/ci/check_layer_dependencies.py` is the executable dependency-policy
    source and enforces:
    - `modality_models` and `corpus` must never import `api.*`
-   - `api/infrastructure` must not import `screening_engine.base`,
+   - `molblender.infrastructure` must not import `screening_engine.base`,
      `screening_engine.result_processor`, or `screening_engine.evaluation`
      (except lazy `from_screening_config` adapters listed in
      `LAZY_EXEMPT_FORBIDDEN`)

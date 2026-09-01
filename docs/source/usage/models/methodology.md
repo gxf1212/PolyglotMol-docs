@@ -217,7 +217,7 @@ with execution_context.timeout_context(timeout=train_timeout):
     training_time = time.time() - start_time
 ```
 
-MolBlender now routes timeout and runtime policy through `molblender.models.api.infrastructure.ExecutionContext` rather than the removed standalone `timeout_context` helper.
+MolBlender now routes timeout and runtime policy through `molblender.infrastructure.ExecutionContext` rather than the removed standalone `timeout_context` helper.
 
 ### Test Set Evaluation
 
