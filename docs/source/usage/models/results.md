@@ -17,7 +17,7 @@ MolBlender uses **SQLite databases** as the primary storage format for screening
 ### Enabling Database Storage
 
 ```python
-from molblender.models.api import universal_screen
+from molblender.screening import universal_screen
 
 results = universal_screen(
     dataset=dataset,
@@ -133,7 +133,7 @@ for result in results['top_models'][:5]:  # Top 5
 ### Loading from Database
 
 ```python
-from molblender.models.api.utils import ScreeningResultsDB
+from molblender.persistence import ScreeningResultsDB
 
 # Connect to the database
 db = ScreeningResultsDB("./my_screening.db")
@@ -195,7 +195,7 @@ conn.close()
 ### Export to JSON
 
 ```python
-from molblender.models.api.utils import ScreeningResultsDB
+from molblender.persistence import ScreeningResultsDB
 
 db = ScreeningResultsDB("./my_screening.db")
 
@@ -209,7 +209,7 @@ db.export_to_json(
 ### Export to CSV
 
 ```python
-from molblender.models.api.utils import export_results_csv
+from molblender.models.api.utils.reporting import export_results_csv
 
 # Export results table to CSV
 export_results_csv(
@@ -237,7 +237,7 @@ best = results['best_model']
 model_params = best.get('model_params', {})
 
 # Reconstruct and train the model for deployment
-from molblender.models.api.screening_engine.model_registry import get_model_registry
+from molblender.screening.engine.model_registry import get_model_registry
 
 registry = get_model_registry()
 config = registry.get_model_config(best['model_name'])

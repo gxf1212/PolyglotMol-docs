@@ -118,7 +118,7 @@ print(f"Screening completed! Best R²: {results['summary']['best_score']:.3f}")
 ### Example: Universal Screening (Recommended)
 
 ```python
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 
 # Run comprehensive screening
 results = universal_screen(
@@ -322,7 +322,7 @@ Loading: ███████████████████████�
 ```python
 # From Python, after screening
 # Retrain best model from stored metadata for deployment:
-from molblender.models.api.screening_engine.model_registry import get_model_registry
+from molblender.screening.engine.model_registry import get_model_registry
 best = results['best_model']
 estimator = get_model_registry().get_model_config(best['model_name']).create_estimator(
     **best.get('model_params', {})
@@ -501,7 +501,7 @@ molblender view ./results --verbose             # Debug mode
 from molblender.models import quick_screen
 results = quick_screen(dataset, target_column="logP")
 # Retrain best model from stored metadata for deployment:
-from molblender.models.api.screening_engine.model_registry import get_model_registry
+from molblender.screening.engine.model_registry import get_model_registry
 best = results['best_model']
 estimator = get_model_registry().get_model_config(best['model_name']).create_estimator(
     **best.get('model_params', {})

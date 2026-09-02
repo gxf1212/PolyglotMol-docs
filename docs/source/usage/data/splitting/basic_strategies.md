@@ -36,7 +36,7 @@ The standard two-way split used for most screening tasks.
 ### Configuration
 
 ```python
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 
 results = universal_screen(
     dataset=dataset,
@@ -126,7 +126,7 @@ def split_train_test(
 
 ```python
 from molblender.data import MolecularDataset
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 
 # Load dataset
 dataset = MolecularDataset.from_csv(
@@ -506,7 +506,7 @@ print(f"CV R² (std): {results['best_model']['cv_r2_std']:.3f}")
 
 MolBlender automatically adjusts cross-validation folds based on dataset size.
 
-**Code Location**: `models/api/screening_engine/evaluation/evaluator.py`
+**Code Location**: `screening/engine/evaluation/evaluator.py`
 
 ```python
 def _cross_validate(self, model, X, y):
@@ -529,7 +529,7 @@ def _cross_validate(self, model, X, y):
 
 ### Classification vs Regression
 
-**Code Location**: `models/api/screening_engine/evaluation/evaluator.py`
+**Code Location**: `screening/engine/evaluation/evaluator.py`
 
 ```python
 # Create CV splitter based on task type

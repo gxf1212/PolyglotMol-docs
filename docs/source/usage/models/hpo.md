@@ -18,7 +18,7 @@ This staged approach avoids optimizing every model upfront, which is wasteful wh
 ### Basic HPO Usage
 
 ```python
-from molblender.models.api import universal_screen
+from molblender.screening import universal_screen
 
 # Enable HPO for top 5 models
 results = universal_screen(
@@ -528,7 +528,7 @@ have results at the same HPO stage** and **saves output after each model**. To r
 re-run with the same `db_path` and `enable_db_storage=True`.
 
 ```python
-from molblender.models.api.utils.results_db import ScreeningResultsDB
+from molblender.persistence import ScreeningResultsDB
 
 db = ScreeningResultsDB("screening_results.db")
 previous_results = db.load_comprehensive_results(session_id="session_xyz")

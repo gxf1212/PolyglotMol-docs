@@ -41,7 +41,7 @@ random_state: int = 42       # Random seed for reproducibility
 
 #### Implementation Details
 
-**Code Location**: `src/molblender/models/api/screening_engine/data_handler.py`
+**Code Location**: `src/molblender/screening/engine/data_handler.py`
 
 ```python
 def split_data(self, X: np.ndarray, y: np.ndarray, stratify=None):
@@ -121,7 +121,7 @@ Cross-validation is performed **only on the training set** to estimate model per
 
 #### Implementation Details
 
-**Code Location**: `src/molblender/models/api/screening_engine/evaluation/cross_validation.py`
+**Code Location**: `src/molblender/screening/engine/evaluation/cross_validation.py`
 
 ```python
 def perform_cross_validation(model, X, y, config, model_requires_scaling=False):
@@ -202,7 +202,7 @@ MolBlender now uses `KFold(random_state=42)` for cross-validation, ensuring **co
 
 After cross-validation, the model is trained on the **entire training set** to maximize performance.
 
-**Code Location**: `models/api/screening_engine/evaluation/evaluator.py`
+**Code Location**: `screening/engine/evaluation/evaluator.py`
 
 ```python
 # Train final model using ALL training data
@@ -443,11 +443,11 @@ Quick reference to implementation modules (line numbers change frequently):
 | Functionality | Module | Description |
 |--------------|--------|-------------|
 | **Configuration** | `screening_engine/base.py` | `ScreeningConfig` with `cv_folds`, `test_size`, `random_state` |
-| **Split Plan** | `screening_runtime/split_plan.py` | `_extract_split_plan` / `_apply_shared_split` — compute indices once, apply to all representations |
+| **Split Plan** | `src/molblender/screening/runtime/split_plan.py` | `_extract_split_plan` / `_apply_shared_split` — compute indices once, apply to all representations |
 | **CV Splitter** | `screening_engine/evaluation/cross_validation.py` | `create_cv_splitter` — KFold / StratifiedKFold with `random_state=42` |
 | **CV Execution** | `screening_engine/evaluation/cross_validation.py` | `perform_cross_validation` — `cross_val_score` with scoring |
 | **Model Ranking** | `screening_engine/evaluation/ranking.py` | `rank_final_results` / `selection_score` — rank by CV/HPO scores |
-| **Final Selection** | `screening_runtime/run.py` | `_select_best_result` — calls `rank_final_results`, never falls back to test score |
+| **Final Selection** | `src/molblender/screening/runtime/run.py` | `_select_best_result` — calls `rank_final_results`, never falls back to test score |
 
 ## Large Dataset Prediction
 
@@ -458,7 +458,7 @@ MolBlender supports efficient prediction on large datasets with automatic batch 
 Deep learning models (VAE, CNN, Transformer) use batch processing for inference to prevent GPU memory overflow:
 
 ```python
-from molblender.models.api import universal_screen
+from molblender.screening import universal_screen
 
 # Large dataset prediction
 results = universal_screen(

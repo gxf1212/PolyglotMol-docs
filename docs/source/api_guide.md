@@ -7,6 +7,7 @@ MolBlender provides a unified API layer (`molblender.api`), integrating all core
 Since the architecture consolidation in 2026-03, the recommended usage is:
 
 - `molblender.api`: Unified convenience entry point, suitable for new code and tutorial examples
+- `molblender.screening`: Canonical home of the screening engine and entry points (`universal_screen`, `screen_models`, `quick_screen`, `thorough_screen`, `interpretable_screen`) after the 2026-09 top-level package promotion
 - `molblender.models` / `molblender.representations`: Domain APIs, suitable for scenarios requiring more complete control
 - `molblender.drawings`: Static plotting tools
 - `molblender.dashboard`: Interactive analysis UI
@@ -57,12 +58,23 @@ from molblender.models import (
     quick_screen,
     thorough_screen,
     # Analysis functions (richer API)
-    analyze_results,
     compare_models,
     compare_representations,
     # Visualization
     plot_screening_results,
-    create_performance_dashboard,
+)
+```
+
+For full screening control (modality sweeps, grouped configs, HPO), prefer
+`molblender.screening`:
+
+```python
+from molblender.screening import (
+    universal_screen,
+    screen_models,
+    quick_screen,
+    thorough_screen,
+    interpretable_screen,
 )
 ```
 
@@ -151,7 +163,6 @@ molblender.run_dashboard(...)
 
 # Compatibility entries (direct import from submodules)
 molblender.list_available_featurizers(...)
-molblender.analyze_results(...)  # Need richer API
 ```
 
 **Notes**:
@@ -313,27 +324,6 @@ Most users should prioritize using workflow entry points like `screen_models()`,
 All these subdomains now use lazy facades—importing the top-level `molblender.data` will not automatically pull them all into memory.
 Among them, `molblender.data.cache` lazy exposes the `multimodal` submodule, and `molblender.data.diagnostics`
 also lazy exposes the specialized `dashboard` submodule.
-
-### Programmatic Architecture Snapshot
-
-If you need to check current recommended entry points, execution layer roles, or migration recommendations, you can read directly from the code:
-
-```python
-from molblender.architecture_roles import (
-    get_package_role_catalog,
-    get_recommended_entrypoints,
-    get_execution_layer_decisions,
-)
-
-print(get_recommended_entrypoints())
-print(get_execution_layer_decisions())
-```
-
-You can also output a JSON snapshot in the terminal:
-
-```bash
-python -m molblender.architecture_roles
-```
 
 ## Quick Start
 

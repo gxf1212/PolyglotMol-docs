@@ -135,7 +135,7 @@ y_train, y_test = y[train_idx], y[test_idx]
 
 **Virtual Screening:**
 ```python
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 
 # Drug discovery scenario
 results = universal_screen(
@@ -710,7 +710,7 @@ class LoSplitter:
 
 **Current Usage via `universal_screen()`:**
 ```python
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 
 # MOOD split — deployment-aware strategy selection
 results = universal_screen(
@@ -748,7 +748,7 @@ train, test = dataset.train_test_split(
 )
 
 # Then screen
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 
 results = universal_screen(
     dataset=train,  # Train on perimeter split

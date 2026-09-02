@@ -18,7 +18,7 @@ The models module automates the entire ML pipeline from data preprocessing to mo
 
 ```python
 from molblender.data import MolecularDataset
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 
 # Load dataset
 dataset = MolecularDataset.from_csv(
@@ -180,7 +180,7 @@ MolBlender intelligently manages CPU/GPU resources:
 
 ```python
 from molblender.data import MolecularDataset
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 import pandas as pd
 
 # 1. Prepare data
@@ -209,7 +209,7 @@ print(f"Models tested: {results['summary']['n_models_evaluated']}")
 # $ molblender view ./screening_results.db
 
 # 5. Retrain and export best model for deployment
-from molblender.models.api.screening_engine.model_registry import get_model_registry
+from molblender.screening.engine.model_registry import get_model_registry
 best = results['best_model']
 registry = get_model_registry()
 config = registry.get_model_config(best['model_name'])

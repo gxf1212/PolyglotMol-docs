@@ -617,7 +617,7 @@ dataset.add_features([
 ])
 
 # Train model (example)
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 
 results = universal_screen(
     dataset=dataset,

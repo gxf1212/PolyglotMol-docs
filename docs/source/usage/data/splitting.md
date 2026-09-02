@@ -22,7 +22,7 @@ All splitting strategies use **fixed random seeds** by default, ensuring complet
 ### Basic Usage
 
 ```python
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 from molblender.data import MolecularDataset
 
 # Load your dataset
@@ -520,7 +520,7 @@ result = scaffold_split(
 **Example:**
 ```python
 from molblender.data import MolecularDataset
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 
 # Load drug-like molecules
 dataset = MolecularDataset.from_csv(
@@ -823,7 +823,7 @@ Feature clustering split is ideal when:
 #### Configuration
 
 ```python
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 from molblender.data import MolecularDataset
 
 # Using RDKit descriptors with K-means
@@ -1140,7 +1140,7 @@ MolBlender automatically adjusts cross-validation based on dataset size and task
 
 #### Automatic Fold Adjustment
 
-**Code Location**: `models/api/screening_engine/evaluation/evaluator.py`
+**Code Location**: `screening/engine/evaluation/evaluator.py`
 
 ```python
 def _cross_validate(self, model, X, y):
@@ -1164,7 +1164,7 @@ def _cross_validate(self, model, X, y):
 
 #### Classification vs Regression
 
-**Code Location**: `models/api/screening_engine/evaluation/evaluator.py`
+**Code Location**: `screening/engine/evaluation/evaluator.py`
 
 ```python
 # Create CV splitter based on task type
@@ -1250,7 +1250,7 @@ How much data do you have?
 
 All splitting strategies use fixed random seeds by default to ensure reproducibility.
 
-**Code Location**: `models/api/screening_engine/base.py`
+**Code Location**: `screening/engine/base.py`
 
 ```python
 @dataclass
@@ -1559,7 +1559,7 @@ y_train, y_test = y[train_idx], y[test_idx]
 **Example:**
 ```python
 # Drug discovery scenario
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 
 results = universal_screen(
     dataset=dataset,
@@ -2078,7 +2078,7 @@ Use custom split when:
 All advanced splitting methods integrate seamlessly with the `universal_screen` API:
 
 ```python
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 
 # Example: MOOD split in model screening
 results = universal_screen(

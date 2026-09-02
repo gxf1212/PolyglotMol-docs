@@ -38,7 +38,7 @@ Scaffold-based splitting for drug discovery and medicinal chemistry applications
 ### Configuration
 
 ```python
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 
 results = universal_screen(
     dataset=dataset,
@@ -416,7 +416,7 @@ General-purpose clustering split supporting arbitrary molecular representations.
 ### Configuration
 
 ```python
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 
 # Using RDKit descriptors with K-means
 results = universal_screen(

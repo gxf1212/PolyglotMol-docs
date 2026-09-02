@@ -53,7 +53,7 @@ Where:
 ### Configuration
 
 ```python
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 
 results = universal_screen(
     dataset=dataset,
@@ -273,7 +273,7 @@ MaxMin split creates either:
 ### Configuration
 
 ```python
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 
 # Unfriendly mode: Diverse test set (challenging)
 results = universal_screen(

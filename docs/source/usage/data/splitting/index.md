@@ -19,7 +19,7 @@ MolBlender provides **18 professional-grade splitting strategies** designed for 
 ## Quick Start
 
 ```python
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 from molblender.data import MolecularDataset
 
 # Load dataset
@@ -233,7 +233,7 @@ Structure-based strategies ensure **no information leakage** from structural sim
 All splitting strategies integrate seamlessly with `universal_screen`:
 
 ```python
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 
 # Basic split
 results = universal_screen(

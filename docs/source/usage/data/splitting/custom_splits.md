@@ -186,7 +186,7 @@ train, test = dataset.train_test_split(
 )
 
 # Train and evaluate
-from molblender.models import universal_screen
+from molblender.screening import universal_screen
 results = universal_screen(
     dataset=train,
     target_column="homo",

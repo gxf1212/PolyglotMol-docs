@@ -40,7 +40,7 @@ verbose: 2
 ### 3. Run Screening with Config File
 
 ```python
-from molblender.models.api import universal_screen
+from molblender.screening import universal_screen
 
 results = universal_screen(
     dataset=your_dataset,
@@ -197,7 +197,7 @@ Save your current configuration for reuse:
 
 ```python
 from molblender.config import export_screening_config
-from molblender.models.api.multimodal.api import SplitConfig, HPOConfig
+from molblender.screening.orchestration import SplitConfig, HPOConfig
 
 export_screening_config(
     split_config=SplitConfig(strategy="nested_cv", outer_cv_folds=10),
@@ -257,7 +257,7 @@ export DATA_DIR=/mnt/storage/prod_data
 ## Complete Example
 
 ```python
-from molblender.models.api import universal_screen
+from molblender.screening import universal_screen
 from molblender.data import MolecularDataset, InputType
 
 # Load dataset
