@@ -153,7 +153,7 @@ Use `molblender.validation` for:
 Keep domain semantics in their own modules:
 - `molblender.data.validation` for dataset diagnostics
 - `molblender.metrics.validation` for metric compatibility
-- `molblender.models.api.*.validation` for screening-engine rules
+- `molblender.validation` and `molblender.screening.engine` validation helpers for screening rules
 
 ## Code Formatting
 

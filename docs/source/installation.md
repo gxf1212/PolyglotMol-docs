@@ -172,10 +172,7 @@ To use advanced features, you need to install "extras." This is done by adding b
 pip install molblender[models]
 
 # Install multiple groups at once
-pip install molblender[deepchem,md]
-
-# Install a convenience group that includes several related packages
-pip install molblender[cheminformatics_base]
+pip install molblender[protein,models]
 
 # Install all optional dependencies
 pip install molblender[all]
@@ -203,11 +200,9 @@ The following table lists the main optional groups and the key functionalities t
 | `pip install molblender[protein]`       | `biopython`, `fair-esm`, `transformers`, `tokenizers` | Protein featurizers (PLMs) and structural biology tools.   |
 | `pip install molblender[cheminformatics_ml]` | `chemprop`, `mol2vec`                            | Advanced ML models like Chemprop and Mol2Vec embeddings.   |
 | `pip install molblender[deepchem]`      | `deepchem`                                            | Featurizers and models from the DeepChem library.          |
-| `pip install molblender[mordred]`       | `mordred`                                             | Calculation of a large set of 2D & 3D molecular descriptors. |
-| `pip install molblender[spatial]`       | `unimol-tools`, `dscribe`, `ase`                      | 3D spatial representations like Coulomb Matrices and Uni-Mol. |
+| `pip install molblender[spatial]`       | `unimol-tools`, `dscribe`, `ase`, `mordred`           | 3D spatial representations (Coulomb Matrices, Uni-Mol) and Mordred 2D/3D descriptors. |
+| `pip install molblender[cheminformatics_ml]` | `chemprop`, `mol2vec`                             | Advanced ML models like Chemprop and Mol2Vec embeddings.   |
 | `pip install molblender[md]`            | `mdanalysis`                                          | Analysis of molecular dynamics trajectories.               |
-| `pip install molblender[cdk]`           | `CDK-pywrapper`                                       | CDK-based fingerprints (requires **Java \>= 11**).          |
-| `pip install molblender[molfeat]`       | `molfeat`                                             | Various fingerprints and representations via Molfeat.      |
 | `pip install molblender[drawing]`       | `matplotlib`, `seaborn`                               | Molecule and data visualization utilities.                 |
 | `pip install molblender[openbabel]`     | `openbabel-wheel`                                     | Support for Open Babel via Pybel.                          |
 | `pip install molblender[io]`            | `openpyxl`, `xlrd`, `pyarrow`                         | Excel (.xlsx/.xls) and Parquet file loading support.       |

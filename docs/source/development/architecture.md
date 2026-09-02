@@ -38,24 +38,11 @@ MolBlender now exposes package-role metadata directly in code. The main roles ar
 | `molblender.drawings` | Static plotting utilities | Supported |
 | `molblender.dashboard` | Interactive dashboard UI | Supported |
 | `molblender.data.diagnostics.dashboard` | Interactive diagnostics dashboard | Specialized |
-| `molblender.models.api.screening_engine` | Screening engine core | Internal |
-| `molblender.infrastructure` | Screening runtime infrastructure | Internal |
+| `molblender.screening.engine` | Screening engine core | Internal |
+| `molblender.screening.orchestration` | Screen workflow facade | Recommended |
+| `molblender.screening.runtime` | Screening execution runtime | Internal |
+| `molblender.infrastructure` | Resource policy, GPU scheduling | Internal |
 | `molblender.representations.utils` | Generic batching/caching helpers | Supported |
-| `molblender.models.execution` | Legacy model execution | Compatibility |
-
-This metadata can be queried programmatically:
-
-```python
-from molblender.architecture_roles import (
-    get_package_role_catalog,
-    get_recommended_entrypoints,
-    get_execution_layer_decisions,
-)
-
-catalog = get_package_role_catalog()
-recommended = get_recommended_entrypoints()
-execution_layers = get_execution_layer_decisions()
-```
 
 For day-to-day workflow code, prefer `molblender.api`, `molblender.models`, or
 `molblender.representations`. The top-level `molblender` package remains a
@@ -68,11 +55,6 @@ mutating `sys.argv` or relying on a separate dashboard-only CLI module.
 The UI package itself, `molblender.dashboard.run_dashboard()`, remains a
 lower-level Streamlit launcher that can optionally accept a results path.
 
-Likewise, `molblender.models.execution` remains available for compatibility,
-but package-level imports such as `from molblender.models.execution import
-ParallelExecutor` now emit deprecation warnings that point new screening runtime
-work toward `molblender.infrastructure`.
-
 (metadata_routing)=
 ## Scikit-learn Metadata Routing
 
@@ -82,11 +64,8 @@ may cross-reference this section when documenting inherited scikit-learn
 behavior. These routing helpers are implementation details of estimator
 interoperability, not a separate MolBlender runtime layer.
 
-For tooling or CI diagnostics, MolBlender can emit a JSON architecture snapshot:
-
-```bash
-python -m molblender.architecture_roles
-```
+For tooling or CI diagnostics, the package inventory is documented in this
+guide; there is no separate CLI command for an architecture snapshot.
 
 ## Core Components
 
@@ -140,7 +119,7 @@ The diagnostics subdomain also lazily exposes its specialized UI as
 separate from the main results dashboard.
 Likewise, `molblender.data.cache` lazily exposes its `multimodal` cache submodule.
 Shared primitive validation lives in `molblender.validation`; domain-specific
-validation remains inside `data`, `metrics`, and `models.api`.
+validation is distributed across `data`, `metrics`, and `screening` subdomains.
 
 **Key Classes:**
 - `Molecule`: Single molecule wrapper with lazy evaluation
@@ -225,15 +204,15 @@ Dashboard Visualization
 
 ### Execution Layer Decisions
 
-Execution-related code now has three distinct layers:
+Screening execution has three distinct layers:
 
 | Layer | Status | Purpose |
 |-------|--------|---------|
-| `molblender.infrastructure` | Primary | Active runtime policy for screening workflows |
-| `molblender.representations.utils` | Supported | Generic batching/caching helpers outside the screening engine |
-| `molblender.models.execution` | Compatibility | Legacy executor/checkpoint APIs retained for older imports |
+| `molblender.screening.runtime` | Primary | Active screening execution, split planning, stage orchestration |
+| `molblender.infrastructure` | Supporting | Resource policy, GPU scheduling, execution context |
+| `molblender.representations.utils` | Supporting | Generic batching/caching helpers outside the screening engine |
 
-This distinction matters because the public workflow APIs should depend on `molblender.infrastructure`, not on the legacy executor packages.
+The public workflow APIs (`molblender.screening`) delegate to `molblender.screening.runtime` for execution and to `molblender.infrastructure` for resource policy, keeping orchestration logic separate from platform concerns.
 
 ## Extension Points
 
@@ -307,11 +286,14 @@ src/molblender/
 │   ├── dataset/        # Dataset classes
 │   └── io.py           # Input handling
 ├── models/             # ML models
-│   ├── api/            # Screening engine, runtime infrastructure, results DB
 │   ├── corpus/         # Model definitions
-│   ├── modality_models/ # Modality-specific wrappers
-│   └── execution/      # Legacy execution compatibility layer
-├── execution/          # Generic execution helpers
+│   └── modality_models/ # Modality-specific wrappers
+├── screening/          # Screening workflow
+│   ├── engine/         # Model registry, combination selection
+│   ├── orchestration/  # Universal screen, screen_models, config contracts
+│   └── runtime/        # Execution, split planning, stage orchestration
+├── infrastructure/     # Resource policy, GPU scheduling
+├── persistence/        # SQLite storage (sessions, results, HPO)
 ├── drawings/           # Static plotting utilities
 ├── config/             # Global configuration
 └── dashboard/          # Streamlit visualization
@@ -327,7 +309,7 @@ For user-facing code, prefer:
 - `molblender.drawings` for static figures
 - `molblender.dashboard` for interactive result exploration
 
-Avoid using internal packages such as `molblender.models.api.screening_engine` or `molblender.infrastructure` unless you are extending MolBlender itself.
+Avoid using internal packages such as `molblender.screening.runtime` or `molblender.infrastructure` unless you are extending MolBlender itself.
 
 ## Design Patterns
 

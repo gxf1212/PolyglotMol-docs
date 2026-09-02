@@ -1,7 +1,7 @@
 # 指标语义表
 
 > **本文件是 MolBlender 全包指标语义的唯一真相来源。**
-> 任何 `src/molblender/metrics/`、`src/molblender/models/api/screening_engine/`、
+> 任何 `src/molblender/metrics/`、`src/molblender/screening/engine/`、
 > 仪表盘、CLI 引用指标前，必须先核对本表。
 > 字段含义冲突时，以本表为准；不一致的代码视为缺陷。
 

@@ -570,7 +570,7 @@ After identifying your production model:
 import joblib
 
 # Retrain best model from stored metadata
-from molblender.models.api.screening_engine.model_registry import get_model_registry
+from molblender.screening.engine.model_registry import get_model_registry
 best = results['best_model']
 best_model = get_model_registry().get_model_config(best['model_name']).create_estimator(
     **best.get('model_params', {})

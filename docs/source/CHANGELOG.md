@@ -105,6 +105,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New `tests/lead/` suite (behavior contracts, route equivalence, runner) and `tests/screening/` surface tests pin the public entry exports and legacy identity (`old is new`)
 - **Persistent-output path module** (`config/paths.py`, `config/__init__.py`) (2026-09-02)
   - New `molblender.config.paths` centralizes persistent-output locations (`get_output_root`, `get_default_screening_db_path`, `get_default_lead_output_dir`, `get_representation_cache_dir`); `config` re-exports them, and `LeadAnalysisRequest.output_dir` now defaults to `get_default_lead_output_dir()` instead of `./lead_sensitivity_results`
+- **Canonical persistence migration + artifact path policy + resource compat** (`persistence/migration.py`, `persistence/backend.py`, `config/paths.py`, `infrastructure/resource_compat.py`) (2026-09-02)
+  - New `molblender.persistence.migration` is the single owner of screening-results migration/repair (`migrate_json_to_sqlite`, `migrate_folder_to_sqlite`, `repair_orphaned_results`, `export_session_to_json`, `get_database_stats`, `list_database_sessions`) with `MigrationOutcome` / `MigrationStatus` / `RepairOutcome` dataclasses; `persistence.backend.ScreeningResultsDB.transaction()` provides all-or-nothing semantics for multi-statement migration
+  - `config.paths` Artifact Path Policy: `MOLBLENDER_CACHE_ROOT` is the single root for every generic cache (defaults `~/.cache/molblender`), `MOLBLENDER_CACHE_DIR` is now representation-cache-only, `MOLBLENDER_OUTPUT_DIR` is the persistent-output root (defaults `~/.molblender/outputs`); `get_cache_root()` / `get_output_root()` derive from these env vars
+  - New `molblender.infrastructure.resource_compat` is the canonical source for `n_jobs` → `max_workers_per_model` / `max_cpu_cores` translation used by the `molblender.screening` / `molblender.lead` call chains
 
 ### Changed
 - **Screening and lead promoted to top-level packages** (`screening/`, `lead/`, `models/api/screening/`, `models/api/screening_engine/`, `models/api/screening_runtime/`, `models/api/multimodal/`, `models/api/lead/`, `models/README.md`) (2026-09-02)
@@ -149,6 +153,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `molblender.models.api.persistence` and `molblender.models.api.infrastructure` import paths (2026-08-31) — moved to `molblender.persistence` / `molblender.infrastructure`; legacy paths keep working as module aliases until v2.0
 - `molblender.models.lead` import path (2026-09-02) — moved to `molblender.lead` (top-level); the legacy path keeps working as a deprecated alias that emits `MolBlenderDeprecationWarning` until v2.0
 - `molblender.models.api.utils` import path (2026-09-02) — re-exports delegate to `molblender.persistence` and the remaining utilities route to their canonical owners (persistence/infrastructure/foundation); the legacy path keeps working as an alias that emits `MolBlenderDeprecationWarning` until v2.0
+- `molblender.models.api.utils.migration` import path (2026-09-02) — moved to `molblender.persistence.migration`; the legacy path keeps working as a re-export shim that emits `MolBlenderDeprecationWarning` until v2.0
+- `molblender.models.api.legacy_parameters` import path (2026-09-02) — aliases `molblender.infrastructure.resource_compat`; the legacy path keeps working with `MolBlenderDeprecationWarning` until v2.0
 
 ### Fixed
 - **Cross-session Stage-1 reuse fails fast on summary refresh** (`persistence/_stage1_reuse.py`, `persistence/session_write.py`, `tests/models/api/persistence/test_session_write.py`, `tests/models/api/persistence/test_stage1_results_queries.py`) (2026-08-31)

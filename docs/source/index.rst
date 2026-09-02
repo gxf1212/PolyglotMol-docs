@@ -11,7 +11,7 @@ MolBlender Docs
    :alt: Python Version
 
 .. image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
-   :target: https://molblender.readthedocs.io/
+   :target: https://molblender-docs.readthedocs.io/
    :alt: Documentation Status
 
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
@@ -96,7 +96,6 @@ Quick Links
    introduction
    installation
    quickstart
-   api_guide
 
 .. toctree::
    :maxdepth: 1
@@ -110,6 +109,7 @@ Quick Links
    :hidden:
    :caption: API Reference
 
+   api_guide
    api/index
 
 .. toctree::
