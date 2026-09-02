@@ -98,6 +98,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New `candidate_cv.py` `evaluate_candidate_folds()` — the single candidate-level fold loop shared by Grid and Optuna; per-fold failure recorded as a `FoldDiagnostics` with the remaining folds retained
   - New `fold_diagnostics.py` is the single source of truth for per-fold/per-candidate diagnostics (`FoldDiagnostics`, `CandidateDiagnostics`, `candidate_to_trial_event`, `collapse_candidate`, `has_any_finite_score`); Optuna `_build_event` and Grid both emit the identical `TrialEvent` via the shared translator instead of re-assembling folds or overfit gaps by hand
   - New `request_validation.py` is the single data-completeness gate reused by every HPO entry point (X/y presence + length, holdout `validation_source`, materialized CV folds, groups/stratify); delegates fold rules to `SplitPlan`'s canonical validators
+- **Screening/lead migration table + package-alias machinery** (`_compat/migration_table.py`, `_compat/package_alias.py`, `_compat/__init__.py`, `tests/screening/test_migration_table_integrity.py`, `tests/screening/test_migration_identity.py`, `tests/screening/test_screening_entry_surface.py`) (2026-09-02)
+  - New `molblender._compat` is the single owner of the legacy `molblender.models.api.*` alias machinery: `register_package_alias()` binds `sys.modules[legacy_root]` to the canonical root object, records it in a process-wide registry and emits one `MolBlenderDeprecationWarning`
+  - A single `_LegacySubmoduleAliasFinder` meta-path hook lazily resolves deep legacy imports (`legacy_root.submodule`) to the same canonical module object via the migration table, so importing a legacy root never drags in GPU / PLM / HPO submodules; unregistered deep imports raise `ModuleNotFoundError` instead of being silently faked
+  - `migration_table.py` is the hand-maintained, immutable old-path → new-path table (`screening_engine` → `screening.engine`, `screening_runtime` → `screening.runtime`, `multimodal` → `screening.orchestration`, `screening` → `screening`, `lead` → `molblender.lead`); the integrity test enumerates the real filesystem and fails closed if the table drifts from the modules on disk
+  - New `tests/lead/` suite (behavior contracts, route equivalence, runner) and `tests/screening/` surface tests pin the public entry exports and legacy identity (`old is new`)
+
+### Changed
+- **Screening and lead promoted to top-level packages** (`screening/`, `lead/`, `models/api/screening/`, `models/api/screening_engine/`, `models/api/screening_runtime/`, `models/api/multimodal/`, `models/api/lead/`, `models/README.md`) (2026-09-02)
+  - `molblender.screening` is now the single public entry for all screening workflows: standard presets (`quick_screen` / `thorough_screen` / `screen_models` / `interpretable_screen` / `StandardScreener`), comparison (`compare_models` / `compare_representations` / `simple_evaluate`), universal/multimodal (`universal_screen` / `UniversalScreener`) and core contracts (`ScreeningConfig` / `TaskType` / `MetricType` / `ModelCorpus` / `ModelResult` / `Combination`); public names resolve lazily through the export manifest so importing the package never drags in the heavy engine/orchestration implementations
+  - `molblender.lead` is the single public entry for lead sensitivity analysis (`run_lead_sensitivity_analysis` / `generate_lead_combinations` / `extract_best_config_from_db`); heavy runner/viz subpackages stay lazily imported
+  - Internal layout: engine → `screening.engine`, runtime → `screening.runtime`, universal/multimodal orchestration → `screening.orchestration`; the old `molblender.models.api.screening_engine` / `...screening_runtime` / `...multimodal` / `...screening` / `...lead` paths keep working as aliases via `_compat` (see Added + Deprecated)
+  - README and docs sync the canonical import paths (`molblender.screening.engine.base.ScreeningConfig` etc.); docs badge now points at ReadTheDocs
 
 ### Changed
 - **Dashboard launcher consolidation** (`dashboard/launcher.py`, `api/dashboard.py`, `cli/commands/view.py`, `dashboard/metrics/metrics_calculator.py`, `tests/api/test_unified_api_contract.py`, `tests/cli/test_cli_refactor_unit.py`) (2026-08-31)
@@ -130,6 +142,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Bandit: zero High findings on the migrated surface (8 pre-existing Low b110/b101 only); ruff clean on all changed source
 
 ### Deprecated
+- `molblender.models.api.screening_engine` / `...screening_runtime` / `...multimodal` / `...screening` / `...lead` import paths (2026-09-02) — moved to `molblender.screening` / `molblender.screening.engine` / `molblender.screening.runtime` / `molblender.screening.orchestration` / `molblender.lead`; legacy paths keep working as module aliases (same module objects) with a `MolBlenderDeprecationWarning` until v2.0
 - `molblender.models.api.persistence` and `molblender.models.api.infrastructure` import paths (2026-08-31) — moved to `molblender.persistence` / `molblender.infrastructure`; legacy paths keep working as module aliases until v2.0
 
 ### Fixed
