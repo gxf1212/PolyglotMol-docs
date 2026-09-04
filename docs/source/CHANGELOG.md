@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **HPO realtime persistence + deployment/external-evaluation persistence** (`persistence/deployment.py`, `persistence/result_updates.py`, `persistence/store/results_query.py`, `persistence/store/schema_bootstrap.py`, `persistence/contracts.py`, `persistence/__init__.py`, `persistence/session_write.py`, `screening/orchestration/processors/hpo/`) (2026-09-04)
+  - `save_deployment_result()`: persist final full-fit predictions as `stage=3` `model_results` rows with `primary_metric=NaN`, `hpo_stage="stage3_deployment"`, no fabricated evaluation score
+  - `finalize_deployment_session()`: mark deployment session complete without inventing `best_score`/`mean_score`/`std_score`
+  - `save_external_evaluation_result()`: persist labeled prospective/external evaluation as `stage=4` with `hpo_stage="stage4_external"`
+  - `update_result_metrics()`: canonical `UPDATE model_results SET all_metrics = ?` helper, no raw SQL from callers
+  - `session_metadata` column added to `screening_sessions` (TEXT, schema bootstrap + ALTER); `session_kind` distinguishes deployment from evaluation
+  - HPO trial rows projected into the same result-record shape as `model_results` in `get_session_results_record()` — callers no longer special-case Grid/Optuna
+  - `score_direction` (`higher_is_better`/`lower_is_better`) derived from `primary_metric_name` via `is_higher_better()`; `record_kind` (`deployment`/`hpo_trial`/`model_result`) added to every result
+  - `ModelExecutionSettings.from_config()` in `screening/engine/models/execution_settings.py`: canonical execution-params dataclass (workers, GPU, timeout, seed) with `ModelConfig` round-trip; replaces scattered config extraction
+  - `save_hpo_trial()` per-trial realtime persistence to main DB; `evaluate_all_hpo_params_on_test` disabled during active HPO runs to avoid redundant test evaluation
+  - `ModelRegistry.get_models()` accepts `execution_settings` kwarg, threaded through all evaluator call sites
+- **Seed contract + nested-CV fail-closed** (`screening/engine/evaluation/nested_cv_evaluator.py`, `screening/engine/evaluation/cross_validation.py`, `screening/engine/hpo/contracts.py`, `screening/engine/hpo/grid_search.py`, `tests/engine/hpo/test_hpo_seed_fail_closed.py`, `tests/engine/hpo/test_seed_parameter_contract.py`) (2026-09-04)
+  - `NestedCVEvaluator` accepts and propagates `seed` / `random_state`; missing seed raises `ValueError` (fail-closed, never silent `None`)
+  - `GridSearch.__init__` validates `seed`/`random_state` consistency; `hpo/contracts.py` adds seed contract fields
+- **Nested-CV seed contract tests** (`tests/engine/evaluation/test_nested_cv_seed_contract.py`) (2026-09-04)
+- **HPO seed fail-closed test** (`tests/engine/hpo/test_hpo_seed_fail_closed.py`, `tests/engine/hpo/test_seed_parameter_contract.py`, `tests/engine/models/test_execution_settings.py`) (2026-09-04)
+- **Export seed reproducibility test** (`tests/dashboard/test_export_seed_reproducibility.py`) (2026-09-04)
+- **Model results persistence tests** (`tests/api/persistence/test_deployment_persistence.py`) (2026-09-04)
+- **Vector screening exclusions test** (`tests/screening/orchestration/processors/hpo/test_vector_screening_exclusions.py`) (2026-09-04)
+- **Representation seed reproducibility test** (`tests/representations/test_representation_seed_reproducibility.py`) (2026-09-04)
 - **Vector pathway routing + GNN canonical split/ScreeningResult** (`multimodal/routing/parser.py`, `multimodal/routing/validation.py`, `multimodal/modality_handlers/graph.py`, `multimodal/modality_handlers/base.py`, `multimodal/modality_handlers/language_model.py`, `multimodal/modality_handlers/vector.py`, `tests/models/api/multimodal/routing/test_parser.py`) (2026-08-25)
   - `_parse_custom_combination()` now returns a `list[ResolvedRoute]`: vector modality with pathways `["all","vae"]` expands to two routes (VECTOR_STANDARD + VECTOR_VAE); other modalities return a single-element list
   - Validation error message for unknown pathways clarifies that `traditional_ml` is a model corpus, not a pathway
@@ -27,7 +47,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Internal orchestration state further bundled in typed dataclasses, replacing positional attribute unpacking; 131-line net change consolidating scheduling, materialization and write-out paths
 - **CI dependency workflow updates** (`.github/workflows/dependencies.yml`, `environment.yml`, `pyproject.toml`) (2026-08-25)
   - `safety scan --full-report` replaces deprecated `safety check --full-report`; `pip-audit --strict` enables stricter vulnerability matching
--
+- **Representations mypy+bandit+Pyright clean** (`representations/**`) (2026-09-04)
+  - 85→0 mypy errors: `no-redef` ignores on `parallel.py` + `deepchem.py` imports, `list-item` ignore on `bert/base.py` `[None]*n` list, `attr-defined` ignore on `esm.py` `self.model.config`, `call-arg` ignore on `coordinates.py` class-level, `arg-type` ignore on `facade.py` `list_available_protein_featurizers_from_registry()` return, unused `Optional` import removed from `cache_validator.py`
+  - 15 bandit issues fixed with `# nosec` annotations: B105 on `full_builtin_manifest.py` (false positive "vector" is output_type), B110 on `mdanalysis_backend.py` (intentional cleanup swallow), B403 on `cache_validator.py` (pickle cache I/O only), B404 on `structure_predictor.py` (subprocess for isolated conda env), B603/B607 on `structure_predictor.py` (validated cmd), B615 on `esm.py` + `transformer_models.py` (HF `from_pretrained` gated by `MOLBLENDER_ALLOW_MODEL_DOWNLOAD`)
 - **HPO resume state immutable dataclasses + evaluator component consolidation** (`multimodal/processors/hpo/`, `screening_engine/evaluation/`) (2026-08-25)
   - `HPOResumeState`/`HPOResumeCandidate` frozen dataclasses replace transient `_resume_*` attributes on Stage-1 results; resume state carried via `candidate_input.resume_state`, `_freeze()`/`_thaw()` provide immutable snapshots and mutable projections
   - `prepare_resume_candidates()` replaces `attach_resume_state()`, `_prepare_optuna_resume_state()` replaces `_resume_optuna_candidate()`, `_prepare_random_resume_state()` replaces `_resume_random_candidate()`
